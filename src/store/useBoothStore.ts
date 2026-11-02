@@ -19,6 +19,7 @@ interface BoothState {
   capturedPhotos: CapturedPhoto[]
   selectedPhotoIds: string[]
   selectedFilter: PhotoFilter
+  filterIntensity: number
   selectedStamp: string
   compositeDataUrl: string | null
   sessionId: string
@@ -33,6 +34,7 @@ interface BoothState {
   togglePhotoSelection: (id: string) => void
   reorderSelectedPhotos: (fromIndex: number, toIndex: number) => void
   setFilter: (filter: PhotoFilter) => void
+  setFilterIntensity: (intensity: number) => void
   setStamp: (stampText: string) => void
   setCompositeDataUrl: (url: string | null) => void
   resetSession: () => void
@@ -48,6 +50,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   capturedPhotos: [],
   selectedPhotoIds: [],
   selectedFilter: 'none',
+  filterIntensity: 1.0,
   selectedStamp: KOREAN_STAMPS[0].text,
   compositeDataUrl: null,
   sessionId: `session_${Date.now()}`,
@@ -116,6 +119,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
 
   setFilter: filter => set({ selectedFilter: filter }),
 
+  setFilterIntensity: intensity => set({ filterIntensity: Math.max(0, Math.min(1, intensity)) }),
+
   setStamp: stampText => set({ selectedStamp: stampText }),
 
   setCompositeDataUrl: url => set({ compositeDataUrl: url, status: 'exportReady' }),
@@ -127,6 +132,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       selectedPhotoIds: [],
       compositeDataUrl: null,
       selectedFilter: 'none',
+      filterIntensity: 1.0,
       selectedStamp: KOREAN_STAMPS[0].text,
       sessionId: `session_${Date.now()}`,
     }),

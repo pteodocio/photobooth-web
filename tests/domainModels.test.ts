@@ -5,8 +5,8 @@ import { AppConstants } from '../src/core/constants'
 import { LayoutType, PrintFormat, PhotoFilter } from '../src/core/types'
 
 describe('Domain Models & Synchronization Tests', () => {
-  it('bundles exactly 36 synchronized photobooth frames', () => {
-    expect(BUNDLED_FRAMES).toHaveLength(36)
+  it('bundles all 76 synchronized photobooth frames (36 original + 40 Christmas)', () => {
+    expect(BUNDLED_FRAMES).toHaveLength(76)
   })
 
   it('contains all 16 creative Korean-style photobooth frames', () => {

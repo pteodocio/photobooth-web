@@ -52,6 +52,12 @@ describe('Canvas Compositor Service Tests', () => {
       clip: vi.fn(),
       moveTo: vi.fn(),
       lineTo: vi.fn(),
+      translate: vi.fn(),
+      rotate: vi.fn(),
+      scale: vi.fn(),
+      ellipse: vi.fn(),
+      quadraticCurveTo: vi.fn(),
+      closePath: vi.fn(),
       setLineDash: vi.fn(),
     }
 
@@ -102,6 +108,25 @@ describe('Canvas Compositor Service Tests', () => {
       stampText: '우정영원 💖',
       dateString: '2026.11.02',
       studioWatermark: 'HARU FILM 1+1',
+    })
+
+    expect(result).toBe('data:image/png;base64,mockPng')
+  })
+
+  it('renders Christmas frame with filter intensity parameter without breaking', async () => {
+    const frame = BUNDLED_FRAMES.find(f => f.id === 'xmas_01_classic')!
+    expect(frame).toBeDefined()
+
+    const result = await renderStrip({
+      photoDataUrls: Array(4).fill('data:image/png;base64,xmas_shot'),
+      frame,
+      layout: LayoutType.fourCut,
+      printFormat: PrintFormat.singleStrip,
+      filter: 'vintage_kodak',
+      filterIntensity: 0.75,
+      stampText: 'Best Shot 👑',
+      dateString: '2026.12.25',
+      studioWatermark: 'CHRISTMAS 2026',
     })
 
     expect(result).toBe('data:image/png;base64,mockPng')

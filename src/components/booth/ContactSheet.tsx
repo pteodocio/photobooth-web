@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
-import { FilterPicker, FILTERS } from './FilterPicker'
+import { FilterPicker } from './FilterPicker'
+import { getCssFilter } from '../../core/filters'
 import { StampPicker } from './StampPicker'
 import { renderStrip } from '../../services/compositorService'
 import { SyncService } from '../../services/syncService'
@@ -19,6 +20,7 @@ export const ContactSheet: React.FC = () => {
     selectedPrintFormat,
     setPrintFormat,
     selectedFilter,
+    filterIntensity,
     setFilter,
     selectedStamp,
     setStamp,
@@ -31,8 +33,7 @@ export const ContactSheet: React.FC = () => {
   const targetCount = selectedLayout.slotCount
   const isReadyToPrint = selectedPhotoIds.length === targetCount
 
-  const activeFilterConfig = FILTERS.find(f => f.id === selectedFilter)
-  const activeCssFilter = activeFilterConfig?.cssFilter || 'none'
+  const activeCssFilter = getCssFilter(selectedFilter, filterIntensity)
 
   const handlePrint = async () => {
     if (!isReadyToPrint || isCompositing) return
@@ -53,6 +54,7 @@ export const ContactSheet: React.FC = () => {
         layout: selectedLayout,
         printFormat: selectedPrintFormat,
         filter: selectedFilter,
+        filterIntensity: filterIntensity,
         stampText: selectedStamp,
         dateString,
         studioWatermark: 'KOREAN 4-CUT STUDIO',

@@ -12,6 +12,7 @@ interface FrameShowcaseProps {
 
 const CATEGORIES = [
   'All',
+  'Christmas',
   'Creative Editions',
   'Classic Film',
   'Pastel Aesthetic',

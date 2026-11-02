@@ -1,6 +1,7 @@
 import QRCode from 'qrcode'
 import { AppConstants } from '../core/constants'
 import type { CompositeJob, FrameTemplate, PhotoFilter } from '../core/types'
+import { getCssFilter } from '../core/filters'
 
 // Helper to asynchronously load image from dataUrl/URL
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -31,9 +32,12 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   })
 }
 
+/**
+ * 300 DPI High-Resolution Korean Photo Strip Compositor
+ */
 export async function renderStrip(job: CompositeJob): Promise<string> {
-  const canvasWidth = AppConstants.stripWidth
-  const canvasHeight = AppConstants.stripHeight
+  const canvasWidth = job.printFormat.canvasWidth
+  const canvasHeight = job.printFormat.canvasHeight
 
   const canvas = document.createElement('canvas')
   canvas.width = canvasWidth
@@ -41,26 +45,28 @@ export async function renderStrip(job: CompositeJob): Promise<string> {
   const ctx = canvas.getContext('2d')
 
   if (!ctx) {
-    throw new Error('Canvas 2D context not available')
+    throw new Error('Canvas 2D context is not available')
   }
 
-  // 1. Draw Background
+  // 1. Draw Frame Background
   if (job.frame.gradientColors && job.frame.gradientColors.length >= 2) {
-    const grad = ctx.createLinearGradient(0, 0, 0, canvasHeight)
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight)
+    const step = 1 / (job.frame.gradientColors.length - 1)
     job.frame.gradientColors.forEach((color, idx) => {
-      grad.addColorStop(idx / (job.frame.gradientColors.length - 1), color)
+      gradient.addColorStop(idx * step, color)
     })
-    ctx.fillStyle = grad
+    ctx.fillStyle = gradient
   } else {
     ctx.fillStyle = job.frame.backgroundColor
   }
   ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
-  // 2. Draw Vector Motifs & Themed Background Accents
+  // 2. Draw Theme Background Decors & Christmas Vectors
   drawThemeBackgroundDecors(ctx, job.frame, canvasWidth, canvasHeight)
 
-  // 3. Draw Photo Slots
+  // 3. Load All Photos in Parallel
   const loadedPhotos = await Promise.all(job.photoDataUrls.map(url => loadImage(url)))
+  const intensity = job.filterIntensity ?? 1.0
 
   if (job.layout.id === 'fourCut') {
     const slotW = AppConstants.fourCutSlotWidth
@@ -71,7 +77,7 @@ export async function renderStrip(job: CompositeJob): Promise<string> {
 
     for (let i = 0; i < 4 && i < loadedPhotos.length; i++) {
       const slotY = marginTop + i * (slotH + gutter)
-      drawPhotoSlot(ctx, loadedPhotos[i], marginX, slotY, slotW, slotH, job.frame, job.filter)
+      drawPhotoSlot(ctx, loadedPhotos[i], marginX, slotY, slotW, slotH, job.frame, job.filter, intensity)
     }
   } else if (job.layout.id === 'sixCut') {
     const cols = 2
@@ -87,7 +93,7 @@ export async function renderStrip(job: CompositeJob): Promise<string> {
       const row = Math.floor(i / cols)
       const slotX = marginX + col * (slotW + gutterX)
       const slotY = marginTop + row * (slotH + gutterY)
-      drawPhotoSlot(ctx, loadedPhotos[i], slotX, slotY, slotW, slotH, job.frame, job.filter)
+      drawPhotoSlot(ctx, loadedPhotos[i], slotX, slotY, slotW, slotH, job.frame, job.filter, intensity)
     }
   }
 
@@ -101,7 +107,7 @@ export async function renderStrip(job: CompositeJob): Promise<string> {
     ctx.restore()
   }
 
-  // 5. Korean Stamp Badge
+  // 5. Stamp Badge
   if (job.stampText) {
     drawStampBadge(ctx, job.stampText, 100, 3180, job.frame.captionColor)
   }
@@ -168,7 +174,8 @@ function drawPhotoSlot(
   w: number,
   h: number,
   frame: FrameTemplate,
-  filter: PhotoFilter
+  filter: PhotoFilter,
+  filterIntensity: number = 1.0
 ) {
   ctx.save()
 
@@ -183,13 +190,10 @@ function drawPhotoSlot(
     ctx.clip()
   }
 
-  // Filter effect
-  if (filter === 'mono') {
-    ctx.filter = 'grayscale(100%) contrast(110%)'
-  } else if (filter === 'haruBlue') {
-    ctx.filter = 'contrast(105%) brightness(105%) saturate(85%) hue-rotate(5deg)'
-  } else if (filter === 'warmFilm') {
-    ctx.filter = 'sepia(28%) contrast(98%) brightness(102%) saturate(110%)'
+  // Universal Filter effect with intensity
+  const cssFilter = getCssFilter(filter, filterIntensity)
+  if (cssFilter && cssFilter !== 'none') {
+    ctx.filter = cssFilter
   }
 
   // Aspect-fill photo into slot (4:3 source into slot)
@@ -254,7 +258,7 @@ function drawStampBadge(
   }
   ctx.stroke()
 
-  ctx.font = 'bold 24px "Pretendard", "Segoe UI", sans-serif'
+  ctx.font = 'bold 24px "Outfit", "Segoe UI", sans-serif'
   ctx.fillStyle = color
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
@@ -270,7 +274,6 @@ async function drawQrCodeBadge(
   size: number
 ) {
   try {
-    // Generate QR code as DataURL
     const qrDataUrl = await QRCode.toDataURL(data, {
       margin: 1,
       color: {
@@ -280,7 +283,6 @@ async function drawQrCodeBadge(
     })
     const qrImg = await loadImage(qrDataUrl)
 
-    // Solid white quiet-zone background sticker
     ctx.save()
     ctx.fillStyle = '#FFFFFF'
     if (typeof ctx.roundRect === 'function') {
@@ -294,7 +296,6 @@ async function drawQrCodeBadge(
     ctx.drawImage(qrImg, startX, startY, size, size)
     ctx.restore()
   } catch {
-    // Fallback card
     ctx.save()
     ctx.fillStyle = '#FFFFFF'
     ctx.fillRect(startX, startY, size, size)
@@ -311,9 +312,9 @@ function drawThemeBackgroundDecors(
   ctx.save()
   const style = frame.themeStyle
 
+  // Original Styles
   if (style === 'pastelDream') {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'
-    // Soft sparkle stars
     drawSparkle(ctx, 60, 80, 16)
     drawSparkle(ctx, width - 70, 90, 20)
     drawSparkle(ctx, 60, height - 160, 18)
@@ -331,15 +332,89 @@ function drawThemeBackgroundDecors(
     drawPixelStar(ctx, width - 60, 70, '#FF007F')
   } else if (style === 'midnightGalaxy') {
     ctx.fillStyle = '#FFFFFF'
-    // Constellation stars
     drawStarDot(ctx, 45, 90, 4)
     drawStarDot(ctx, 95, 110, 3)
     drawStarDot(ctx, width - 50, 85, 5)
     drawStarDot(ctx, width - 90, 130, 3)
   }
+
+  // --- Christmas Vector Themes ---
+  else if (style === 'xmas_classic') {
+    drawHollyBerries(ctx, 50, 70, 18)
+    drawHollyBerries(ctx, width - 50, 70, 18)
+    drawStarSparkle(ctx, 55, height - 140, 14, '#FACC15')
+    drawStarSparkle(ctx, width - 55, height - 140, 14, '#FACC15')
+  } else if (style === 'xmas_wonderland') {
+    drawSnowflake(ctx, 50, 80, 22, '#FFFFFF')
+    drawSnowflake(ctx, width - 55, 95, 26, '#FFFFFF')
+    drawSnowflake(ctx, 45, height - 150, 18, '#FFFFFF')
+    drawChristmasTree(ctx, width - 60, height - 130, 50, '#10B981')
+  } else if (style === 'xmas_santas_workshop') {
+    drawBaubleOrnament(ctx, 60, 85, 20, '#FACC15')
+    drawBaubleOrnament(ctx, width - 60, 95, 22, '#22C55E')
+    drawCandyCane(ctx, 50, height - 160, 45)
+  } else if (style === 'xmas_snowy_december') {
+    drawSnowflake(ctx, 50, 75, 20, '#0284C7')
+    drawSnowflake(ctx, width - 55, 90, 28, '#0284C7')
+    drawSnowflake(ctx, 50, height - 160, 22, '#0284C7')
+    drawSnowflake(ctx, width - 50, height - 130, 24, '#0284C7')
+  } else if (style === 'xmas_gingerbread_house' || style === 'xmas_gingerbread_friends') {
+    drawGingerbreadMan(ctx, 55, 85, 40)
+    drawGingerbreadMan(ctx, width - 55, 85, 40)
+    drawCandyCane(ctx, 50, height - 150, 40)
+  } else if (style === 'xmas_candy_cane' || style === 'xmas_peppermint_candy') {
+    drawCandyCane(ctx, 50, 80, 46)
+    drawCandyCane(ctx, width - 50, 80, 46)
+    drawCandyCane(ctx, 50, height - 160, 46)
+  } else if (style === 'xmas_red_and_green' || style === 'xmas_holly_and_berries' || style === 'xmas_holly_jolly') {
+    drawHollyBerries(ctx, 50, 75, 20)
+    drawHollyBerries(ctx, width - 50, 75, 20)
+    drawHollyBerries(ctx, 50, height - 150, 20)
+    drawHollyBerries(ctx, width - 50, height - 150, 20)
+  } else if (style === 'xmas_cozy_christmas' || style === 'xmas_cozy_fireplace') {
+    drawStarSparkle(ctx, 55, 75, 16, '#F59E0B')
+    drawStarSparkle(ctx, width - 55, 75, 16, '#F59E0B')
+    drawChristmasTree(ctx, 55, height - 140, 45, '#15803D')
+  } else if (style === 'xmas_pink_christmas' || style === 'xmas_pink_ribbon' || style === 'xmas_kawaii_christmas') {
+    drawStarSparkle(ctx, 50, 75, 16, '#DB2777')
+    drawStarSparkle(ctx, width - 50, 75, 16, '#DB2777')
+    drawBaubleOrnament(ctx, 55, height - 140, 18, '#F472B6')
+    drawBaubleOrnament(ctx, width - 55, height - 140, 18, '#F472B6')
+  } else if (style === 'xmas_blue_snowfall' || style === 'xmas_snowflake_dreams' || style === 'xmas_polar_bear_christmas') {
+    drawSnowflake(ctx, 50, 80, 24, '#E0F2FE')
+    drawSnowflake(ctx, width - 50, 85, 20, '#E0F2FE')
+    drawSnowflake(ctx, 50, height - 150, 26, '#E0F2FE')
+    drawSnowflake(ctx, width - 50, height - 140, 22, '#E0F2FE')
+  } else if (style === 'xmas_christmas_tree') {
+    drawChristmasTree(ctx, 55, 85, 48, '#047857')
+    drawChristmasTree(ctx, width - 55, 85, 48, '#047857')
+    drawStarSparkle(ctx, 55, height - 140, 16, '#FACC15')
+    drawStarSparkle(ctx, width - 55, height - 140, 16, '#FACC15')
+  } else if (style === 'xmas_christmas_lights') {
+    drawFairyLights(ctx, width, 30)
+    drawFairyLights(ctx, width, height - 80)
+  } else if (style === 'xmas_golden_christmas' || style === 'xmas_merry_and_bright' || style === 'xmas_starry_night' || style === 'xmas_midnight_christmas') {
+    drawStarSparkle(ctx, 50, 75, 20, '#FACC15')
+    drawStarSparkle(ctx, width - 50, 75, 20, '#FACC15')
+    drawStarSparkle(ctx, 50, height - 140, 16, '#FACC15')
+    drawStarSparkle(ctx, width - 50, height - 140, 16, '#FACC15')
+  } else if (style === 'xmas_reindeer_friends') {
+    drawHollyBerries(ctx, 50, 75, 18)
+    drawHollyBerries(ctx, width - 50, 75, 18)
+    drawStarSparkle(ctx, 50, height - 140, 14, '#EF4444')
+    drawStarSparkle(ctx, width - 50, height - 140, 14, '#EF4444')
+  } else {
+    // Default winter holiday accents
+    drawSnowflake(ctx, 50, 80, 20, 'rgba(255,255,255,0.7)')
+    drawSnowflake(ctx, width - 50, 80, 20, 'rgba(255,255,255,0.7)')
+    drawStarSparkle(ctx, 50, height - 140, 14, 'rgba(255,255,255,0.8)')
+    drawStarSparkle(ctx, width - 50, height - 140, 14, 'rgba(255,255,255,0.8)')
+  }
+
   ctx.restore()
 }
 
+// Vector Drawing Primitives
 function drawSparkle(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
   ctx.beginPath()
   ctx.arc(cx, cy, size * 0.4, 0, Math.PI * 2)
@@ -362,4 +437,173 @@ function drawStarDot(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: n
   ctx.beginPath()
   ctx.arc(cx, cy, r, 0, Math.PI * 2)
   ctx.fill()
+}
+
+function drawSnowflake(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, color: string = '#FFFFFF') {
+  ctx.save()
+  ctx.strokeStyle = color
+  ctx.lineWidth = Math.max(2, size * 0.08)
+  ctx.lineCap = 'round'
+  for (let i = 0; i < 6; i++) {
+    const angle = (i * Math.PI) / 3
+    const cos = Math.cos(angle)
+    const sin = Math.sin(angle)
+    ctx.beginPath()
+    ctx.moveTo(cx, cy)
+    ctx.lineTo(cx + cos * size, cy + sin * size)
+    ctx.stroke()
+    const bPos = 0.6 * size
+    const bLen = 0.35 * size
+    ctx.beginPath()
+    ctx.moveTo(cx + cos * bPos, cy + sin * bPos)
+    ctx.lineTo(cx + cos * bPos - sin * bLen, cy + sin * bPos + cos * bLen)
+    ctx.moveTo(cx + cos * bPos, cy + sin * bPos)
+    ctx.lineTo(cx + cos * bPos + sin * bLen, cy + sin * bPos - cos * bLen)
+    ctx.stroke()
+  }
+  ctx.restore()
+}
+
+function drawChristmasTree(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, color: string = '#14532D') {
+  ctx.save()
+  ctx.fillStyle = '#78350F'
+  ctx.fillRect(cx - size * 0.1, cy + size * 0.35, size * 0.2, size * 0.25)
+  ctx.fillStyle = color
+  for (let tier = 0; tier < 3; tier++) {
+    const tierY = cy + (tier * size * 0.22) - size * 0.1
+    const tierW = size * (0.35 + tier * 0.22)
+    const tierH = size * 0.38
+    ctx.beginPath()
+    ctx.moveTo(cx, tierY - tierH * 0.6)
+    ctx.lineTo(cx - tierW, tierY + tierH * 0.4)
+    ctx.lineTo(cx + tierW, tierY + tierH * 0.4)
+    ctx.closePath()
+    ctx.fill()
+  }
+  drawStarSparkle(ctx, cx, cy - size * 0.38, size * 0.18, '#FACC15')
+  ctx.restore()
+}
+
+function drawHollyBerries(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  ctx.fillStyle = '#15803D'
+  drawEllipse(ctx, cx - size * 0.5, cy - size * 0.2, size * 0.7, size * 0.35, -Math.PI / 4)
+  drawEllipse(ctx, cx + size * 0.5, cy - size * 0.2, size * 0.7, size * 0.35, Math.PI / 4)
+  ctx.fillStyle = '#DC2626'
+  const r = size * 0.3
+  ctx.beginPath(); ctx.arc(cx - r * 0.6, cy + r * 0.2, r, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + r * 0.6, cy + r * 0.2, r, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx, cy - r * 0.6, r, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+}
+
+function drawEllipse(ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number, rotation: number = 0) {
+  if (typeof ctx.ellipse === 'function') {
+    ctx.beginPath()
+    ctx.ellipse(x, y, rx, ry, rotation, 0, Math.PI * 2)
+    ctx.fill()
+  } else {
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(rotation)
+    ctx.scale(1, ry / rx)
+    ctx.beginPath()
+    ctx.arc(0, 0, rx, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
+}
+
+function drawCandyCane(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  ctx.translate(cx, cy)
+  ctx.rotate(0.3)
+  ctx.lineWidth = Math.max(3, size * 0.22)
+  ctx.strokeStyle = '#FFFFFF'
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(0, size * 0.7)
+  ctx.lineTo(0, 0)
+  ctx.arc(-size * 0.3, 0, size * 0.3, 0, Math.PI, true)
+  ctx.stroke()
+  ctx.strokeStyle = '#DC2626'
+  ctx.setLineDash([size * 0.16, size * 0.16])
+  ctx.stroke()
+  ctx.restore()
+}
+
+function drawBaubleOrnament(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string = '#E11D48') {
+  ctx.save()
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(cx, cy - r * 2.0)
+  ctx.lineTo(cx, cy - r)
+  ctx.stroke()
+  ctx.fillStyle = '#F59E0B'
+  ctx.fillRect(cx - r * 0.25, cy - r * 1.15, r * 0.5, r * 0.25)
+  ctx.fillStyle = color
+  ctx.beginPath()
+  ctx.arc(cx, cy, r, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)'
+  ctx.beginPath()
+  ctx.arc(cx - r * 0.35, cy - r * 0.35, r * 0.28, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.restore()
+}
+
+function drawGingerbreadMan(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  ctx.fillStyle = '#854D0E'
+  ctx.strokeStyle = '#FFFFFF'
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.arc(cx, cy - size * 0.45, size * 0.22, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.stroke()
+  drawEllipse(ctx, cx, cy, size * 0.24, size * 0.32, 0)
+  drawEllipse(ctx, cx - size * 0.32, cy - size * 0.1, size * 0.24, size * 0.1, -0.4)
+  drawEllipse(ctx, cx + size * 0.32, cy - size * 0.1, size * 0.24, size * 0.1, 0.4)
+  drawEllipse(ctx, cx - size * 0.16, cy + size * 0.38, size * 0.12, size * 0.22, -0.2)
+  drawEllipse(ctx, cx + size * 0.16, cy + size * 0.38, size * 0.12, size * 0.22, 0.2)
+  ctx.fillStyle = '#DC2626'
+  ctx.beginPath(); ctx.arc(cx, cy - size * 0.1, 3, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = '#16A34A'
+  ctx.beginPath(); ctx.arc(cx, cy + size * 0.08, 3, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+}
+
+function drawStarSparkle(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, color: string = '#FEF08A') {
+  ctx.save()
+  ctx.fillStyle = color
+  ctx.beginPath()
+  ctx.moveTo(cx, cy - size)
+  ctx.quadraticCurveTo(cx, cy, cx + size, cy)
+  ctx.quadraticCurveTo(cx, cy, cx, cy + size)
+  ctx.quadraticCurveTo(cx, cy, cx - size, cy)
+  ctx.quadraticCurveTo(cx, cy, cx, cy - size)
+  ctx.fill()
+  ctx.restore()
+}
+
+function drawFairyLights(ctx: CanvasRenderingContext2D, width: number, y: number) {
+  ctx.save()
+  const colors = ['#EF4444', '#22C55E', '#FACC15', '#38BDF8', '#F472B6']
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(40, y)
+  for (let x = 80; x < width - 40; x += 90) {
+    ctx.quadraticCurveTo(x - 45, y + 25, x, y)
+  }
+  ctx.stroke()
+  let ci = 0
+  for (let x = 80; x < width - 40; x += 90) {
+    const col = colors[ci % colors.length]
+    ctx.fillStyle = col
+    drawEllipse(ctx, x - 45, y + 28, 8, 12, 0)
+    ci++
+  }
+  ctx.restore()
 }

@@ -1,6 +1,9 @@
 import type { FrameTemplate } from './types'
+import { CHRISTMAS_FRAMES } from './christmasFrames'
 
-export const BUNDLED_FRAMES: FrameTemplate[] = [
+export { CHRISTMAS_FRAMES }
+
+const ORIGINAL_FRAMES: FrameTemplate[] = [
   // 1. Classic Film
   {
     id: 'classic_black',
@@ -516,6 +519,11 @@ export const BUNDLED_FRAMES: FrameTemplate[] = [
     slotBorderWidth: 0,
     slotCornerRadius: 0,
   },
+]
+
+export const BUNDLED_FRAMES: FrameTemplate[] = [
+  ...ORIGINAL_FRAMES,
+  ...CHRISTMAS_FRAMES,
 ]
 
 export function getFrameById(id: string): FrameTemplate | undefined {

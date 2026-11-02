@@ -11,6 +11,7 @@ describe('FramePickerModal Component Tests', () => {
   it('renders frame picker with categories and layout switch', () => {
     render(<FramePickerModal isOpen={true} onClose={() => {}} />)
     expect(screen.getByText('Select Frame')).toBeInTheDocument()
+    expect(screen.getByText('Christmas')).toBeInTheDocument()
     expect(screen.getByText('Creative Editions')).toBeInTheDocument()
     expect(screen.getByText('4-Cut')).toBeInTheDocument()
     expect(screen.getByText('6-Cut')).toBeInTheDocument()
@@ -23,6 +24,16 @@ describe('FramePickerModal Component Tests', () => {
 
     expect(screen.getByText('Classic Black')).toBeInTheDocument()
     expect(screen.queryByText('Y2K Cyber Pop')).not.toBeInTheDocument()
+  })
+
+  it('filters frames when Christmas category tab is clicked', () => {
+    render(<FramePickerModal isOpen={true} onClose={() => {}} />)
+    const xmasTab = screen.getByText('Christmas')
+    fireEvent.click(xmasTab)
+
+    expect(screen.getByText('Classic Christmas')).toBeInTheDocument()
+    expect(screen.getByText('Snowy December')).toBeInTheDocument()
+    expect(screen.queryByText('Classic Black')).not.toBeInTheDocument()
   })
 
   it('switches layout between 4-Cut and 6-Cut', () => {

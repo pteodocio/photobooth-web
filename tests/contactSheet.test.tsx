@@ -20,12 +20,12 @@ describe('ContactSheet Component Tests', () => {
     expect(screen.getByText('Print Strip')).toBeInTheDocument()
   })
 
-  it('allows switching photo filters (Haru Blue, Warm Film, Mono)', () => {
+  it('allows switching photo filters and adjusting intensity', () => {
     render(<ContactSheet />)
-    const haruBtn = screen.getByText('Haru Blue')
-    fireEvent.click(haruBtn)
+    const seoulBtn = screen.getByText('Seoul Film')
+    fireEvent.click(seoulBtn)
 
-    expect(useBoothStore.getState().selectedFilter).toBe('haruBlue')
+    expect(useBoothStore.getState().selectedFilter).toBe('seoul_film')
   })
 
   it('allows selecting stickers', () => {

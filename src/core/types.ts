@@ -1,21 +1,4 @@
-export type FrameThemeStyle =
-  | 'classic'
-  | 'pastelDream'
-  | 'cherryBlossom'
-  | 'y2kCyber'
-  | 'retroFilm'
-  | 'strawberryMilk'
-  | 'midnightGalaxy'
-  | 'summerSplash'
-  | 'wildflower'
-  | 'editorialBw'
-  | 'holographicParty'
-  | 'photoismHighKey'
-  | 'monomansionKraft'
-  | 'haruCloud'
-  | 'matchaLatte'
-  | 'teddyBear'
-  | 'analog1998'
+export type FrameThemeStyle = string
 
 export interface FrameTemplate {
   id: string
@@ -89,13 +72,14 @@ export const PrintFormat = {
   } as PrintFormatConfig,
 } as const
 
-export type PhotoFilter = 'none' | 'mono' | 'haruBlue' | 'warmFilm'
+export type PhotoFilter = string
 
 export interface FilterOption {
   id: PhotoFilter
   displayName: string
   description: string
-  cssFilter: string
+  cssFilter?: string
+  category?: string
 }
 
 export interface StampItem {
@@ -117,6 +101,7 @@ export interface CompositeJob {
   layout: LayoutTypeConfig
   printFormat: PrintFormatConfig
   filter: PhotoFilter
+  filterIntensity?: number
   stampText: string
   dateString: string
   studioWatermark: string
