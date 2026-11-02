@@ -2,44 +2,101 @@
 
 @layer base {
   body {
-    background-color: #0F0F11;
-    color: #FFFFFF;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Pretendard", "Apple SD Gothic Neo", sans-serif;
+    background-color: #0B0B0E;
+    color: #F3F3F6;
+    font-family: 'Outfit', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 /* Custom photobooth scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #151518;
+  background: #0E0E12;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A2A32;
+  background: #23232C;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF5252;
+  background: #FF385C;
 }
 
-@keyframes flashAnimation {
+/* Authentic studio flash */
+@keyframes studioFlashAnimation {
   0% { opacity: 0; }
-  25% { opacity: 0.95; }
+  15% { opacity: 1; }
   100% { opacity: 0; }
 }
 
 .camera-flash-effect {
-  animation: flashAnimation 160ms cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  animation: studioFlashAnimation 220ms cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
 }
 
-@keyframes dispenseAnimation {
-  0% { transform: translateY(-70%); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+/* Realistic mechanical dispenser drop */
+@keyframes mechanicalDispense {
+  0% {
+    transform: translateY(-90%) scale(0.96);
+    opacity: 0;
+    filter: drop-shadow(0 0 0 rgba(0,0,0,0));
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-20%) scale(0.98);
+  }
+  75% {
+    transform: translateY(4px) scale(1.002);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    filter: drop-shadow(0 25px 35px rgba(0,0,0,0.65));
+  }
 }
 
 .dispense-slide-down {
-  animation: dispenseAnimation 850ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: mechanicalDispense 950ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Filmstrip Perforation Notch Styling */
+.film-notch-pattern {
+  background-image: radial-gradient(circle at 50% 50%, #0B0B0E 3px, transparent 4px);
+  background-size: 14px 14px;
+}
+
+/* Darkroom Lightbox Grid Texture */
+.darkroom-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Mechanical ticket tear-off edge */
+.ticket-edge-left {
+  mask-image: radial-gradient(circle 8px at 0 50%, transparent 8px, black 9px);
+}
+.ticket-edge-right {
+  mask-image: radial-gradient(circle 8px at 100% 50%, transparent 8px, black 9px);
+}
+
+/* Physical photo paper shadow */
+.photo-card-shadow {
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    0 24px 48px rgba(0, 0, 0, 0.4);
+}
+
+/* Washi tape effect */
+.washi-tape-accent {
+  background: rgba(255, 248, 220, 0.28);
+  border-left: 2px dashed rgba(255, 255, 255, 0.3);
+  border-right: 2px dashed rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(2px);
 }

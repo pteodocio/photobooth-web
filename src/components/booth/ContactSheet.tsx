@@ -5,7 +5,8 @@ import { StampPicker } from './StampPicker'
 import { renderStrip } from '../../services/compositorService'
 import { SyncService } from '../../services/syncService'
 import { PrintFormat } from '../../core/types'
-import { Printer, Lock, CheckCircle2, ArrowLeftRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Printer, Lock, CheckCircle2, ArrowLeftRight, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react'
+import { sound } from '../../services/soundService'
 
 export const ContactSheet: React.FC = () => {
   const {
@@ -35,6 +36,7 @@ export const ContactSheet: React.FC = () => {
 
   const handlePrint = async () => {
     if (!isReadyToPrint || isCompositing) return
+    sound.playClick()
     setIsCompositing(true)
 
     try {
@@ -78,48 +80,59 @@ export const ContactSheet: React.FC = () => {
   }
 
   const handleMoveLeft = (index: number) => {
+    sound.playClick()
     if (index > 0) reorderSelectedPhotos(index, index - 1)
   }
 
   const handleMoveRight = (index: number) => {
+    sound.playClick()
     if (index < selectedPhotoIds.length - 1) reorderSelectedPhotos(index, index + 1)
   }
 
+  const handlePhotoClick = (id: string) => {
+    sound.playClick()
+    togglePhotoSelection(id)
+  }
+
   return (
-    <div className="w-full min-h-screen bg-[#0F0F12] text-white p-4 sm:p-6 flex flex-col justify-between max-w-5xl mx-auto select-none">
+    <div className="w-full min-h-screen bg-[#0A0A0E] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-5xl mx-auto select-none">
       {/* Header with Upfront Frame Lock Badge */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1C1C26]">
         <div>
-          <h2 className="text-xl font-bold flex items-center gap-2">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF385C] uppercase tracking-wider mb-1">
+            <SlidersHorizontal size={13} />
+            <span>DARKROOM LIGHTBOX · 작업대</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
             포토 스트립 커스텀
-            <span className="text-xs px-2.5 py-1 rounded-full bg-white/10 text-white/70 font-normal">
+            <span className="text-xs font-mono px-2.5 py-1 rounded-md bg-[#181822] text-[#B0B0C0] font-medium border border-[#262635]">
               {selectedPhotoIds.length}/{targetCount} Selected
             </span>
           </h2>
-          <p className="text-xs text-white/50 mt-1">
-            마음에 드는 사진 {targetCount}장을 선택하고 순서를 지정하세요.
+          <p className="text-xs text-[#808092] mt-0.5 font-mono">
+            마음에 드는 사진 {targetCount}장을 선택하고 슬롯 순서를 자유롭게 조정하세요.
           </p>
         </div>
 
         {/* Upfront Frame Lock Indicator */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#1C1C22] border border-white/10 text-xs self-start sm:self-auto">
-          <Lock size={13} className="text-[#FF5252]" />
-          <span className="text-white/60">프레임 고정:</span>
-          <span className="font-semibold text-white">{selectedFrame.name}</span>
-          <span className="text-white/40">· {selectedLayout.displayName}</span>
+        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#14141B] border border-[#242432] text-xs font-mono self-start sm:self-auto shadow-sm">
+          <Lock size={13} className="text-[#FF385C]" />
+          <span className="text-[#808092]">프레임 고정:</span>
+          <span className="font-bold text-white">{selectedFrame.name}</span>
+          <span className="text-[#A0A0B0]">· {selectedLayout.displayName}</span>
         </div>
       </div>
 
       {/* Main Selection Area */}
-      <div className="my-4 space-y-6">
-        {/* Reorderable Strip Tray */}
-        <div className="p-4 rounded-2xl bg-[#141418] border border-white/5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-white/70 flex items-center gap-1.5">
-              <ArrowLeftRight size={14} className="text-[#FF5252]" />
+      <div className="my-5 space-y-6">
+        {/* Reorderable Strip Tray (Light Table) */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#121218] border border-[#20202C] darkroom-grid">
+          <div className="flex items-center justify-between mb-3.5">
+            <span className="text-xs font-mono font-bold text-white/90 flex items-center gap-2">
+              <ArrowLeftRight size={14} className="text-[#FF385C]" />
               스트립 출력 순서 (순서 바꾸기)
             </span>
-            <span className="text-[11px] text-white/40">좌우 버튼으로 순서 변경</span>
+            <span className="text-[11px] font-mono text-white/40">좌우 버튼으로 순서 변경</span>
           </div>
 
           <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
@@ -130,7 +143,7 @@ export const ContactSheet: React.FC = () => {
               return (
                 <div
                   key={photoId}
-                  className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-[#FF5252] bg-black shadow-md flex flex-col justify-between group"
+                  className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-[#FF385C] bg-black shadow-lg flex flex-col justify-between group transition-all"
                 >
                   <img
                     src={photo.dataUrl}
@@ -138,25 +151,25 @@ export const ContactSheet: React.FC = () => {
                     style={{ filter: activeCssFilter }}
                     className="w-full h-full object-cover"
                   />
-                  {/* Index badge */}
-                  <div className="absolute top-1.5 left-1.5 bg-black/80 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {/* Slot order badge */}
+                  <div className="absolute top-1.5 left-1.5 bg-[#FF385C] text-white text-[10px] font-mono font-black w-5 h-5 rounded-md flex items-center justify-center shadow">
                     {idx + 1}
                   </div>
                   {/* Reorder Buttons */}
-                  <div className="absolute bottom-1 inset-x-1 flex justify-between opacity-80 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-1.5 inset-x-1.5 flex justify-between opacity-85 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleMoveLeft(idx)}
                       disabled={idx === 0}
-                      className="p-1 rounded bg-black/70 hover:bg-black text-white/80 disabled:opacity-30"
+                      className="p-1 rounded-md bg-black/80 hover:bg-black text-white/90 disabled:opacity-20 cursor-pointer"
                     >
-                      <ChevronLeft size={12} />
+                      <ChevronLeft size={13} />
                     </button>
                     <button
                       onClick={() => handleMoveRight(idx)}
                       disabled={idx === selectedPhotoIds.length - 1}
-                      className="p-1 rounded bg-black/70 hover:bg-black text-white/80 disabled:opacity-30"
+                      className="p-1 rounded-md bg-black/80 hover:bg-black text-white/90 disabled:opacity-20 cursor-pointer"
                     >
-                      <ChevronRight size={12} />
+                      <ChevronRight size={13} />
                     </button>
                   </div>
                 </div>
@@ -167,7 +180,9 @@ export const ContactSheet: React.FC = () => {
 
         {/* All Captured Photos Selector Grid */}
         <div>
-          <h3 className="text-xs font-semibold text-white/70 mb-2">촬영된 전체 사진 (터치하여 선택/해제)</h3>
+          <h3 className="text-xs font-mono font-bold text-white/80 mb-2.5">
+            촬영된 전체 사진 (터치하여 선택/해제)
+          </h3>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {capturedPhotos.map((photo, i) => {
               const isSelected = selectedPhotoIds.includes(photo.id)
@@ -176,11 +191,11 @@ export const ContactSheet: React.FC = () => {
               return (
                 <div
                   key={photo.id}
-                  onClick={() => togglePhotoSelection(photo.id)}
+                  onClick={() => handlePhotoClick(photo.id)}
                   className={`relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer border transition-all ${
                     isSelected
-                      ? 'border-[#FF5252] ring-2 ring-[#FF5252]/50 scale-[1.02]'
-                      : 'border-white/10 opacity-70 hover:opacity-100'
+                      ? 'border-[#FF385C] ring-2 ring-[#FF385C]/60 scale-[1.02] shadow-md'
+                      : 'border-[#22222E] opacity-65 hover:opacity-100 bg-[#14141B]'
                   }`}
                 >
                   <img
@@ -190,15 +205,18 @@ export const ContactSheet: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                   {isSelected && (
-                    <div className="absolute top-1.5 right-1.5 bg-[#FF5252] text-white p-0.5 rounded-full shadow">
-                      <CheckCircle2 size={14} />
+                    <div className="absolute top-1.5 right-1.5 bg-[#FF385C] text-white p-0.5 rounded-full shadow">
+                      <CheckCircle2 size={13} />
                     </div>
                   )}
                   {isSelected && (
-                    <div className="absolute bottom-1.5 left-1.5 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+                    <div className="absolute bottom-1.5 left-1.5 bg-black/85 text-white font-mono text-[10px] font-bold px-1.5 py-0.5 rounded-md">
                       #{selectedIdx + 1}
                     </div>
                   )}
+                  <div className="absolute top-1.5 left-1.5 font-mono text-[9px] text-white/50 bg-black/60 px-1 rounded">
+                    0{i + 1}
+                  </div>
                 </div>
               )
             })}
@@ -212,27 +230,35 @@ export const ContactSheet: React.FC = () => {
         <StampPicker selectedStamp={selectedStamp} onSelectStamp={setStamp} />
 
         {/* Print Format Switcher (Single Strip vs Twin Strip 1+1) */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#141418] border border-white/5">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#121218] border border-[#20202C]">
           <div>
-            <span className="text-xs font-semibold text-white">인화 포맷 Print Format:</span>
-            <p className="text-[11px] text-white/50 mt-0.5">트윈 스트립(1+1) 선택 시 친구와 나눌 수 있는 2장 듀얼 인쇄물로 출력됩니다.</p>
+            <span className="text-xs font-mono font-bold text-white">인화 포맷 PRINT FORMAT</span>
+            <p className="text-[11px] text-[#808090] mt-0.5 font-mono">
+              트윈 스트립(1+1) 선택 시 친구와 나눌 수 있는 2장 듀얼 인쇄물로 출력됩니다.
+            </p>
           </div>
-          <div className="flex items-center gap-2 p-1 bg-black/40 rounded-xl border border-white/10">
+          <div className="flex items-center gap-2 p-1 bg-[#0A0A0D] rounded-xl border border-[#22222D]">
             <button
-              onClick={() => setPrintFormat(PrintFormat.singleStrip)}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
+              onClick={() => {
+                sound.playClick()
+                setPrintFormat(PrintFormat.singleStrip)
+              }}
+              className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
                 selectedPrintFormat.id === 'singleStrip'
-                  ? 'bg-white text-black font-bold shadow'
+                  ? 'bg-white text-black shadow-md'
                   : 'text-white/60 hover:text-white'
               }`}
             >
               Single Strip
             </button>
             <button
-              onClick={() => setPrintFormat(PrintFormat.twinStrip)}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
+              onClick={() => {
+                sound.playClick()
+                setPrintFormat(PrintFormat.twinStrip)
+              }}
+              className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
                 selectedPrintFormat.id === 'twinStrip'
-                  ? 'bg-[#FF5252] text-white font-bold shadow'
+                  ? 'bg-[#FF385C] text-white shadow-md'
                   : 'text-white/60 hover:text-white'
               }`}
             >
@@ -243,8 +269,8 @@ export const ContactSheet: React.FC = () => {
       </div>
 
       {/* Footer CTA Bar */}
-      <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-        <span className="text-xs text-white/60">
+      <div className="pt-4 border-t border-[#1C1C26] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <span className="text-xs font-mono text-[#808090]">
           {isReadyToPrint
             ? '준비 완료! 아래 버튼을 눌러 인화하세요.'
             : `${targetCount - selectedPhotoIds.length}장의 사진을 더 선택해주세요.`}
@@ -253,10 +279,10 @@ export const ContactSheet: React.FC = () => {
         <button
           onClick={handlePrint}
           disabled={!isReadyToPrint || isCompositing}
-          className="flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#FF5252] hover:bg-[#FF3838] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm shadow-xl shadow-[#FF5252]/25 transition-all transform active:scale-95"
+          className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] disabled:opacity-40 disabled:cursor-not-allowed text-white font-mono font-bold text-xs tracking-wider shadow-xl shadow-[#FF385C]/25 transition-all transform active:scale-95 cursor-pointer"
         >
-          <Printer size={18} />
-          {isCompositing ? '인화 렌더링 중...' : '인화하기 Print Film'}
+          <Printer size={16} />
+          <span>{isCompositing ? '인화 렌더링 중...' : '인화하기 Print Film'}</span>
         </button>
       </div>
     </div>

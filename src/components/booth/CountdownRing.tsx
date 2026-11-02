@@ -9,41 +9,42 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
   secondsRemaining,
   totalSeconds,
 }) => {
-  const size = 96
-  const strokeWidth = 6
+  const size = 90
+  const strokeWidth = 5
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const progress = (totalSeconds - secondsRemaining) / totalSeconds
   const strokeDashoffset = circumference * progress
+  const isUrgent = secondsRemaining <= 3
 
   return (
-    <div className="relative flex items-center justify-center">
+    <div className={`relative flex items-center justify-center ${isUrgent ? 'scale-105 transition-transform' : ''}`}>
       <svg width={size} height={size} className="transform -rotate-90">
         {/* Background track circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="rgba(255, 255, 255, 0.15)"
+          stroke="rgba(255, 255, 255, 0.12)"
           strokeWidth={strokeWidth}
-          fill="transparent"
+          fill="rgba(10, 10, 14, 0.65)"
         />
         {/* Animated countdown progress ring */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#FF5252"
+          stroke={isUrgent ? '#FF385C' : '#FF6680'}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          fill="rgba(0, 0, 0, 0.45)"
+          fill="transparent"
           className="transition-all duration-300 ease-linear"
         />
       </svg>
       {/* Center number */}
-      <span className="absolute text-4xl font-black text-white font-mono tracking-tight drop-shadow-md">
+      <span className={`absolute text-3xl font-black font-mono tracking-tight ${isUrgent ? 'text-[#FF385C] animate-pulse' : 'text-white'}`}>
         {secondsRemaining}
       </span>
     </div>
