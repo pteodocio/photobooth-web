@@ -37,6 +37,6 @@ describe('ExportView Component Tests', () => {
     const qrBtn = screen.getByText('QR Code')
     fireEvent.click(qrBtn)
 
-    expect(screen.getByText('QR 모바일 다운로드')).toBeInTheDocument()
+    expect(screen.getByText('Scan to Download')).toBeInTheDocument()
   })
 })

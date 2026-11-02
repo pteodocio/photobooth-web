@@ -31,13 +31,13 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
       onClick={handleClick}
       className={`relative group cursor-pointer flex flex-col items-center p-2.5 rounded-xl transition-all duration-200 select-none ${
         isSelected
-          ? 'bg-[#191922] ring-2 ring-[#FF385C] shadow-xl shadow-[#FF385C]/20 scale-[1.02]'
-          : 'bg-[#121217] hover:bg-[#181820] border border-[#23232E] hover:border-[#38384A]'
+          ? 'bg-[#181822] ring-2 ring-[#FF385C] shadow-lg shadow-[#FF385C]/20 scale-[1.02]'
+          : 'bg-[#121216] hover:bg-[#1A1A20] border border-white/5 hover:border-white/15'
       }`}
     >
       {/* Selected Indicator Stamp */}
       {isSelected && (
-        <div className="absolute top-2 right-2 z-20 bg-[#FF385C] text-white p-1 rounded-md shadow-md">
+        <div className="absolute top-2 right-2 z-20 bg-[#FF385C] text-white p-1 rounded-md shadow">
           <Check size={11} strokeWidth={3} />
         </div>
       )}
@@ -50,7 +50,7 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
         {/* Top title label */}
         <div
           style={{ color: frame.captionColor }}
-          className="text-[8px] font-mono font-bold text-center tracking-wider truncate uppercase opacity-85 leading-tight"
+          className="text-[8px] font-bold text-center tracking-wider truncate uppercase opacity-80"
         >
           {frame.englishTitle || frame.name}
         </div>
@@ -67,7 +67,7 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
                     borderColor: frame.slotBorderColor || 'transparent',
                     borderWidth: frame.slotBorderWidth > 0 ? 1 : 0,
                   }}
-                  className="w-full flex-1 bg-black/45 border"
+                  className="w-full flex-1 bg-black/40 border"
                 />
               ))}
             </div>
@@ -81,28 +81,25 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
                     borderColor: frame.slotBorderColor || 'transparent',
                     borderWidth: frame.slotBorderWidth > 0 ? 1 : 0,
                   }}
-                  className="w-full h-full bg-black/45 border"
+                  className="w-full h-full bg-black/40 border"
                 />
               ))}
             </div>
           )}
         </div>
 
-        {/* Bottom Korean title */}
+        {/* Bottom title */}
         <div
           style={{ color: frame.captionColor }}
-          className="text-[8px] font-bold text-center truncate opacity-90 leading-tight"
+          className="text-[8px] font-semibold text-center truncate opacity-80 uppercase"
         >
-          {frame.koreanTitle || '인생네컷'}
+          {frame.englishTitle || 'PHOTO STRIP'}
         </div>
       </div>
 
       {/* Card Text Info */}
       <div className="mt-2 text-center w-full">
-        <h4 className="text-xs font-semibold text-white/95 truncate font-sans">{frame.name}</h4>
-        <p className="text-[10px] text-[#888898] truncate mt-0.5 font-mono">
-          {frame.koreanTitle || frame.category}
-        </p>
+        <h4 className="text-xs font-semibold text-white/95 truncate">{frame.name}</h4>
       </div>
     </div>
   )

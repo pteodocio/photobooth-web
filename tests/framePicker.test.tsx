@@ -10,7 +10,7 @@ describe('FramePickerModal Component Tests', () => {
 
   it('renders frame picker with categories and layout switch', () => {
     render(<FramePickerModal isOpen={true} onClose={() => {}} />)
-    expect(screen.getByText('포토부스 프레임 선택')).toBeInTheDocument()
+    expect(screen.getByText('Select Frame')).toBeInTheDocument()
     expect(screen.getByText('Creative Editions')).toBeInTheDocument()
     expect(screen.getByText('4-Cut')).toBeInTheDocument()
     expect(screen.getByText('6-Cut')).toBeInTheDocument()
@@ -42,7 +42,7 @@ describe('FramePickerModal Component Tests', () => {
 
     expect(useBoothStore.getState().selectedFrame.id).toBe('y2k_cyber')
 
-    const startBtn = screen.getByText('이 프레임으로 촬영 시작')
+    const startBtn = screen.getByText('Start Session')
     fireEvent.click(startBtn)
     expect(closed).toBe(true)
   })

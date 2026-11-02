@@ -24,15 +24,15 @@ describe('WebcamViewfinder Component Tests', () => {
     })
   })
 
-  it('renders 4:3 viewfinder framing guide with Korean photobooth cues', () => {
+  it('renders 4:3 viewfinder framing guide with clean photobooth cues', () => {
     render(<WebcamViewfinder onExit={() => {}} />)
     expect(screen.getByTestId('viewfinder-framing-mask')).toBeInTheDocument()
-    expect(screen.getByText('찰칵 Shoot Now')).toBeInTheDocument()
+    expect(screen.getByText('Take Photo')).toBeInTheDocument()
   })
 
-  it('triggers manual photo capture when 찰칵 button is clicked', () => {
+  it('triggers manual photo capture when Take Photo button is clicked', () => {
     render(<WebcamViewfinder onExit={() => {}} />)
-    const shutterBtn = screen.getByText('찰칵 Shoot Now')
+    const shutterBtn = screen.getByText('Take Photo')
 
     act(() => {
       fireEvent.click(shutterBtn)

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { LiveMotionReel } from './LiveMotionReel'
-import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check, Printer } from 'lucide-react'
+import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check } from 'lucide-react'
 import QRCode from 'qrcode'
 import confetti from 'canvas-confetti'
 import { sound } from '../../services/soundService'
@@ -81,33 +81,29 @@ export const ExportView: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-[#09090C] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#1C1C26]">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF385C] uppercase tracking-wider mb-0.5">
-            <Printer size={13} />
-            <span>DISPENSER OUTPUT · 인화 완료</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
             Your Film Strip
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#181822] text-[#A0A0B0] border border-[#272738] font-normal">
-              300 DPI READY
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#FF385C]/20 text-[#FF385C] font-semibold">
+              Ready
             </span>
           </h2>
-          <p className="text-xs text-[#808092] mt-0.5 font-mono">
-            {selectedFrame.name} · {selectedFrame.koreanTitle}
+          <p className="text-xs text-white/50 mt-0.5">
+            {selectedFrame.name} · {selectedPrintFormat.displayName}
           </p>
         </div>
 
         {/* View Mode Toggle */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#121217] rounded-xl border border-[#22222D]">
+        <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
           <button
             onClick={() => {
               sound.playClick()
               setActiveTab('strip')
             }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'strip'
-                ? 'bg-[#FF385C] text-white shadow-md'
+                ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -118,9 +114,9 @@ export const ExportView: React.FC = () => {
               sound.playClick()
               setActiveTab('reel')
             }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'reel'
-                ? 'bg-[#FF385C] text-white shadow-md'
+                ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -133,23 +129,14 @@ export const ExportView: React.FC = () => {
       <div className="my-6 flex-1 flex flex-col items-center justify-center">
         {activeTab === 'strip' ? (
           <div className="flex flex-col items-center">
-            {/* Mechanical Photobooth Printer Dispenser Slot Mouth */}
-            <div className="flex flex-col items-center mb-[-8px] z-20">
-              <div className="flex items-center justify-between w-56 sm:w-72 px-3 py-1 bg-[#1C1C24] rounded-t-lg border-t border-x border-[#333342] text-[9px] font-mono text-[#888898]">
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  THERMAL PRINTER
-                </span>
-                <span>DISPENSING...</span>
-              </div>
-              <div
-                data-testid="printer-dispenser-slot"
-                className="w-56 sm:w-72 h-3 bg-[#0A0A0D] rounded-full border border-[#2C2C38] shadow-[inset_0_2px_4px_rgba(0,0,0,0.9)]"
-              />
-            </div>
+            {/* Mechanical Dispenser Slot Mouth */}
+            <div
+              data-testid="printer-dispenser-slot"
+              className="w-48 sm:w-64 h-2.5 bg-[#1B1B1F] rounded-full border border-white/20 shadow-inner mb-[-6px] z-10"
+            />
 
-            {/* Sliding Dispensed Physical Strip */}
-            <div className="dispense-slide-down photo-card-shadow rounded-2xl overflow-hidden max-h-[66vh] border border-[#262635] bg-[#0E0E12]">
+            {/* Sliding Dispensed Strip */}
+            <div className="dispense-slide-down photo-card-shadow rounded-2xl overflow-hidden max-h-[66vh] border border-white/10 bg-[#0E0E12]">
               {compositeDataUrl && (
                 <img
                   src={compositeDataUrl}
@@ -165,16 +152,16 @@ export const ExportView: React.FC = () => {
       </div>
 
       {/* Action Buttons Toolbar */}
-      <div className="pt-4 border-t border-[#1C1C26] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
         <button
           onClick={() => {
             sound.playClick()
             resetSession()
           }}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#14141B] hover:bg-[#1C1C24] text-white/70 hover:text-white text-xs font-mono font-semibold border border-[#242432] transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
         >
           <RotateCcw size={15} />
-          <span>새 촬영 시작 New Session</span>
+          <span>New Session</span>
         </button>
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
@@ -183,7 +170,7 @@ export const ExportView: React.FC = () => {
               sound.playClick()
               setShowQrModal(true)
             }}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#181822] hover:bg-[#20202E] text-white text-xs font-mono font-bold border border-[#2B2B3C] transition-colors cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
           >
             <QrIcon size={15} className="text-[#00F0FF]" />
             <span>QR Code</span>
@@ -191,7 +178,7 @@ export const ExportView: React.FC = () => {
 
           <button
             onClick={handleDownload}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-7 py-3 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-mono font-bold tracking-wide shadow-xl shadow-[#FF385C]/25 transition-all transform active:scale-95 cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold shadow-xl shadow-[#FF385C]/20 transition-all active:scale-95 cursor-pointer"
           >
             <Download size={15} />
             <span>Download PNG</span>
@@ -199,10 +186,10 @@ export const ExportView: React.FC = () => {
         </div>
       </div>
 
-      {/* QR Code Thermal Receipt Modal */}
+      {/* QR Code Modal */}
       {showQrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in">
-          <div className="relative w-full max-w-sm bg-[#121217] border border-[#262635] rounded-3xl p-6 shadow-2xl text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-sm bg-[#141419] border border-white/10 rounded-2xl p-6 shadow-2xl text-center">
             <button
               onClick={() => {
                 sound.playClick()
@@ -213,36 +200,31 @@ export const ExportView: React.FC = () => {
               <X size={18} />
             </button>
 
-            {/* Receipt Header */}
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-xl bg-[#FF385C]/10 border border-[#FF385C]/30 flex items-center justify-center text-[#FF385C] font-mono font-black text-sm mb-3">
-                4C
-              </div>
-              <h3 className="text-base font-bold text-white flex items-center justify-center gap-2 font-sans">
-                QR 모바일 다운로드
-              </h3>
-              <p className="text-xs text-[#808092] mt-1 font-mono">
-                스마트폰 카메라로 스캔하여 고화질 원본을 즉시 다운로드하세요.
-              </p>
-            </div>
+            <h3 className="text-base font-bold text-white flex items-center justify-center gap-2">
+              <QrIcon size={18} className="text-[#FF385C]" />
+              Scan to Download
+            </h3>
+            <p className="text-xs text-white/50 mt-1">
+              Scan with your phone camera to download your photo strip.
+            </p>
 
             {/* QR Card Container */}
-            <div className="my-5 p-3.5 bg-white rounded-2xl inline-block shadow-xl">
+            <div className="my-5 p-3.5 bg-white rounded-2xl inline-block shadow-lg">
               {qrCodeDataUrl ? (
                 <img src={qrCodeDataUrl} alt="QR Code" className="w-48 h-48 block" />
               ) : (
                 <div className="w-48 h-48 bg-gray-100 flex items-center justify-center">
-                  <span className="text-xs text-black/50 font-mono">Generating QR...</span>
+                  <span className="text-xs text-black/50">Generating QR...</span>
                 </div>
               )}
             </div>
 
             {/* URL Copy Box */}
-            <div className="flex items-center gap-2 p-2.5 bg-[#0A0A0D] rounded-xl border border-[#22222D] text-xs font-mono text-white/70 justify-between">
+            <div className="flex items-center gap-2 p-2.5 bg-black/40 rounded-xl border border-white/10 text-xs text-white/70 justify-between">
               <span className="truncate">{downloadUrl}</span>
               <button
                 onClick={handleCopyLink}
-                className="p-1.5 rounded-lg bg-[#1C1C26] hover:bg-[#252534] text-white cursor-pointer"
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer"
                 title="Copy Link"
               >
                 {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}

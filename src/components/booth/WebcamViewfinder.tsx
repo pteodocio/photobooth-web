@@ -4,7 +4,7 @@ import { useBoothStore } from '../../store/useBoothStore'
 import { CountdownRing } from './CountdownRing'
 import { RollingFilmstrip } from './RollingFilmstrip'
 import { AppConstants } from '../../core/constants'
-import { Camera, X, RefreshCw, Eye } from 'lucide-react'
+import { Camera, X, RefreshCw } from 'lucide-react'
 import { sound } from '../../services/soundService'
 
 interface WebcamViewfinderProps {
@@ -22,7 +22,6 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
 
   // Trigger snapshot
   const triggerCapture = useCallback(() => {
-    // Sound & Flash effect
     sound.playShutterSound()
     setIsFlashing(true)
     setTimeout(() => setIsFlashing(false), AppConstants.flashDurationMs + 40)
@@ -104,31 +103,25 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       )}
 
       {/* Top Controls Bar */}
-      <div className="relative z-20 flex items-center justify-between w-full max-w-4xl mx-auto">
+      <div className="relative z-20 flex items-center justify-between w-full max-w-3xl mx-auto">
         {/* Frame Info Pill */}
-        <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#14141B] border border-[#23232E]">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md">
           <div
-            className="w-3 h-3 rounded-full shadow-sm"
+            className="w-2.5 h-2.5 rounded-full shadow-sm"
             style={{ backgroundColor: selectedFrame.gradientColors[0] || selectedFrame.backgroundColor }}
           />
-          <span className="text-xs font-mono font-bold text-white">{selectedFrame.name}</span>
-          <span className="text-[11px] text-[#FF385C] font-semibold">({selectedFrame.koreanTitle})</span>
-          <span className="text-[10px] text-white/40 hidden sm:inline">· {selectedLayout.displayName}</span>
+          <span className="text-xs font-semibold text-white">{selectedFrame.name}</span>
+          <span className="text-xs text-white/50">· {selectedLayout.displayName}</span>
         </div>
 
-        {/* Live Studio Indicators & Action Buttons */}
+        {/* Action Buttons */}
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#14141B] border border-[#23232E] text-[11px] font-mono text-emerald-400">
-            <Eye size={12} />
-            <span>MIRROR VIEW (거울 모드)</span>
-          </div>
-
           <button
             onClick={toggleCamera}
             title="Switch Camera"
-            className="p-2.5 rounded-lg bg-[#14141B] hover:bg-[#1E1E28] text-white/70 hover:text-white border border-[#23232E] transition-colors cursor-pointer"
+            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer"
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={15} />
           </button>
           <button
             onClick={() => {
@@ -136,20 +129,20 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
               onExit()
             }}
             title="Exit Booth"
-            className="p-2.5 rounded-lg bg-[#14141B] hover:bg-[#1E1E28] text-white/70 hover:text-white border border-[#23232E] transition-colors cursor-pointer"
+            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer"
           >
-            <X size={16} />
+            <X size={15} />
           </button>
         </div>
       </div>
 
-      {/* Main 4:3 Korean Viewfinder Stage */}
+      {/* Main 4:3 Viewfinder Stage */}
       <div className="relative z-10 flex-1 flex items-center justify-center my-2">
         <div
           data-testid="viewfinder-framing-mask"
-          className="relative aspect-[4/3] w-full max-w-2xl max-h-[64vh] rounded-2xl overflow-hidden border-2 border-[#2C2C3A] shadow-2xl bg-black"
+          className="relative aspect-[4/3] w-full max-w-2xl max-h-[64vh] rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black"
         >
-          {/* Video Stream (Mirrored for photobooth selfie natural feel) */}
+          {/* Mirrored Video Stream */}
           <video
             ref={videoRef}
             playsInline
@@ -160,38 +153,28 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
 
           {/* Camera Error Fallback */}
           {cameraError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#0F0F14]">
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-black/90">
               <Camera size={36} className="text-white/40 mb-3" />
               <p className="text-sm font-semibold text-white/80">{cameraError}</p>
               <p className="text-xs text-white/50 mt-1">Please allow camera permissions or test in a supported browser.</p>
             </div>
           )}
 
-          {/* Studio Viewfinder Corner Framing Brackets */}
+          {/* Corner Framing Marks */}
           <div className="absolute inset-4 pointer-events-none">
-            {/* Top-Left Bracket */}
-            <div className="absolute top-0 left-0 w-7 h-7 border-t-3 border-l-3 border-[#FF385C] rounded-tl-md" />
-            {/* Top-Right Bracket */}
-            <div className="absolute top-0 right-0 w-7 h-7 border-t-3 border-r-3 border-[#FF385C] rounded-tr-md" />
-            {/* Bottom-Left Bracket */}
-            <div className="absolute bottom-0 left-0 w-7 h-7 border-b-3 border-l-3 border-[#FF385C] rounded-bl-md" />
-            {/* Bottom-Right Bracket */}
-            <div className="absolute bottom-0 right-0 w-7 h-7 border-b-3 border-r-3 border-[#FF385C] rounded-br-md" />
+            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#FF385C] rounded-tl-sm" />
+            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#FF385C] rounded-tr-sm" />
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#FF385C] rounded-bl-sm" />
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#FF385C] rounded-br-sm" />
 
-            {/* Subtle Viewfinder Center Crosshair */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30">
-              <div className="w-8 h-[1px] bg-white mx-auto" />
-              <div className="h-8 w-[1px] bg-white mx-auto -mt-[17px]" />
-            </div>
-
-            {/* Camera Technical Telemetry Readout */}
-            <div className="absolute bottom-1 left-2 font-mono text-[9px] text-white/50 tracking-wider">
-              REC ● 4:3 RATIO · RAW 300DPI
+              <div className="w-6 h-[1px] bg-white mx-auto" />
+              <div className="h-6 w-[1px] bg-white mx-auto -mt-[13px]" />
             </div>
           </div>
 
-          {/* Countdown Ring Floating Overlay */}
-          <div className="absolute top-4 left-4 pointer-events-none drop-shadow-2xl">
+          {/* Countdown Ring */}
+          <div className="absolute top-4 left-4 pointer-events-none drop-shadow-xl">
             <CountdownRing
               secondsRemaining={secondsRemaining}
               totalSeconds={AppConstants.defaultShotIntervalSeconds}
@@ -200,22 +183,18 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         </div>
       </div>
 
-      {/* Bottom Control Dock: Filmstrip + Handheld Remote Shutter */}
-      <div className="relative z-20 flex flex-col items-center gap-3 w-full max-w-4xl mx-auto">
-        {/* Rolling Filmstrip Progress */}
+      {/* Bottom Control Dock: Filmstrip + Take Photo Button */}
+      <div className="relative z-20 flex flex-col items-center gap-3 w-full max-w-3xl mx-auto">
         <RollingFilmstrip photos={capturedPhotos} layout={selectedLayout} />
 
-        {/* Handheld Cable-Release Styled Remote Button */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleManualShoot}
-            className="group relative flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-[#FF385C] hover:bg-[#E02649] text-white font-mono font-bold text-sm shadow-2xl shadow-[#FF385C]/35 border border-[#FF6680]/50 transition-all transform active:scale-95 cursor-pointer"
-          >
-            <div className="w-2.5 h-2.5 rounded-full bg-white animate-ping opacity-75" />
-            <span>찰칵 Shoot Now</span>
-            <span className="text-[10px] opacity-70 font-normal">({secondsRemaining}s)</span>
-          </button>
-        </div>
+        <button
+          onClick={handleManualShoot}
+          className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-all transform active:scale-95 cursor-pointer"
+        >
+          <Camera size={16} />
+          <span>Take Photo</span>
+          <span className="text-xs opacity-70 font-normal">({secondsRemaining}s)</span>
+        </button>
       </div>
     </div>
   )

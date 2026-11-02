@@ -55,59 +55,34 @@ export function App() {
     return <ExportView />
   }
 
-  // 3. Showcase / Studio Entrance (Anti-Slop Editorial Design)
+  // 3. Simple Showcase & Landing Page
   return (
-    <div className="min-h-screen bg-[#0B0B0E] text-[#F3F3F6] flex flex-col justify-between selection:bg-[#FF385C] selection:text-white relative">
-      {/* Top Studio Ticker Marquee */}
-      <div className="w-full bg-[#111116] border-b border-[#1E1E26] py-1.5 px-4 overflow-hidden text-[11px] font-mono tracking-widest text-[#8E8E9B] flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-[#FF385C] font-semibold">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#FF385C] animate-pulse" />
-            BOOTH 01 · LIVE ON AIR
-          </span>
-          <span className="hidden sm:inline text-white/30">|</span>
-          <span className="hidden sm:inline">SEOUL HONGDAE STUDIO · KOREAN 4-CUT & 6-CUT SYSTEM</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-white/60">300 DPI DYE-SUB PRINT</span>
-          <span className="text-white/30">|</span>
-          <span className="text-[#00F0FF] font-semibold">CLOUD SYNC ACTIVE</span>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-[#0B0B0E] text-[#F3F3F6] flex flex-col justify-between selection:bg-[#FF385C] selection:text-white">
       {/* Navigation Header */}
-      <nav className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-3.5">
-          {/* Studio Emblem Badge */}
-          <div className="relative w-10 h-10 rounded-xl bg-[#16161D] border border-[#2A2A36] flex items-center justify-center shadow-lg group">
-            <span className="font-mono text-sm font-black text-[#FF385C] tracking-tighter">4C</span>
-            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FF385C] border-2 border-[#0B0B0E]" />
+      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#181820] border border-white/10 flex items-center justify-center font-bold text-[#FF385C] text-sm">
+            4C
           </div>
-
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-black tracking-tight text-white">인생네컷</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#1D1D26] text-[#A2A2B2] border border-[#2D2D3B]">
-                STUDIO v2.4
-              </span>
+            <div className="text-sm font-bold tracking-tight text-white leading-tight">
+              Korean 4-Cut
             </div>
-            <div className="text-[10px] text-[#7E7E8E] font-mono tracking-wider uppercase">
-              HARU FILM & PHOTOISM EDITION
-            </div>
+            <div className="text-[11px] text-white/40">Photobooth Studio</div>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => {
               sound.playClick()
               setIsRetrieveModalOpen(true)
             }}
-            className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#15151C] hover:bg-[#1D1D26] text-[#D0D0DC] hover:text-white text-xs font-mono font-medium border border-[#262633] transition-all cursor-pointer shadow-sm active:translate-y-0.5"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs font-medium border border-white/10 transition-colors cursor-pointer"
           >
-            <QrCode size={14} className="text-[#00F0FF]" />
-            <span>사진 찾기 Retrieve</span>
+            <QrCode size={14} />
+            <span>Find Photos</span>
           </button>
 
           <button
@@ -115,10 +90,10 @@ export function App() {
               sound.playClick()
               setIsFramePickerOpen(true)
             }}
-            className="relative flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold font-mono tracking-wide shadow-lg shadow-[#FF385C]/20 border border-[#FF6680]/40 transition-all cursor-pointer active:translate-y-0.5 transform hover:scale-[1.02]"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold transition-all shadow-md shadow-[#FF385C]/20 cursor-pointer active:scale-95"
           >
-            <Camera size={15} />
-            <span>부스 입장 ENTER BOOTH</span>
+            <Camera size={14} />
+            <span>Start Booth</span>
           </button>
         </div>
       </nav>
@@ -143,30 +118,18 @@ export function App() {
         />
       </main>
 
-      {/* Studio Footer */}
-      <footer className="w-full bg-[#0E0E12] border-t border-[#1C1C24] py-8 px-4 sm:px-8 mt-16">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-[#737382]">
-          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-            <span className="font-mono text-white/80 font-medium">인생네컷 WEB BOOTH</span>
-            <span className="hidden sm:inline text-white/20">/</span>
-            <span>Inspired by Seoul Street Photobooths · Haru Film, Photoism, Life4Cuts</span>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <div className="flex items-center gap-2 font-mono text-[11px] px-2.5 py-1 rounded-md bg-[#16161D] border border-[#242430]">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>SUPABASE SYNC OK</span>
-            </div>
-
-            <a
-              href="/apk/photobooth-release.apk"
-              download="photobooth-release.apk"
-              className="flex items-center gap-1.5 text-white/70 hover:text-white font-mono text-[11px] px-3 py-1 rounded-md bg-[#16161D] hover:bg-[#20202A] border border-[#242430] transition-colors"
-            >
-              <Smartphone size={13} className="text-[#FF385C]" />
-              <span>Mobile APK (54.9MB)</span>
-            </a>
-          </div>
+      {/* Simple Footer */}
+      <footer className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/40">
+        <div>© 2026 Korean 4-Cut Photobooth. All rights reserved.</div>
+        <div className="flex items-center gap-4">
+          <a
+            href="/apk/photobooth-release.apk"
+            download="photobooth-release.apk"
+            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors"
+          >
+            <Smartphone size={13} />
+            <span>Android APK (54.9 MB)</span>
+          </a>
         </div>
       </footer>
 

@@ -38,8 +38,8 @@ describe('Domain Models & Synchronization Tests', () => {
 
   it('provides all 6 authentic Korean stamps', () => {
     expect(KOREAN_STAMPS).toHaveLength(6)
-    expect(KOREAN_STAMPS.map(s => s.text)).toContain('인생샷 👑')
-    expect(KOREAN_STAMPS.map(s => s.text)).toContain('오늘의 우리 ✨')
+    expect(KOREAN_STAMPS.map(s => s.text)).toContain('Best Shot 👑')
+    expect(KOREAN_STAMPS.map(s => s.text)).toContain('Us Today ✨')
   })
 
   it('defines 4-Cut and balanced 6-Cut geometries with zero dead space', () => {

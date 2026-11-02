@@ -13,27 +13,27 @@ describe('ContactSheet Component Tests', () => {
     }
   })
 
-  it('renders contact sheet with upfront frame lock indicator and photo grid', () => {
+  it('renders contact sheet with frame indicator and photo grid', () => {
     render(<ContactSheet />)
-    expect(screen.getByText('포토 스트립 커스텀')).toBeInTheDocument()
-    expect(screen.getByText(/프레임 고정:/)).toBeInTheDocument()
-    expect(screen.getByText('인화하기 Print Film')).toBeInTheDocument()
+    expect(screen.getByText('Customize Strip')).toBeInTheDocument()
+    expect(screen.getByText(/Frame:/)).toBeInTheDocument()
+    expect(screen.getByText('Print Strip')).toBeInTheDocument()
   })
 
   it('allows switching photo filters (Haru Blue, Warm Film, Mono)', () => {
     render(<ContactSheet />)
-    const haruBtn = screen.getByText('하루블루')
+    const haruBtn = screen.getByText('Haru Blue')
     fireEvent.click(haruBtn)
 
     expect(useBoothStore.getState().selectedFilter).toBe('haruBlue')
   })
 
-  it('allows selecting Korean stamps', () => {
+  it('allows selecting stickers', () => {
     render(<ContactSheet />)
-    const stampBtn = screen.getByText('오늘의 우리 ✨')
+    const stampBtn = screen.getByText('Us Today ✨')
     fireEvent.click(stampBtn)
 
-    expect(useBoothStore.getState().selectedStamp).toBe('오늘의 우리 ✨')
+    expect(useBoothStore.getState().selectedStamp).toBe('Us Today ✨')
   })
 
   it('toggles print format between Single and Twin Strip', () => {
