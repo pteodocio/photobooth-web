@@ -1,5 +1,5 @@
 import React from 'react'
-import { CapturedPhoto, LayoutTypeConfig } from '../../core/types'
+import type { CapturedPhoto, LayoutTypeConfig } from '../../core/types'
 import { Camera } from 'lucide-react'
 
 interface RollingFilmstripProps {

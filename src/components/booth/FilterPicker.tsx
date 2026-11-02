@@ -1,5 +1,5 @@
 import React from 'react'
-import { FilterOption, PhotoFilter } from '../../core/types'
+import type { FilterOption, PhotoFilter } from '../../core/types'
 import { Wand2 } from 'lucide-react'
 
 interface FilterPickerProps {

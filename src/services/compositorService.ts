@@ -1,10 +1,10 @@
 import QRCode from 'qrcode'
 import { AppConstants } from '../core/constants'
-import { CompositeJob, FrameTemplate, PhotoFilter } from '../core/types'
+import type { CompositeJob, FrameTemplate, PhotoFilter } from '../core/types'
 
 // Helper to asynchronously load image from dataUrl/URL
 function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (typeof Image === 'undefined') {
       // In non-browser test environment
       resolve({ width: 800, height: 600 } as unknown as HTMLImageElement)

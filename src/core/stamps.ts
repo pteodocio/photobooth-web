@@ -1,4 +1,4 @@
-import { StampItem } from './types'
+import type { StampItem } from './types'
 
 export const KOREAN_STAMPS: StampItem[] = [
   { id: 'stamp_life_shot', text: '인생샷 👑', category: 'hype' },

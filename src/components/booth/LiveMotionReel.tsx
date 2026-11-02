@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CapturedPhoto, FrameTemplate } from '../../core/types'
-import { Play } from 'lucide-react'
+import type { CapturedPhoto, FrameTemplate } from '../../core/types'
 
 interface LiveMotionReelProps {
   photos: CapturedPhoto[]

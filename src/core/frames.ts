@@ -1,4 +1,4 @@
-import { FrameTemplate } from './types'
+import type { FrameTemplate } from './types'
 
 export const BUNDLED_FRAMES: FrameTemplate[] = [
   // 1. Classic Film

@@ -1,5 +1,5 @@
 import React from 'react'
-import { FrameTemplate, LayoutTypeConfig } from '../../core/types'
+import type { FrameTemplate, LayoutTypeConfig } from '../../core/types'
 import { Check } from 'lucide-react'
 
 interface FrameThumbnailProps {

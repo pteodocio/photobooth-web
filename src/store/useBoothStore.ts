@@ -1,14 +1,13 @@
 import { create } from 'zustand'
-import {
+import type {
   BoothSessionStatus,
   CapturedPhoto,
   FrameTemplate,
-  LayoutType,
   LayoutTypeConfig,
   PhotoFilter,
-  PrintFormat,
   PrintFormatConfig,
 } from '../core/types'
+import { LayoutType, PrintFormat } from '../core/types'
 import { BUNDLED_FRAMES } from '../core/frames'
 import { KOREAN_STAMPS } from '../core/stamps'
 
