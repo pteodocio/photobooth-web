@@ -28,21 +28,21 @@ export const LayoutType = {
     id: 'fourCut',
     displayName: '4-Cut',
     slotCount: 4,
-    burstCount: 6,
+    burstCount: 4,
     aspectRatio: 4 / 3,
   } as LayoutTypeConfig,
   sixCut: {
     id: 'sixCut',
     displayName: '6-Cut',
     slotCount: 6,
-    burstCount: 8,
+    burstCount: 6,
     aspectRatio: 4 / 3,
   } as LayoutTypeConfig,
   single: {
     id: 'single',
     displayName: 'Single',
     slotCount: 1,
-    burstCount: 3,
+    burstCount: 1,
     aspectRatio: 3 / 4,
   } as LayoutTypeConfig,
 } as const
@@ -110,7 +110,9 @@ export interface CompositeJob {
 
 export type BoothSessionStatus =
   | 'idle'
+  | 'filterSelect'
   | 'frameSelect'
+  | 'cameraPrep'
   | 'countdown'
   | 'capturing'
   | 'contactSheet'

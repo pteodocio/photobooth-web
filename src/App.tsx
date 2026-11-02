@@ -5,6 +5,9 @@ import { FrameShowcase } from './components/showcase/FrameShowcase'
 import { SessionRetrieveModal } from './components/showcase/SessionRetrieveModal'
 import { StripViewerRoute } from './components/showcase/StripViewerRoute'
 import { FramePickerModal } from './components/booth/FramePickerModal'
+import { PreCaptureFilterStep } from './components/booth/PreCaptureFilterStep'
+import { PreCaptureFrameStep } from './components/booth/PreCaptureFrameStep'
+import { CameraPrepStep } from './components/booth/CameraPrepStep'
 import { WebcamViewfinder } from './components/booth/WebcamViewfinder'
 import { ContactSheet } from './components/booth/ContactSheet'
 import { ExportView } from './components/booth/ExportView'
@@ -12,7 +15,7 @@ import { Camera, Smartphone, QrCode } from 'lucide-react'
 import { sound } from './services/soundService'
 
 export function App() {
-  const { status, resetSession } = useBoothStore()
+  const { status, resetSession, startBooth, goToFilterSelect } = useBoothStore()
 
   const [isFramePickerOpen, setIsFramePickerOpen] = useState(false)
   const [isRetrieveModalOpen, setIsRetrieveModalOpen] = useState(false)
@@ -42,7 +45,19 @@ export function App() {
     )
   }
 
-  // 2. In-Booth Active Flows
+  // 2. In-Booth Active Flows (Pre-capture sequence: Filter -> Frame -> Camera Prep -> 4 Shots with 3s Timer -> Final Strip)
+  if (status === 'filterSelect') {
+    return <PreCaptureFilterStep />
+  }
+
+  if (status === 'frameSelect') {
+    return <PreCaptureFrameStep />
+  }
+
+  if (status === 'cameraPrep') {
+    return <CameraPrepStep />
+  }
+
   if (status === 'capturing') {
     return <WebcamViewfinder onExit={resetSession} />
   }
@@ -88,7 +103,7 @@ export function App() {
           <button
             onClick={() => {
               sound.playClick()
-              setIsFramePickerOpen(true)
+              startBooth()
             }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold transition-all shadow-md shadow-[#FF385C]/20 cursor-pointer active:scale-95"
           >
@@ -103,7 +118,7 @@ export function App() {
         <HeroSection
           onStartBooth={() => {
             sound.playClick()
-            setIsFramePickerOpen(true)
+            startBooth()
           }}
           onOpenRetrieve={() => {
             sound.playClick()
@@ -113,7 +128,7 @@ export function App() {
         <FrameShowcase
           onSelectFrameAndStart={() => {
             sound.playClick()
-            setIsFramePickerOpen(true)
+            goToFilterSelect()
           }}
         />
       </main>

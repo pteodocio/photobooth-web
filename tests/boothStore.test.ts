@@ -35,16 +35,33 @@ describe('Booth Store State Machine Tests', () => {
     const store = useBoothStore.getState()
     store.startSession()
 
-    // 6 shots burst
-    for (let i = 0; i < 6; i++) {
+    // 4 shots burst for 4-cut photobooth
+    for (let i = 0; i < 4; i++) {
       useBoothStore.getState().recordShot(`data:image/png;base64,shot_${i}`)
     }
 
     const state = useBoothStore.getState()
-    expect(state.capturedPhotos).toHaveLength(6)
-    // Auto selects first 4
+    expect(state.capturedPhotos).toHaveLength(4)
     expect(state.selectedPhotoIds).toHaveLength(4)
     expect(state.status).toBe('contactSheet')
+  })
+
+  it('supports pre-capture workflow step navigation', () => {
+    const store = useBoothStore.getState()
+    store.startBooth()
+    expect(useBoothStore.getState().status).toBe('filterSelect')
+
+    store.goToFrameSelect()
+    expect(useBoothStore.getState().status).toBe('frameSelect')
+
+    store.goToCameraPrep()
+    expect(useBoothStore.getState().status).toBe('cameraPrep')
+
+    store.startCapture()
+    expect(useBoothStore.getState().status).toBe('capturing')
+
+    store.retakePhotos()
+    expect(useBoothStore.getState().status).toBe('cameraPrep')
   })
 
   it('reorders selected photos in the strip tray', () => {

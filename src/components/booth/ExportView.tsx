@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { LiveMotionReel } from './LiveMotionReel'
-import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check } from 'lucide-react'
+import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check, Camera } from 'lucide-react'
 import QRCode from 'qrcode'
 import confetti from 'canvas-confetti'
 import { sound } from '../../services/soundService'
@@ -15,6 +15,7 @@ export const ExportView: React.FC = () => {
     selectedPrintFormat,
     sessionId,
     resetSession,
+    retakePhotos,
   } = useBoothStore()
 
   const [activeTab, setActiveTab] = useState<'strip' | 'reel'>('strip')
@@ -153,16 +154,29 @@ export const ExportView: React.FC = () => {
 
       {/* Action Buttons Toolbar */}
       <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <button
-          onClick={() => {
-            sound.playClick()
-            resetSession()
-          }}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
-        >
-          <RotateCcw size={15} />
-          <span>New Session</span>
-        </button>
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <button
+            onClick={() => {
+              sound.playClick()
+              retakePhotos()
+            }}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+          >
+            <Camera size={15} className="text-[#FF385C]" />
+            <span>Retake Photos</span>
+          </button>
+
+          <button
+            onClick={() => {
+              sound.playClick()
+              resetSession()
+            }}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+          >
+            <RotateCcw size={14} />
+            <span>New Strip</span>
+          </button>
+        </div>
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button

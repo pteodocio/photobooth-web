@@ -29,6 +29,12 @@ interface BoothState {
   selectFrame: (frame: FrameTemplate) => void
   setLayout: (layout: LayoutTypeConfig) => void
   setPrintFormat: (format: PrintFormatConfig) => void
+  startBooth: () => void
+  goToFrameSelect: () => void
+  goToCameraPrep: () => void
+  goToFilterSelect: () => void
+  startCapture: () => void
+  retakePhotos: () => void
   startSession: () => void
   recordShot: (dataUrl: string) => void
   togglePhotoSelection: (id: string) => void
@@ -62,6 +68,37 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   setLayout: layout => set({ selectedLayout: layout }),
 
   setPrintFormat: format => set({ selectedPrintFormat: format }),
+
+  startBooth: () =>
+    set({
+      status: 'filterSelect',
+      capturedPhotos: [],
+      selectedPhotoIds: [],
+      compositeDataUrl: null,
+      sessionId: `session_${Date.now()}`,
+    }),
+
+  goToFrameSelect: () => set({ status: 'frameSelect' }),
+
+  goToCameraPrep: () => set({ status: 'cameraPrep' }),
+
+  goToFilterSelect: () => set({ status: 'filterSelect' }),
+
+  startCapture: () =>
+    set({
+      status: 'capturing',
+      capturedPhotos: [],
+      selectedPhotoIds: [],
+      compositeDataUrl: null,
+    }),
+
+  retakePhotos: () =>
+    set({
+      status: 'cameraPrep',
+      capturedPhotos: [],
+      selectedPhotoIds: [],
+      compositeDataUrl: null,
+    }),
 
   startSession: () =>
     set({

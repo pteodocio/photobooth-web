@@ -338,71 +338,285 @@ function drawThemeBackgroundDecors(
     drawStarDot(ctx, width - 90, 130, 3)
   }
 
-  // --- Christmas Vector Themes ---
+  // --- All 40 Christmas Themes with Real Graphic Decorations ---
   else if (style === 'xmas_classic') {
-    drawHollyBerries(ctx, 50, 70, 18)
-    drawHollyBerries(ctx, width - 50, 70, 18)
-    drawStarSparkle(ctx, 55, height - 140, 14, '#FACC15')
-    drawStarSparkle(ctx, width - 55, height - 140, 14, '#FACC15')
+    // 1. Classic Christmas: Holly berries in top corners, Christmas bells in top center, tree & gift in footer
+    drawHollyBerries(ctx, 50, 60, 22)
+    drawHollyBerries(ctx, width - 50, 60, 22)
+    drawChristmasBells(ctx, width / 2, 55, 36)
+    drawChristmasTree(ctx, width - 60, height - 160, 65, '#15803D')
+    drawWrappedPresent(ctx, 60, height - 160, 50, '#DC2626', '#FACC15')
   } else if (style === 'xmas_wonderland') {
-    drawSnowflake(ctx, 50, 80, 22, '#FFFFFF')
-    drawSnowflake(ctx, width - 55, 95, 26, '#FFFFFF')
-    drawSnowflake(ctx, 45, height - 150, 18, '#FFFFFF')
-    drawChristmasTree(ctx, width - 60, height - 130, 50, '#10B981')
+    // 2. Christmas Wonderland: Snowflakes along borders, pines, snow sparkles
+    drawSnowflake(ctx, 50, 65, 26, '#FFFFFF')
+    drawSnowflake(ctx, width - 50, 65, 26, '#FFFFFF')
+    drawSnowflake(ctx, 40, height / 2, 22, '#E0F2FE')
+    drawSnowflake(ctx, width - 40, height / 2, 22, '#E0F2FE')
+    drawChristmasTree(ctx, 60, height - 160, 65, '#059669')
+    drawChristmasTree(ctx, width - 60, height - 160, 65, '#059669')
+    drawStarSparkle(ctx, width / 2, 50, 18, '#FDE047')
   } else if (style === 'xmas_santas_workshop') {
-    drawBaubleOrnament(ctx, 60, 85, 20, '#FACC15')
-    drawBaubleOrnament(ctx, width - 60, 95, 22, '#22C55E')
-    drawCandyCane(ctx, 50, height - 160, 45)
+    // 3. Santa's Workshop: Santa Claus, wrapped gifts, candy cane, baubles
+    drawBaubleOrnament(ctx, 50, 70, 22, '#FACC15')
+    drawBaubleOrnament(ctx, width - 50, 70, 22, '#22C55E')
+    drawSantaClaus(ctx, width - 65, height - 180, 55)
+    drawWrappedPresent(ctx, 60, height - 160, 52, '#16A34A', '#FEF08A')
+    drawCandyCane(ctx, 45, height / 2, 42)
   } else if (style === 'xmas_snowy_december') {
-    drawSnowflake(ctx, 50, 75, 20, '#0284C7')
-    drawSnowflake(ctx, width - 55, 90, 28, '#0284C7')
-    drawSnowflake(ctx, 50, height - 160, 22, '#0284C7')
-    drawSnowflake(ctx, width - 50, height - 130, 24, '#0284C7')
-  } else if (style === 'xmas_gingerbread_house' || style === 'xmas_gingerbread_friends') {
-    drawGingerbreadMan(ctx, 55, 85, 40)
-    drawGingerbreadMan(ctx, width - 55, 85, 40)
-    drawCandyCane(ctx, 50, height - 150, 40)
-  } else if (style === 'xmas_candy_cane' || style === 'xmas_peppermint_candy') {
-    drawCandyCane(ctx, 50, 80, 46)
-    drawCandyCane(ctx, width - 50, 80, 46)
-    drawCandyCane(ctx, 50, height - 160, 46)
-  } else if (style === 'xmas_red_and_green' || style === 'xmas_holly_and_berries' || style === 'xmas_holly_jolly') {
-    drawHollyBerries(ctx, 50, 75, 20)
-    drawHollyBerries(ctx, width - 50, 75, 20)
-    drawHollyBerries(ctx, 50, height - 150, 20)
-    drawHollyBerries(ctx, width - 50, height - 150, 20)
-  } else if (style === 'xmas_cozy_christmas' || style === 'xmas_cozy_fireplace') {
-    drawStarSparkle(ctx, 55, 75, 16, '#F59E0B')
-    drawStarSparkle(ctx, width - 55, 75, 16, '#F59E0B')
-    drawChristmasTree(ctx, 55, height - 140, 45, '#15803D')
-  } else if (style === 'xmas_pink_christmas' || style === 'xmas_pink_ribbon' || style === 'xmas_kawaii_christmas') {
-    drawStarSparkle(ctx, 50, 75, 16, '#DB2777')
-    drawStarSparkle(ctx, width - 50, 75, 16, '#DB2777')
-    drawBaubleOrnament(ctx, 55, height - 140, 18, '#F472B6')
-    drawBaubleOrnament(ctx, width - 55, height - 140, 18, '#F472B6')
-  } else if (style === 'xmas_blue_snowfall' || style === 'xmas_snowflake_dreams' || style === 'xmas_polar_bear_christmas') {
-    drawSnowflake(ctx, 50, 80, 24, '#E0F2FE')
-    drawSnowflake(ctx, width - 50, 85, 20, '#E0F2FE')
-    drawSnowflake(ctx, 50, height - 150, 26, '#E0F2FE')
-    drawSnowflake(ctx, width - 50, height - 140, 22, '#E0F2FE')
-  } else if (style === 'xmas_christmas_tree') {
-    drawChristmasTree(ctx, 55, 85, 48, '#047857')
-    drawChristmasTree(ctx, width - 55, 85, 48, '#047857')
-    drawStarSparkle(ctx, 55, height - 140, 16, '#FACC15')
-    drawStarSparkle(ctx, width - 55, height - 140, 16, '#FACC15')
-  } else if (style === 'xmas_christmas_lights') {
-    drawFairyLights(ctx, width, 30)
-    drawFairyLights(ctx, width, height - 80)
-  } else if (style === 'xmas_golden_christmas' || style === 'xmas_merry_and_bright' || style === 'xmas_starry_night' || style === 'xmas_midnight_christmas') {
-    drawStarSparkle(ctx, 50, 75, 20, '#FACC15')
-    drawStarSparkle(ctx, width - 50, 75, 20, '#FACC15')
-    drawStarSparkle(ctx, 50, height - 140, 16, '#FACC15')
-    drawStarSparkle(ctx, width - 50, height - 140, 16, '#FACC15')
+    // 4. Snowy December: Icicles along top, blue snowflakes, snowman in footer
+    drawIcicles(ctx, width, 10)
+    drawSnowflake(ctx, 45, 75, 24, '#0284C7')
+    drawSnowflake(ctx, width - 45, 75, 24, '#0284C7')
+    drawSnowflake(ctx, 40, height / 2, 20, '#0284C7')
+    drawSnowflake(ctx, width - 40, height / 2, 20, '#0284C7')
+    drawSnowman(ctx, 60, height - 170, 50)
+    drawSnowflake(ctx, width - 55, height - 160, 28, '#0284C7')
+  } else if (style === 'xmas_gingerbread_house') {
+    // 5. Gingerbread House: Gingerbread characters, candy canes, gumdrop stars
+    drawCandyCane(ctx, 48, 65, 46)
+    drawCandyCane(ctx, width - 48, 65, 46)
+    drawGingerbreadMan(ctx, 60, height - 170, 52)
+    drawGingerbreadMan(ctx, width - 60, height - 170, 52)
+    drawStarSparkle(ctx, width / 2, 50, 18, '#FDE047')
+  } else if (style === 'xmas_candy_cane') {
+    // 6. Candy Cane: Candy canes in top & bottom corners, peppermint bows
+    drawCandyCane(ctx, 50, 65, 48)
+    drawCandyCane(ctx, width - 50, 65, 48)
+    drawRibbonBow(ctx, width / 2, 50, 42, '#DC2626')
+    drawCandyCane(ctx, 50, height - 160, 48)
+    drawCandyCane(ctx, width - 50, height - 160, 48)
+  } else if (style === 'xmas_red_and_green') {
+    // 7. Red & Green: Festive pine garland, holly in corners, stocking and tree
+    drawFestiveGarland(ctx, width, 30)
+    drawHollyBerries(ctx, 50, 80, 20)
+    drawHollyBerries(ctx, width - 50, 80, 20)
+    drawChristmasStocking(ctx, 60, height - 160, 48, '#DC2626')
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
+  } else if (style === 'xmas_cozy_christmas') {
+    // 8. Cozy Christmas: Warm fireplace glow, stocking, tree, warm star sparkles
+    drawStarSparkle(ctx, 50, 60, 18, '#F59E0B')
+    drawStarSparkle(ctx, width - 50, 60, 18, '#F59E0B')
+    drawChristmasStocking(ctx, 60, height - 160, 48, '#B91C1C')
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#14532D')
+  } else if (style === 'xmas_pink_christmas') {
+    // 9. Pink Christmas: Pastel pink ribbon bows, pink ornaments, pastel sparkles
+    drawRibbonBow(ctx, 50, 60, 40, '#F472B6')
+    drawRibbonBow(ctx, width - 50, 60, 40, '#F472B6')
+    drawBaubleOrnament(ctx, 45, height / 2, 20, '#F472B6')
+    drawBaubleOrnament(ctx, width - 45, height / 2, 20, '#F472B6')
+    drawWrappedPresent(ctx, 60, height - 160, 48, '#F472B6', '#FFFFFF')
+    drawStarSparkle(ctx, width - 60, height - 160, 22, '#F472B6')
+  } else if (style === 'xmas_blue_snowfall') {
+    // 10. Blue Snowfall: Polar bear, icy crystal snowflakes
+    drawSnowflake(ctx, 50, 65, 26, '#BAE6FD')
+    drawSnowflake(ctx, width - 50, 65, 26, '#BAE6FD')
+    drawSnowflake(ctx, 40, height / 2, 22, '#E0F2FE')
+    drawSnowflake(ctx, width - 40, height / 2, 22, '#E0F2FE')
+    drawPolarBear(ctx, 65, height - 170, 52)
+    drawSnowflake(ctx, width - 60, height - 160, 30, '#BAE6FD')
+  } else if (style === 'xmas_christmas_ribbon') {
+    // 11. Christmas Ribbon: Elegant holiday bows, flowing ribbon swags
+    drawRibbonBow(ctx, 50, 60, 44, '#DC2626')
+    drawRibbonBow(ctx, width - 50, 60, 44, '#DC2626')
+    drawRibbonBow(ctx, width / 2, 50, 48, '#FACC15')
+    drawWrappedPresent(ctx, 60, height - 160, 52, '#DC2626', '#FACC15')
+    drawWrappedPresent(ctx, width - 60, height - 160, 52, '#15803D', '#DC2626')
+  } else if (style === 'xmas_holly_and_berries') {
+    // 12. Holly & Berries: Lush holly clusters in all 4 corners and borders
+    drawHollyBerries(ctx, 50, 60, 24)
+    drawHollyBerries(ctx, width - 50, 60, 24)
+    drawHollyBerries(ctx, 42, height / 2, 18)
+    drawHollyBerries(ctx, width - 42, height / 2, 18)
+    drawHollyBerries(ctx, 55, height - 160, 24)
+    drawHollyBerries(ctx, width - 55, height - 160, 24)
   } else if (style === 'xmas_reindeer_friends') {
-    drawHollyBerries(ctx, 50, 75, 18)
-    drawHollyBerries(ctx, width - 50, 75, 18)
-    drawStarSparkle(ctx, 50, height - 140, 14, '#EF4444')
-    drawStarSparkle(ctx, width - 50, height - 140, 14, '#EF4444')
+    // 13. Reindeer Friends: Cute Rudolph with red nose, holiday bells
+    drawChristmasBells(ctx, 50, 65, 34)
+    drawChristmasBells(ctx, width - 50, 65, 34)
+    drawReindeer(ctx, 65, height - 170, 55)
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#166534')
+  } else if (style === 'xmas_christmas_tree') {
+    // 14. Christmas Tree: Pine trees in corners, fairy lights and stars
+    drawFairyLights(ctx, width, 30)
+    drawChristmasTree(ctx, 55, 80, 50, '#15803D')
+    drawChristmasTree(ctx, width - 55, 80, 50, '#15803D')
+    drawChristmasTree(ctx, 60, height - 160, 65, '#15803D')
+    drawChristmasTree(ctx, width - 60, height - 160, 65, '#15803D')
+  } else if (style === 'xmas_winter_village') {
+    // 15. Winter Village: Pine trees, snowman, snowflakes, cozy winter scene
+    drawSnowflake(ctx, 50, 60, 24, '#E2E8F0')
+    drawSnowflake(ctx, width - 50, 60, 24, '#E2E8F0')
+    drawSnowman(ctx, 60, height - 170, 50)
+    drawChristmasTree(ctx, width - 60, height - 160, 65, '#0F766E')
+  } else if (style === 'xmas_snowflake_dreams') {
+    // 16. Snowflake Dreams: Intricate snowflake crystals of various sizes
+    drawSnowflake(ctx, 50, 65, 28, '#FFFFFF')
+    drawSnowflake(ctx, width - 50, 65, 28, '#FFFFFF')
+    drawSnowflake(ctx, 40, 400, 22, '#E0F2FE')
+    drawSnowflake(ctx, width - 40, 400, 22, '#E0F2FE')
+    drawSnowflake(ctx, 40, height / 2, 26, '#BAE6FD')
+    drawSnowflake(ctx, width - 40, height / 2, 26, '#BAE6FD')
+    drawSnowflake(ctx, 55, height - 160, 30, '#FFFFFF')
+    drawSnowflake(ctx, width - 55, height - 160, 30, '#FFFFFF')
+  } else if (style === 'xmas_merry_and_bright') {
+    // 17. Merry & Bright: Twinkling fairy lights, sparkling stars, holiday cheer
+    drawFairyLights(ctx, width, 30)
+    drawStarSparkle(ctx, 50, 85, 20, '#FACC15')
+    drawStarSparkle(ctx, width - 50, 85, 20, '#FACC15')
+    drawChristmasBells(ctx, 60, height - 160, 38)
+    drawWrappedPresent(ctx, width - 60, height - 160, 50, '#DC2626', '#FACC15')
+  } else if (style === 'xmas_christmas_cookies') {
+    // 18. Christmas Cookies: Gingerbread characters, candy canes, holiday treats
+    drawCandyCane(ctx, 48, 65, 44)
+    drawCandyCane(ctx, width - 48, 65, 44)
+    drawGingerbreadMan(ctx, 60, height - 170, 52)
+    drawCandyCane(ctx, width - 55, height - 160, 48)
+  } else if (style === 'xmas_gift_wrapped') {
+    // 19. Gift Wrapped: Wrapped presents with big ribbon bows
+    drawRibbonBow(ctx, width / 2, 45, 46, '#DC2626')
+    drawWrappedPresent(ctx, 55, 75, 46, '#DC2626', '#FEF08A')
+    drawWrappedPresent(ctx, width - 55, 75, 46, '#15803D', '#FEF08A')
+    drawWrappedPresent(ctx, 65, height - 160, 54, '#DC2626', '#FEF08A')
+    drawWrappedPresent(ctx, width - 65, height - 160, 54, '#15803D', '#FEF08A')
+  } else if (style === 'xmas_golden_christmas') {
+    // 20. Golden Christmas: Golden bells, golden star sparkles, gold baubles
+    drawChristmasBells(ctx, width / 2, 55, 40)
+    drawStarSparkle(ctx, 50, 65, 22, '#FACC15')
+    drawStarSparkle(ctx, width - 50, 65, 22, '#FACC15')
+    drawBaubleOrnament(ctx, 45, height / 2, 22, '#FACC15')
+    drawBaubleOrnament(ctx, width - 45, height / 2, 22, '#FACC15')
+    drawStarSparkle(ctx, 55, height - 160, 24, '#FACC15')
+    drawStarSparkle(ctx, width - 55, height - 160, 24, '#FACC15')
+  } else if (style === 'xmas_frosted_window') {
+    // 21. Frosted Window: Icicles hanging, frosty snowflakes
+    drawIcicles(ctx, width, 10)
+    drawSnowflake(ctx, 50, 70, 26, 'rgba(255, 255, 255, 0.9)')
+    drawSnowflake(ctx, width - 50, 70, 26, 'rgba(255, 255, 255, 0.9)')
+    drawSnowflake(ctx, 55, height - 160, 28, 'rgba(255, 255, 255, 0.9)')
+    drawSnowflake(ctx, width - 55, height - 160, 28, 'rgba(255, 255, 255, 0.9)')
+  } else if (style === 'xmas_peppermint_candy') {
+    // 22. Peppermint Candy: Peppermint candy canes, festive red/white accents
+    drawCandyCane(ctx, 48, 65, 48)
+    drawCandyCane(ctx, width - 48, 65, 48)
+    drawCandyCane(ctx, 48, height - 160, 48)
+    drawCandyCane(ctx, width - 48, height - 160, 48)
+    drawRibbonBow(ctx, width / 2, 50, 42, '#DC2626')
+  } else if (style === 'xmas_nordic_christmas') {
+    // 23. Nordic Christmas: Scandinavian cross-stitch border, reindeer, pine trees
+    drawNordicBorder(ctx, width, height)
+    drawReindeer(ctx, 60, height - 170, 52)
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#DC2626')
+  } else if (style === 'xmas_christmas_lights') {
+    // 24. Christmas Lights: String fairy lights along top and bottom
+    drawFairyLights(ctx, width, 30)
+    drawFairyLights(ctx, width, height - 100)
+    drawStarSparkle(ctx, 50, 90, 18, '#FACC15')
+    drawStarSparkle(ctx, width - 50, 90, 18, '#38BDF8')
+  } else if (style === 'xmas_nutcracker') {
+    // 25. Nutcracker: Soldier nutcracker, holiday bells, gold accents
+    drawChristmasBells(ctx, 50, 65, 34)
+    drawChristmasBells(ctx, width - 50, 65, 34)
+    drawNutcracker(ctx, width - 65, height - 180, 65)
+    drawChristmasTree(ctx, 60, height - 160, 60, '#15803D')
+  } else if (style === 'xmas_polar_bear_christmas') {
+    // 26. Polar Bear Christmas: Cute polar bear with red scarf, snowflakes
+    drawSnowflake(ctx, 50, 65, 24, '#E2E8F0')
+    drawSnowflake(ctx, width - 50, 65, 24, '#E2E8F0')
+    drawPolarBear(ctx, 65, height - 170, 55)
+    drawSnowflake(ctx, width - 55, height - 160, 30, '#E2E8F0')
+  } else if (style === 'xmas_vintage_postcard') {
+    // 27. Vintage Christmas Postcard: Holly sprigs, bells, vintage ribbon bow
+    drawHollyBerries(ctx, 50, 60, 22)
+    drawRibbonBow(ctx, width - 50, 60, 40, '#B91C1C')
+    drawChristmasBells(ctx, 60, height - 160, 38)
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
+  } else if (style === 'xmas_christmas_sweater') {
+    // 28. Christmas Sweater: Fair Isle knit borders, trees, winter diamonds
+    drawNordicBorder(ctx, width, height)
+    drawChristmasTree(ctx, 55, 75, 45, '#FFFFFF')
+    drawChristmasTree(ctx, width - 55, 75, 45, '#FFFFFF')
+    drawReindeer(ctx, 60, height - 170, 50)
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#FFFFFF')
+  } else if (style === 'xmas_midnight_christmas') {
+    // 29. Midnight Christmas: Golden stars, moonlit sparkles, reindeer
+    drawStarSparkle(ctx, 50, 65, 22, '#FDE047')
+    drawStarSparkle(ctx, width - 50, 65, 22, '#FDE047')
+    drawStarSparkle(ctx, width / 2, 45, 26, '#FEF08A')
+    drawReindeer(ctx, 65, height - 170, 52)
+    drawStarSparkle(ctx, width - 60, height - 160, 24, '#FDE047')
+  } else if (style === 'xmas_kawaii_christmas') {
+    // 30. Kawaii Christmas: Korean kawaii Santa, Rudolph, sweet sparkles
+    drawSantaClaus(ctx, 60, height - 170, 52)
+    drawReindeer(ctx, width - 60, height - 170, 52)
+    drawStarSparkle(ctx, 50, 65, 18, '#F472B6')
+    drawStarSparkle(ctx, width - 50, 65, 18, '#F472B6')
+    drawRibbonBow(ctx, width / 2, 50, 42, '#F472B6')
+  } else if (style === 'xmas_snowman_party') {
+    // 31. Snowman Party: Cheerful snowmen with carrot noses & scarves, snowflakes
+    drawSnowflake(ctx, 50, 65, 24, '#BAE6FD')
+    drawSnowflake(ctx, width - 50, 65, 24, '#BAE6FD')
+    drawSnowman(ctx, 60, height - 170, 50)
+    drawSnowman(ctx, width - 60, height - 170, 50)
+  } else if (style === 'xmas_christmas_stockings') {
+    // 32. Christmas Stockings: Stockings hanging in corners with candy canes
+    drawChristmasStocking(ctx, 50, 75, 46, '#DC2626')
+    drawChristmasStocking(ctx, width - 50, 75, 46, '#15803D')
+    drawChristmasStocking(ctx, 55, height - 160, 48, '#DC2626')
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
+  } else if (style === 'xmas_cozy_fireplace') {
+    // 33. Cozy Fireplace: Hearth stockings, pine tree, warm glowing sparkles
+    drawStarSparkle(ctx, 50, 65, 20, '#F59E0B')
+    drawStarSparkle(ctx, width - 50, 65, 20, '#F59E0B')
+    drawChristmasStocking(ctx, 60, height - 160, 48, '#B91C1C')
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
+  } else if (style === 'xmas_starry_night') {
+    // 34. Starry Christmas Night: Bright gold star constellation, deep night aesthetic
+    drawStarSparkle(ctx, 50, 65, 22, '#FACC15')
+    drawStarSparkle(ctx, width - 50, 65, 22, '#FACC15')
+    drawStarSparkle(ctx, width / 2, 45, 26, '#FACC15')
+    drawStarSparkle(ctx, 42, height / 2, 18, '#FACC15')
+    drawStarSparkle(ctx, width - 42, height / 2, 18, '#FACC15')
+    drawStarSparkle(ctx, 55, height - 160, 24, '#FACC15')
+    drawStarSparkle(ctx, width - 55, height - 160, 24, '#FACC15')
+  } else if (style === 'xmas_pink_ribbon') {
+    // 35. Pink Ribbon Christmas: Sweet pastel ribbons, candy canes, pastel ornaments
+    drawRibbonBow(ctx, 50, 60, 42, '#F472B6')
+    drawRibbonBow(ctx, width - 50, 60, 42, '#F472B6')
+    drawCandyCane(ctx, 45, height / 2, 40)
+    drawCandyCane(ctx, width - 45, height / 2, 40)
+    drawRibbonBow(ctx, 60, height - 160, 46, '#F472B6')
+    drawWrappedPresent(ctx, width - 60, height - 160, 50, '#F472B6', '#FFFFFF')
+  } else if (style === 'xmas_christmas_market') {
+    // 36. Christmas Market: Festive pine swags, gingerbread, wooden bells
+    drawFestiveGarland(ctx, width, 30)
+    drawGingerbreadMan(ctx, 60, height - 170, 50)
+    drawChristmasBells(ctx, width - 60, height - 160, 38)
+  } else if (style === 'xmas_winter_wonderland') {
+    // 37. Winter Wonderland: Cute penguin, snowy trees, falling snowflakes
+    drawSnowflake(ctx, 50, 65, 26, '#FFFFFF')
+    drawSnowflake(ctx, width - 50, 65, 26, '#FFFFFF')
+    drawPenguin(ctx, 65, height - 170, 50)
+    drawChristmasTree(ctx, width - 60, height - 160, 65, '#047857')
+  } else if (style === 'xmas_gingerbread_friends') {
+    // 38. Gingerbread Friends: Smiling gingerbread pair, candy canes, frosting stars
+    drawCandyCane(ctx, 50, 65, 44)
+    drawCandyCane(ctx, width - 50, 65, 44)
+    drawGingerbreadMan(ctx, 60, height - 170, 50)
+    drawGingerbreadMan(ctx, width - 60, height - 170, 50)
+  } else if (style === 'xmas_holly_jolly') {
+    // 39. Holly Jolly: Jolly bells, red bows, holly berries
+    drawChristmasBells(ctx, width / 2, 50, 40)
+    drawHollyBerries(ctx, 50, 65, 22)
+    drawHollyBerries(ctx, width - 50, 65, 22)
+    drawHollyBerries(ctx, 55, height - 160, 24)
+    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
+  } else if (style === 'xmas_december_memories') {
+    // 40. December Memories: Christmas wreath, ribbon bows, snowflakes, star sparkles
+    drawChristmasWreath(ctx, width / 2, 60, 48)
+    drawSnowflake(ctx, 50, 65, 24, '#FFFFFF')
+    drawSnowflake(ctx, width - 50, 65, 24, '#FFFFFF')
+    drawWrappedPresent(ctx, 60, height - 160, 52, '#DC2626', '#FACC15')
+    drawChristmasTree(ctx, width - 60, height - 160, 62, '#15803D')
   } else {
     // Default winter holiday accents
     drawSnowflake(ctx, 50, 80, 20, 'rgba(255,255,255,0.7)')
@@ -604,6 +818,457 @@ function drawFairyLights(ctx: CanvasRenderingContext2D, width: number, y: number
     ctx.fillStyle = col
     drawEllipse(ctx, x - 45, y + 28, 8, 12, 0)
     ci++
+  }
+  ctx.restore()
+}
+
+function drawSantaClaus(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Hat
+  ctx.fillStyle = '#DC2626'
+  ctx.beginPath()
+  ctx.moveTo(cx - size * 0.45, cy - size * 0.2)
+  ctx.quadraticCurveTo(cx - size * 0.2, cy - size * 0.9, cx + size * 0.5, cy - size * 0.7)
+  ctx.lineTo(cx + size * 0.4, cy - size * 0.15)
+  ctx.closePath()
+  ctx.fill()
+
+  // Pompom
+  ctx.fillStyle = '#FFFFFF'
+  ctx.beginPath()
+  ctx.arc(cx + size * 0.52, cy - size * 0.7, size * 0.14, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Hat White Trim
+  drawEllipse(ctx, cx, cy - size * 0.2, size * 0.48, size * 0.12, 0)
+
+  // Face
+  ctx.fillStyle = '#FED7AA'
+  ctx.beginPath()
+  ctx.arc(cx, cy + size * 0.05, size * 0.32, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Rosy Cheeks
+  ctx.fillStyle = 'rgba(244, 114, 182, 0.65)'
+  ctx.beginPath(); ctx.arc(cx - size * 0.2, cy + size * 0.1, size * 0.09, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.2, cy + size * 0.1, size * 0.09, 0, Math.PI * 2); ctx.fill()
+
+  // Eyes
+  ctx.fillStyle = '#18181B'
+  ctx.beginPath(); ctx.arc(cx - size * 0.13, cy - size * 0.02, size * 0.04, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.13, cy - size * 0.02, size * 0.04, 0, Math.PI * 2); ctx.fill()
+
+  // Nose
+  ctx.fillStyle = '#F87171'
+  ctx.beginPath(); ctx.arc(cx, cy + size * 0.06, size * 0.06, 0, Math.PI * 2); ctx.fill()
+
+  // Beard
+  ctx.fillStyle = '#FFFFFF'
+  ctx.beginPath()
+  ctx.arc(cx - size * 0.25, cy + size * 0.25, size * 0.2, 0, Math.PI * 2)
+  ctx.arc(cx + size * 0.25, cy + size * 0.25, size * 0.2, 0, Math.PI * 2)
+  ctx.arc(cx, cy + size * 0.45, size * 0.26, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Mustache
+  drawEllipse(ctx, cx - size * 0.1, cy + size * 0.15, size * 0.14, size * 0.07, -0.2)
+  drawEllipse(ctx, cx + size * 0.1, cy + size * 0.15, size * 0.14, size * 0.07, 0.2)
+  ctx.restore()
+}
+
+function drawReindeer(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Antlers
+  ctx.strokeStyle = '#78350F'
+  ctx.lineWidth = Math.max(2.5, size * 0.08)
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(cx - size * 0.2, cy - size * 0.25)
+  ctx.lineTo(cx - size * 0.45, cy - size * 0.75)
+  ctx.moveTo(cx - size * 0.32, cy - size * 0.5)
+  ctx.lineTo(cx - size * 0.52, cy - size * 0.48)
+  ctx.moveTo(cx - size * 0.38, cy - size * 0.65)
+  ctx.lineTo(cx - size * 0.28, cy - size * 0.8)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(cx + size * 0.2, cy - size * 0.25)
+  ctx.lineTo(cx + size * 0.45, cy - size * 0.75)
+  ctx.moveTo(cx + size * 0.32, cy - size * 0.5)
+  ctx.lineTo(cx + size * 0.52, cy - size * 0.48)
+  ctx.moveTo(cx + size * 0.38, cy - size * 0.65)
+  ctx.lineTo(cx + size * 0.28, cy - size * 0.8)
+  ctx.stroke()
+
+  // Ears
+  ctx.fillStyle = '#92400E'
+  drawEllipse(ctx, cx - size * 0.36, cy - size * 0.18, size * 0.18, size * 0.08, -0.5)
+  drawEllipse(ctx, cx + size * 0.36, cy - size * 0.18, size * 0.18, size * 0.08, 0.5)
+
+  // Head
+  ctx.fillStyle = '#B45309'
+  drawEllipse(ctx, cx, cy, size * 0.34, size * 0.4, 0)
+
+  // Muzzle
+  ctx.fillStyle = '#FEF3C7'
+  drawEllipse(ctx, cx, cy + size * 0.18, size * 0.22, size * 0.16, 0)
+
+  // Rudolph Red Nose
+  ctx.fillStyle = '#EF4444'
+  ctx.beginPath()
+  ctx.arc(cx, cy + size * 0.15, size * 0.1, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = '#FFFFFF'
+  ctx.beginPath()
+  ctx.arc(cx - size * 0.03, cy + size * 0.12, size * 0.03, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Eyes
+  ctx.fillStyle = '#18181B'
+  ctx.beginPath(); ctx.arc(cx - size * 0.14, cy - size * 0.05, size * 0.045, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.14, cy - size * 0.05, size * 0.045, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+}
+
+function drawSnowman(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Body (bottom)
+  ctx.fillStyle = '#FFFFFF'
+  ctx.strokeStyle = 'rgba(186, 230, 253, 0.5)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.arc(cx, cy + size * 0.25, size * 0.38, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.stroke()
+
+  // Head (top)
+  ctx.beginPath()
+  ctx.arc(cx, cy - size * 0.25, size * 0.26, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.stroke()
+
+  // Top hat
+  ctx.fillStyle = '#18181B'
+  ctx.fillRect(cx - size * 0.28, cy - size * 0.48, size * 0.56, size * 0.08)
+  ctx.fillRect(cx - size * 0.18, cy - size * 0.8, size * 0.36, size * 0.34)
+  ctx.fillStyle = '#DC2626'
+  ctx.fillRect(cx - size * 0.18, cy - size * 0.54, size * 0.36, size * 0.07)
+
+  // Scarf
+  ctx.fillStyle = '#DC2626'
+  drawEllipse(ctx, cx, cy - size * 0.02, size * 0.26, size * 0.08, 0)
+  ctx.fillRect(cx + size * 0.08, cy, size * 0.1, size * 0.26)
+
+  // Carrot Nose
+  ctx.fillStyle = '#F97316'
+  ctx.beginPath()
+  ctx.moveTo(cx, cy - size * 0.27)
+  ctx.lineTo(cx + size * 0.22, cy - size * 0.23)
+  ctx.lineTo(cx, cy - size * 0.19)
+  ctx.closePath()
+  ctx.fill()
+
+  // Eyes & Buttons
+  ctx.fillStyle = '#18181B'
+  ctx.beginPath(); ctx.arc(cx - size * 0.08, cy - size * 0.31, size * 0.03, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.08, cy - size * 0.31, size * 0.03, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx, cy + size * 0.18, size * 0.035, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx, cy + size * 0.32, size * 0.035, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+}
+
+function drawPenguin(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Body
+  ctx.fillStyle = '#18181B'
+  drawEllipse(ctx, cx, cy, size * 0.32, size * 0.44, 0)
+
+  // White belly
+  ctx.fillStyle = '#FFFFFF'
+  drawEllipse(ctx, cx, cy + size * 0.06, size * 0.22, size * 0.32, 0)
+
+  // Flippers
+  ctx.fillStyle = '#18181B'
+  drawEllipse(ctx, cx - size * 0.3, cy + size * 0.05, size * 0.08, size * 0.22, 0.4)
+  drawEllipse(ctx, cx + size * 0.3, cy + size * 0.05, size * 0.08, size * 0.22, -0.4)
+
+  // Earmuffs
+  ctx.strokeStyle = '#DC2626'
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  ctx.arc(cx, cy - size * 0.25, size * 0.28, Math.PI, 0)
+  ctx.stroke()
+  ctx.fillStyle = '#DC2626'
+  ctx.beginPath(); ctx.arc(cx - size * 0.28, cy - size * 0.25, size * 0.1, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.28, cy - size * 0.25, size * 0.1, 0, Math.PI * 2); ctx.fill()
+
+  // Eyes
+  ctx.fillStyle = '#FFFFFF'
+  ctx.beginPath(); ctx.arc(cx - size * 0.08, cy - size * 0.2, size * 0.05, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.08, cy - size * 0.2, size * 0.05, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = '#18181B'
+  ctx.beginPath(); ctx.arc(cx - size * 0.08, cy - size * 0.2, size * 0.025, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.08, cy - size * 0.2, size * 0.025, 0, Math.PI * 2); ctx.fill()
+
+  // Beak
+  ctx.fillStyle = '#F59E0B'
+  ctx.beginPath()
+  ctx.moveTo(cx - size * 0.07, cy - size * 0.14)
+  ctx.lineTo(cx + size * 0.07, cy - size * 0.14)
+  ctx.lineTo(cx, cy - size * 0.06)
+  ctx.closePath()
+  ctx.fill()
+
+  // Orange Feet
+  ctx.beginPath(); ctx.arc(cx - size * 0.12, cy + size * 0.44, size * 0.08, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.12, cy + size * 0.44, size * 0.08, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+}
+
+function drawPolarBear(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Ears
+  ctx.fillStyle = '#F8FAFC'
+  ctx.beginPath(); ctx.arc(cx - size * 0.26, cy - size * 0.24, size * 0.12, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.26, cy - size * 0.24, size * 0.12, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = '#FDA4AF'
+  ctx.beginPath(); ctx.arc(cx - size * 0.26, cy - size * 0.24, size * 0.06, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.26, cy - size * 0.24, size * 0.06, 0, Math.PI * 2); ctx.fill()
+
+  // Head
+  ctx.fillStyle = '#F8FAFC'
+  drawEllipse(ctx, cx, cy, size * 0.36, size * 0.32, 0)
+
+  // Muzzle
+  ctx.fillStyle = '#E2E8F0'
+  drawEllipse(ctx, cx, cy + size * 0.08, size * 0.18, size * 0.14, 0)
+
+  // Black Nose
+  ctx.fillStyle = '#0F172A'
+  drawEllipse(ctx, cx, cy + size * 0.04, size * 0.07, size * 0.045, 0)
+
+  // Eyes
+  ctx.beginPath(); ctx.arc(cx - size * 0.14, cy - size * 0.05, size * 0.04, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.14, cy - size * 0.05, size * 0.04, 0, Math.PI * 2); ctx.fill()
+
+  // Red Scarf
+  ctx.fillStyle = '#DC2626'
+  drawEllipse(ctx, cx, cy + size * 0.26, size * 0.34, size * 0.1, 0)
+  ctx.fillRect(cx - size * 0.06, cy + size * 0.28, size * 0.12, size * 0.2)
+  ctx.restore()
+}
+
+function drawChristmasWreath(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  ctx.strokeStyle = '#15803D'
+  ctx.lineWidth = Math.max(5, size * 0.25)
+  ctx.beginPath()
+  ctx.arc(cx, cy, size * 0.35, 0, Math.PI * 2)
+  ctx.stroke()
+
+  ctx.strokeStyle = '#22C55E'
+  ctx.lineWidth = Math.max(2, size * 0.1)
+  ctx.setLineDash([size * 0.15, size * 0.15])
+  ctx.stroke()
+
+  ctx.fillStyle = '#DC2626'
+  const berryAngles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6]
+  berryAngles.forEach(ang => {
+    const bx = cx + Math.cos(ang) * size * 0.35
+    const by = cy + Math.sin(ang) * size * 0.35
+    ctx.beginPath(); ctx.arc(bx, by, size * 0.06, 0, Math.PI * 2); ctx.fill()
+  })
+
+  drawRibbonBow(ctx, cx, cy - size * 0.35, size * 0.4, '#DC2626')
+  ctx.restore()
+}
+
+function drawWrappedPresent(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, boxColor: string = '#DC2626', ribbonColor: string = '#FACC15') {
+  ctx.save()
+  const boxW = size * 0.7
+  const boxH = size * 0.65
+  const bx = cx - boxW / 2
+  const by = cy - boxH / 2
+
+  ctx.fillStyle = boxColor
+  ctx.fillRect(bx, by, boxW, boxH)
+
+  ctx.fillStyle = boxColor
+  ctx.fillRect(bx - size * 0.05, by - size * 0.08, boxW + size * 0.1, size * 0.12)
+
+  ctx.fillStyle = ribbonColor
+  const rw = size * 0.12
+  ctx.fillRect(cx - rw / 2, by - size * 0.08, rw, boxH + size * 0.08)
+  ctx.fillRect(bx, cy - rw / 2, boxW, rw)
+
+  drawRibbonBow(ctx, cx, by - size * 0.1, size * 0.38, ribbonColor)
+  ctx.restore()
+}
+
+function drawChristmasStocking(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, color: string = '#DC2626') {
+  ctx.save()
+  ctx.translate(cx, cy)
+  ctx.rotate(0.15)
+
+  ctx.fillStyle = color
+  ctx.fillRect(-size * 0.18, -size * 0.4, size * 0.36, size * 0.5)
+
+  ctx.beginPath()
+  ctx.arc(-size * 0.1, size * 0.15, size * 0.22, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillRect(-size * 0.32, size * 0.02, size * 0.32, size * 0.26)
+
+  ctx.fillStyle = '#FFFFFF'
+  drawEllipse(ctx, 0, -size * 0.42, size * 0.24, size * 0.1, 0)
+
+  ctx.fillStyle = '#FEF3C7'
+  ctx.beginPath(); ctx.arc(-size * 0.3, size * 0.15, size * 0.12, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(size * 0.12, size * 0.1, size * 0.1, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+}
+
+function drawChristmasBells(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Bell 1
+  ctx.save()
+  ctx.translate(cx - size * 0.16, cy + size * 0.05)
+  ctx.rotate(-0.3)
+  ctx.fillStyle = '#EAB308'
+  ctx.beginPath()
+  ctx.moveTo(0, -size * 0.3)
+  ctx.quadraticCurveTo(size * 0.22, size * 0.1, size * 0.25, size * 0.2)
+  ctx.lineTo(-size * 0.25, size * 0.2)
+  ctx.quadraticCurveTo(-size * 0.22, size * 0.1, 0, -size * 0.3)
+  ctx.fill()
+  drawEllipse(ctx, 0, size * 0.2, size * 0.25, size * 0.07, 0)
+  ctx.fillStyle = '#CA8A04'
+  ctx.beginPath(); ctx.arc(0, size * 0.24, size * 0.06, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+
+  // Bell 2
+  ctx.save()
+  ctx.translate(cx + size * 0.16, cy + size * 0.05)
+  ctx.rotate(0.3)
+  ctx.fillStyle = '#FACC15'
+  ctx.beginPath()
+  ctx.moveTo(0, -size * 0.3)
+  ctx.quadraticCurveTo(size * 0.22, size * 0.1, size * 0.25, size * 0.2)
+  ctx.lineTo(-size * 0.25, size * 0.2)
+  ctx.quadraticCurveTo(-size * 0.22, size * 0.1, 0, -size * 0.3)
+  ctx.fill()
+  drawEllipse(ctx, 0, size * 0.2, size * 0.25, size * 0.07, 0)
+  ctx.fillStyle = '#CA8A04'
+  ctx.beginPath(); ctx.arc(0, size * 0.24, size * 0.06, 0, Math.PI * 2); ctx.fill()
+  ctx.restore()
+
+  drawRibbonBow(ctx, cx, cy - size * 0.2, size * 0.45, '#DC2626')
+  ctx.restore()
+}
+
+function drawRibbonBow(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, color: string = '#DC2626') {
+  ctx.save()
+  ctx.fillStyle = color
+  // Left Loop
+  ctx.beginPath()
+  ctx.moveTo(cx, cy)
+  if (typeof ctx.bezierCurveTo === 'function') {
+    ctx.bezierCurveTo(cx - size * 0.5, cy - size * 0.4, cx - size * 0.5, cy + size * 0.4, cx, cy)
+  } else {
+    ctx.quadraticCurveTo(cx - size * 0.5, cy, cx, cy)
+  }
+  ctx.fill()
+  // Right Loop
+  ctx.beginPath()
+  ctx.moveTo(cx, cy)
+  if (typeof ctx.bezierCurveTo === 'function') {
+    ctx.bezierCurveTo(cx + size * 0.5, cy - size * 0.4, cx + size * 0.5, cy + size * 0.4, cx, cy)
+  } else {
+    ctx.quadraticCurveTo(cx + size * 0.5, cy, cx, cy)
+  }
+  ctx.fill()
+
+  ctx.beginPath()
+  ctx.arc(cx, cy, size * 0.1, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.lineWidth = Math.max(2, size * 0.12)
+  ctx.strokeStyle = color
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(cx - size * 0.05, cy + size * 0.08)
+  ctx.quadraticCurveTo(cx - size * 0.2, cy + size * 0.25, cx - size * 0.25, cy + size * 0.4)
+  ctx.moveTo(cx + size * 0.05, cy + size * 0.08)
+  ctx.quadraticCurveTo(cx + size * 0.2, cy + size * 0.25, cx + size * 0.25, cy + size * 0.4)
+  ctx.stroke()
+  ctx.restore()
+}
+
+function drawNutcracker(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  ctx.fillStyle = '#18181B'
+  ctx.fillRect(cx - size * 0.18, cy - size * 0.65, size * 0.36, size * 0.4)
+  ctx.fillStyle = '#FACC15'
+  ctx.fillRect(cx - size * 0.18, cy - size * 0.32, size * 0.36, size * 0.06)
+  ctx.beginPath(); ctx.arc(cx, cy - size * 0.52, size * 0.08, 0, Math.PI * 2); ctx.fill()
+
+  ctx.fillStyle = '#FED7AA'
+  ctx.fillRect(cx - size * 0.16, cy - size * 0.26, size * 0.32, size * 0.24)
+
+  ctx.fillStyle = '#18181B'
+  ctx.beginPath(); ctx.arc(cx - size * 0.08, cy - size * 0.18, size * 0.025, 0, Math.PI * 2); ctx.fill()
+  ctx.beginPath(); ctx.arc(cx + size * 0.08, cy - size * 0.18, size * 0.025, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = '#FFFFFF'
+  drawEllipse(ctx, cx - size * 0.07, cy - size * 0.1, size * 0.08, size * 0.035, -0.2)
+  drawEllipse(ctx, cx + size * 0.07, cy - size * 0.1, size * 0.08, size * 0.035, 0.2)
+
+  ctx.fillStyle = '#DC2626'
+  ctx.fillRect(cx - size * 0.2, cy - size * 0.02, size * 0.4, size * 0.35)
+
+  ctx.fillStyle = '#FACC15'
+  drawEllipse(ctx, cx - size * 0.22, cy, size * 0.07, size * 0.05, 0)
+  drawEllipse(ctx, cx + size * 0.22, cy, size * 0.07, size * 0.05, 0)
+  ctx.restore()
+}
+
+function drawIcicles(ctx: CanvasRenderingContext2D, width: number, y: number) {
+  ctx.save()
+  ctx.fillStyle = 'rgba(224, 242, 254, 0.85)'
+  for (let x = 30; x < width - 30; x += 40) {
+    const h = 25 + ((x * 17) % 35)
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    ctx.lineTo(x + 18, y)
+    ctx.lineTo(x + 9, y + h)
+    ctx.closePath()
+    ctx.fill()
+  }
+  ctx.restore()
+}
+
+function drawFestiveGarland(ctx: CanvasRenderingContext2D, width: number, y: number) {
+  ctx.save()
+  ctx.strokeStyle = '#15803D'
+  ctx.lineWidth = 6
+  ctx.beginPath()
+  ctx.moveTo(40, y)
+  for (let x = 120; x < width - 40; x += 160) {
+    ctx.quadraticCurveTo(x - 80, y + 45, x, y)
+  }
+  ctx.stroke()
+
+  for (let x = 40; x < width; x += 160) {
+    drawRibbonBow(ctx, x, y, 24, '#DC2626')
+  }
+  ctx.restore()
+}
+
+function drawNordicBorder(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  ctx.save()
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
+  ctx.lineWidth = 2
+  for (let y = 140; y < height - 160; y += 80) {
+    drawStarSparkle(ctx, 40, y, 8, '#FFFFFF')
+    drawStarSparkle(ctx, width - 40, y, 8, '#FFFFFF')
   }
   ctx.restore()
 }

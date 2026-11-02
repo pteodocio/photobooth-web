@@ -62,9 +62,9 @@ describe('Domain Models & Synchronization Tests', () => {
 
   it('defines correct layout slot and burst counts', () => {
     expect(LayoutType.fourCut.slotCount).toBe(4)
-    expect(LayoutType.fourCut.burstCount).toBe(6)
+    expect(LayoutType.fourCut.burstCount).toBe(4)
 
     expect(LayoutType.sixCut.slotCount).toBe(6)
-    expect(LayoutType.sixCut.burstCount).toBe(8)
+    expect(LayoutType.sixCut.burstCount).toBe(6)
   })
 })

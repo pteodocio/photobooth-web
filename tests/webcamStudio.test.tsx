@@ -44,6 +44,8 @@ describe('WebcamViewfinder Component Tests', () => {
 
   it('displays shot progress in the rolling filmstrip indicator', () => {
     render(<WebcamViewfinder onExit={() => {}} />)
-    expect(screen.getByText('SHOT 1/6')).toBeInTheDocument()
+    const indicators = screen.getAllByText('SHOT 1/4')
+    expect(indicators.length).toBeGreaterThan(0)
+    expect(indicators[0]).toBeInTheDocument()
   })
 })

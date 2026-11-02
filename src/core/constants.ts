@@ -1,6 +1,6 @@
 export class AppConstants {
-  static readonly defaultCountdownSeconds = 8
-  static readonly defaultShotIntervalSeconds = 5
+  static readonly defaultCountdownSeconds = 3
+  static readonly defaultShotIntervalSeconds = 3
 
   // Composite Strip Geometry (300 DPI high-res)
   static readonly stripWidth = 1200

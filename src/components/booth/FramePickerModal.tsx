@@ -23,7 +23,7 @@ const CATEGORIES = [
 ]
 
 export const FramePickerModal: React.FC<FramePickerModalProps> = ({ isOpen, onClose }) => {
-  const { selectedFrame, selectFrame, selectedLayout, setLayout, startSession } = useBoothStore()
+  const { selectedFrame, selectFrame, selectedLayout, setLayout, goToFilterSelect } = useBoothStore()
   const [activeCategory, setActiveCategory] = useState('All')
 
   if (!isOpen) return null
@@ -35,7 +35,7 @@ export const FramePickerModal: React.FC<FramePickerModalProps> = ({ isOpen, onCl
 
   const handleStart = () => {
     sound.playClick()
-    startSession()
+    goToFilterSelect()
     onClose()
   }
 

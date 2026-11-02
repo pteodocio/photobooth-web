@@ -57,6 +57,7 @@ describe('Canvas Compositor Service Tests', () => {
       scale: vi.fn(),
       ellipse: vi.fn(),
       quadraticCurveTo: vi.fn(),
+      bezierCurveTo: vi.fn(),
       closePath: vi.fn(),
       setLineDash: vi.fn(),
     }

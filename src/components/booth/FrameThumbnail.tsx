@@ -10,6 +10,52 @@ interface FrameThumbnailProps {
   onClick: () => void
 }
 
+function getChristmasGraphics(style: string) {
+  switch (style) {
+    case 'xmas_01_classic': return { tl: '🌿', tr: '🔔', bl: '🎁', br: '🎄' }
+    case 'xmas_02_wonderland': return { tl: '❄️', tr: '❄️', bl: '🎄', br: '❄️' }
+    case 'xmas_03_santas_workshop': return { tl: '🦯', tr: '🌟', bl: '🎁', br: '🎅' }
+    case 'xmas_04_snowy_december': return { tl: '❄️', tr: '❄️', bl: '⛄', br: '❄️' }
+    case 'xmas_05_gingerbread_house': return { tl: '🦯', tr: '🦯', bl: '🍪', br: '🍪' }
+    case 'xmas_06_candy_cane': return { tl: '🦯', tr: '🦯', bl: '🦯', br: '🦯' }
+    case 'xmas_07_red_and_green': return { tl: '🌿', tr: '🌿', bl: '🧦', br: '🎄' }
+    case 'xmas_08_cozy_christmas': return { tl: '✨', tr: '✨', bl: '🧦', br: '🎄' }
+    case 'xmas_09_pink_christmas': return { tl: '🎀', tr: '🎀', bl: '🎁', br: '✨' }
+    case 'xmas_10_blue_snowfall': return { tl: '❄️', tr: '❄️', bl: '🐻‍❄️', br: '❄️' }
+    case 'xmas_11_christmas_ribbon': return { tl: '🎀', tr: '🎀', bl: '🎁', br: '🎁' }
+    case 'xmas_12_holly_and_berries': return { tl: '🌿', tr: '🌿', bl: '🌿', br: '🌿' }
+    case 'xmas_13_reindeer_friends': return { tl: '🔔', tr: '🔔', bl: '🦌', br: '🎄' }
+    case 'xmas_14_christmas_tree': return { tl: '🎄', tr: '🎄', bl: '🎄', br: '🎄' }
+    case 'xmas_15_winter_village': return { tl: '❄️', tr: '❄️', bl: '⛄', br: '🎄' }
+    case 'xmas_16_snowflake_dreams': return { tl: '❄️', tr: '❄️', bl: '❄️', br: '❄️' }
+    case 'xmas_17_merry_and_bright': return { tl: '💡', tr: '💡', bl: '✨', br: '🎁' }
+    case 'xmas_18_christmas_cookies': return { tl: '🍪', tr: '🦯', bl: '🍪', br: '🦯' }
+    case 'xmas_19_gift_wrapped': return { tl: '🎁', tr: '🎁', bl: '🎁', br: '🎁' }
+    case 'xmas_20_golden_christmas': return { tl: '🔔', tr: '✨', bl: '🌟', br: '✨' }
+    case 'xmas_21_frosted_window': return { tl: '❄️', tr: '❄️', bl: '❄️', br: '❄️' }
+    case 'xmas_22_peppermint_candy': return { tl: '🍬', tr: '🍬', bl: '🦯', br: '🦯' }
+    case 'xmas_23_nordic_christmas': return { tl: '❄️', tr: '❄️', bl: '🦌', br: '🎄' }
+    case 'xmas_24_christmas_lights': return { tl: '💡', tr: '💡', bl: '💡', br: '💡' }
+    case 'xmas_25_nutcracker': return { tl: '🔔', tr: '🔔', bl: '🎄', br: '💂' }
+    case 'xmas_26_polar_bear_christmas': return { tl: '❄️', tr: '❄️', bl: '🐻‍❄️', br: '❄️' }
+    case 'xmas_27_vintage_postcard': return { tl: '🌿', tr: '🎀', bl: '🔔', br: '🎄' }
+    case 'xmas_28_christmas_sweater': return { tl: '🎄', tr: '🎄', bl: '🦌', br: '🎄' }
+    case 'xmas_29_midnight_christmas': return { tl: '🌙', tr: '✨', bl: '🦌', br: '✨' }
+    case 'xmas_30_kawaii_christmas': return { tl: '🎀', tr: '🎀', bl: '🎅', br: '🦌' }
+    case 'xmas_31_snowman_party': return { tl: '❄️', tr: '❄️', bl: '⛄', br: '⛄' }
+    case 'xmas_32_christmas_stockings': return { tl: '🧦', tr: '🧦', bl: '🧦', br: '🎄' }
+    case 'xmas_33_cozy_fireplace': return { tl: '✨', tr: '✨', bl: '🧦', br: '🎄' }
+    case 'xmas_34_starry_night': return { tl: '🌟', tr: '✨', bl: '✨', br: '🌟' }
+    case 'xmas_35_pink_ribbon': return { tl: '🎀', tr: '🎀', bl: '🎀', br: '🎁' }
+    case 'xmas_36_christmas_market': return { tl: '🌿', tr: '🌿', bl: '🍪', br: '🔔' }
+    case 'xmas_37_winter_wonderland': return { tl: '❄️', tr: '❄️', bl: '🐧', br: '🎄' }
+    case 'xmas_38_gingerbread_friends': return { tl: '🦯', tr: '🦯', bl: '🍪', br: '🍪' }
+    case 'xmas_39_holly_jolly': return { tl: '🔔', tr: '🔔', bl: '🌿', br: '🎄' }
+    case 'xmas_40_december_memories': return { tl: '🎀', tr: '❄️', bl: '🎁', br: '🎄' }
+    default: return null
+  }
+}
+
 export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
   frame,
   layout,
@@ -20,6 +66,8 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
   const bgStyle = isGradient
     ? { backgroundImage: `linear-gradient(to bottom, ${frame.gradientColors.join(', ')})` }
     : { backgroundColor: frame.backgroundColor }
+
+  const decor = getChristmasGraphics(frame.themeStyle)
 
   const handleClick = () => {
     sound.playClick()
@@ -47,6 +95,16 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
         style={bgStyle}
         className="w-24 h-60 rounded-lg p-2 flex flex-col justify-between shadow-md relative overflow-hidden transition-transform duration-200 group-hover:scale-[1.03] border border-black/10"
       >
+        {/* Real Christmas decorative graphics overlay on corners */}
+        {decor && (
+          <>
+            <div className="absolute top-1 left-1 text-[10px] pointer-events-none drop-shadow z-10">{decor.tl}</div>
+            <div className="absolute top-1 right-1 text-[10px] pointer-events-none drop-shadow z-10">{decor.tr}</div>
+            <div className="absolute bottom-1 left-1 text-[11px] pointer-events-none drop-shadow z-10">{decor.bl}</div>
+            <div className="absolute bottom-1 right-1 text-[11px] pointer-events-none drop-shadow z-10">{decor.br}</div>
+          </>
+        )}
+
         {/* Top title label */}
         <div
           style={{ color: frame.captionColor }}
