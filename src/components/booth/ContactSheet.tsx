@@ -3,6 +3,7 @@ import { useBoothStore } from '../../store/useBoothStore'
 import { FilterPicker, FILTERS } from './FilterPicker'
 import { StampPicker } from './StampPicker'
 import { renderStrip } from '../../services/compositorService'
+import { SyncService } from '../../services/syncService'
 import { PrintFormat } from '../../core/types'
 import { Printer, Lock, CheckCircle2, ArrowLeftRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -58,6 +59,17 @@ export const ContactSheet: React.FC = () => {
       })
 
       setCompositeDataUrl(compositeUrl)
+
+      // Upload session to Supabase in background
+      SyncService.uploadSession(
+        sessionId,
+        compositeUrl,
+        selectedFrame.name,
+        selectedFrame.koreanTitle,
+        selectedLayout.id,
+        selectedFilter,
+        selectedStamp
+      ).catch(() => {})
     } catch (err) {
       console.error('Failed to render strip:', err)
     } finally {
