@@ -75,7 +75,7 @@ describe('Pre-Capture Workflow Step Tests', () => {
 
     // Navigate forward to camera prep
     useBoothStore.getState().goToFrameSelect()
-    const nextBtn = screen.getByText('Next: Camera Setup')
+    const nextBtn = screen.getByRole('button', { name: /Camera Setup/i })
     fireEvent.click(nextBtn)
     expect(useBoothStore.getState().status).toBe('cameraPrep')
   })

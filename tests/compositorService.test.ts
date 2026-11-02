@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { renderStrip } from '../src/services/compositorService'
+import { renderStrip, renderFrameToCanvas, getSamplePhotos } from '../src/services/compositorService'
 import { BUNDLED_FRAMES } from '../src/core/frames'
+import { CHRISTMAS_FRAMES } from '../src/core/christmasFrames'
 import { LayoutType, PrintFormat } from '../src/core/types'
 
 describe('Canvas Compositor Service Tests', () => {
@@ -131,5 +132,42 @@ describe('Canvas Compositor Service Tests', () => {
     })
 
     expect(result).toBe('data:image/png;base64,mockPng')
+  })
+
+  it('generates 4 sample portrait photos for live frame previews', () => {
+    const samples = getSamplePhotos()
+    expect(samples).toHaveLength(4)
+    samples.forEach(s => {
+      expect(s.width).toBe(400)
+      expect(s.height).toBe(300)
+    })
+  })
+
+  it('renders frame preview directly onto canvas using renderFrameToCanvas', () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 400
+    canvas.height = 1200
+
+    const frame = CHRISTMAS_FRAMES[0] // Classic Christmas
+    const samples = getSamplePhotos()
+
+    expect(() => {
+      renderFrameToCanvas(canvas, frame, LayoutType.fourCut, samples, {
+        filter: 'vintage_kodak',
+        filterIntensity: 0.8,
+      })
+    }).not.toThrow()
+  })
+
+  it('successfully executes canvas vector graphics for all 40 Christmas frames without throwing', () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1200
+    canvas.height = 3600
+
+    CHRISTMAS_FRAMES.forEach(frame => {
+      expect(() => {
+        renderFrameToCanvas(canvas, frame, LayoutType.fourCut)
+      }).not.toThrow()
+    })
   })
 })

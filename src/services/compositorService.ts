@@ -1,6 +1,6 @@
 import QRCode from 'qrcode'
 import { AppConstants } from '../core/constants'
-import type { CompositeJob, FrameTemplate, PhotoFilter } from '../core/types'
+import type { CompositeJob, FrameTemplate, PhotoFilter, LayoutTypeConfig } from '../core/types'
 import { getCssFilter } from '../core/filters'
 
 // Helper to asynchronously load image from dataUrl/URL
@@ -338,291 +338,414 @@ function drawThemeBackgroundDecors(
     drawStarDot(ctx, width - 90, 130, 3)
   }
 
-  // --- All 40 Christmas Themes with Real Graphic Decorations ---
-  else if (style === 'xmas_classic') {
-    // 1. Classic Christmas: Holly berries in top corners, Christmas bells in top center, tree & gift in footer
-    drawHollyBerries(ctx, 50, 60, 22)
-    drawHollyBerries(ctx, width - 50, 60, 22)
-    drawChristmasBells(ctx, width / 2, 55, 36)
-    drawChristmasTree(ctx, width - 60, height - 160, 65, '#15803D')
-    drawWrappedPresent(ctx, 60, height - 160, 50, '#DC2626', '#FACC15')
-  } else if (style === 'xmas_wonderland') {
-    // 2. Christmas Wonderland: Snowflakes along borders, pines, snow sparkles
-    drawSnowflake(ctx, 50, 65, 26, '#FFFFFF')
-    drawSnowflake(ctx, width - 50, 65, 26, '#FFFFFF')
-    drawSnowflake(ctx, 40, height / 2, 22, '#E0F2FE')
-    drawSnowflake(ctx, width - 40, height / 2, 22, '#E0F2FE')
-    drawChristmasTree(ctx, 60, height - 160, 65, '#059669')
-    drawChristmasTree(ctx, width - 60, height - 160, 65, '#059669')
-    drawStarSparkle(ctx, width / 2, 50, 18, '#FDE047')
-  } else if (style === 'xmas_santas_workshop') {
-    // 3. Santa's Workshop: Santa Claus, wrapped gifts, candy cane, baubles
-    drawBaubleOrnament(ctx, 50, 70, 22, '#FACC15')
-    drawBaubleOrnament(ctx, width - 50, 70, 22, '#22C55E')
-    drawSantaClaus(ctx, width - 65, height - 180, 55)
-    drawWrappedPresent(ctx, 60, height - 160, 52, '#16A34A', '#FEF08A')
-    drawCandyCane(ctx, 45, height / 2, 42)
-  } else if (style === 'xmas_snowy_december') {
-    // 4. Snowy December: Icicles along top, blue snowflakes, snowman in footer
-    drawIcicles(ctx, width, 10)
-    drawSnowflake(ctx, 45, 75, 24, '#0284C7')
-    drawSnowflake(ctx, width - 45, 75, 24, '#0284C7')
-    drawSnowflake(ctx, 40, height / 2, 20, '#0284C7')
-    drawSnowflake(ctx, width - 40, height / 2, 20, '#0284C7')
-    drawSnowman(ctx, 60, height - 170, 50)
-    drawSnowflake(ctx, width - 55, height - 160, 28, '#0284C7')
-  } else if (style === 'xmas_gingerbread_house') {
-    // 5. Gingerbread House: Gingerbread characters, candy canes, gumdrop stars
-    drawCandyCane(ctx, 48, 65, 46)
-    drawCandyCane(ctx, width - 48, 65, 46)
-    drawGingerbreadMan(ctx, 60, height - 170, 52)
-    drawGingerbreadMan(ctx, width - 60, height - 170, 52)
-    drawStarSparkle(ctx, width / 2, 50, 18, '#FDE047')
-  } else if (style === 'xmas_candy_cane') {
-    // 6. Candy Cane: Candy canes in top & bottom corners, peppermint bows
-    drawCandyCane(ctx, 50, 65, 48)
-    drawCandyCane(ctx, width - 50, 65, 48)
-    drawRibbonBow(ctx, width / 2, 50, 42, '#DC2626')
-    drawCandyCane(ctx, 50, height - 160, 48)
-    drawCandyCane(ctx, width - 50, height - 160, 48)
-  } else if (style === 'xmas_red_and_green') {
-    // 7. Red & Green: Festive pine garland, holly in corners, stocking and tree
-    drawFestiveGarland(ctx, width, 30)
-    drawHollyBerries(ctx, 50, 80, 20)
-    drawHollyBerries(ctx, width - 50, 80, 20)
-    drawChristmasStocking(ctx, 60, height - 160, 48, '#DC2626')
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
-  } else if (style === 'xmas_cozy_christmas') {
-    // 8. Cozy Christmas: Warm fireplace glow, stocking, tree, warm star sparkles
-    drawStarSparkle(ctx, 50, 60, 18, '#F59E0B')
-    drawStarSparkle(ctx, width - 50, 60, 18, '#F59E0B')
-    drawChristmasStocking(ctx, 60, height - 160, 48, '#B91C1C')
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#14532D')
-  } else if (style === 'xmas_pink_christmas') {
-    // 9. Pink Christmas: Pastel pink ribbon bows, pink ornaments, pastel sparkles
-    drawRibbonBow(ctx, 50, 60, 40, '#F472B6')
-    drawRibbonBow(ctx, width - 50, 60, 40, '#F472B6')
-    drawBaubleOrnament(ctx, 45, height / 2, 20, '#F472B6')
-    drawBaubleOrnament(ctx, width - 45, height / 2, 20, '#F472B6')
-    drawWrappedPresent(ctx, 60, height - 160, 48, '#F472B6', '#FFFFFF')
-    drawStarSparkle(ctx, width - 60, height - 160, 22, '#F472B6')
-  } else if (style === 'xmas_blue_snowfall') {
-    // 10. Blue Snowfall: Polar bear, icy crystal snowflakes
-    drawSnowflake(ctx, 50, 65, 26, '#BAE6FD')
-    drawSnowflake(ctx, width - 50, 65, 26, '#BAE6FD')
-    drawSnowflake(ctx, 40, height / 2, 22, '#E0F2FE')
-    drawSnowflake(ctx, width - 40, height / 2, 22, '#E0F2FE')
-    drawPolarBear(ctx, 65, height - 170, 52)
-    drawSnowflake(ctx, width - 60, height - 160, 30, '#BAE6FD')
-  } else if (style === 'xmas_christmas_ribbon') {
-    // 11. Christmas Ribbon: Elegant holiday bows, flowing ribbon swags
-    drawRibbonBow(ctx, 50, 60, 44, '#DC2626')
-    drawRibbonBow(ctx, width - 50, 60, 44, '#DC2626')
-    drawRibbonBow(ctx, width / 2, 50, 48, '#FACC15')
-    drawWrappedPresent(ctx, 60, height - 160, 52, '#DC2626', '#FACC15')
-    drawWrappedPresent(ctx, width - 60, height - 160, 52, '#15803D', '#DC2626')
-  } else if (style === 'xmas_holly_and_berries') {
-    // 12. Holly & Berries: Lush holly clusters in all 4 corners and borders
-    drawHollyBerries(ctx, 50, 60, 24)
-    drawHollyBerries(ctx, width - 50, 60, 24)
-    drawHollyBerries(ctx, 42, height / 2, 18)
-    drawHollyBerries(ctx, width - 42, height / 2, 18)
-    drawHollyBerries(ctx, 55, height - 160, 24)
-    drawHollyBerries(ctx, width - 55, height - 160, 24)
-  } else if (style === 'xmas_reindeer_friends') {
-    // 13. Reindeer Friends: Cute Rudolph with red nose, holiday bells
-    drawChristmasBells(ctx, 50, 65, 34)
-    drawChristmasBells(ctx, width - 50, 65, 34)
-    drawReindeer(ctx, 65, height - 170, 55)
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#166534')
-  } else if (style === 'xmas_christmas_tree') {
-    // 14. Christmas Tree: Pine trees in corners, fairy lights and stars
-    drawFairyLights(ctx, width, 30)
-    drawChristmasTree(ctx, 55, 80, 50, '#15803D')
-    drawChristmasTree(ctx, width - 55, 80, 50, '#15803D')
-    drawChristmasTree(ctx, 60, height - 160, 65, '#15803D')
-    drawChristmasTree(ctx, width - 60, height - 160, 65, '#15803D')
-  } else if (style === 'xmas_winter_village') {
-    // 15. Winter Village: Pine trees, snowman, snowflakes, cozy winter scene
-    drawSnowflake(ctx, 50, 60, 24, '#E2E8F0')
-    drawSnowflake(ctx, width - 50, 60, 24, '#E2E8F0')
-    drawSnowman(ctx, 60, height - 170, 50)
-    drawChristmasTree(ctx, width - 60, height - 160, 65, '#0F766E')
-  } else if (style === 'xmas_snowflake_dreams') {
-    // 16. Snowflake Dreams: Intricate snowflake crystals of various sizes
-    drawSnowflake(ctx, 50, 65, 28, '#FFFFFF')
-    drawSnowflake(ctx, width - 50, 65, 28, '#FFFFFF')
-    drawSnowflake(ctx, 40, 400, 22, '#E0F2FE')
-    drawSnowflake(ctx, width - 40, 400, 22, '#E0F2FE')
-    drawSnowflake(ctx, 40, height / 2, 26, '#BAE6FD')
-    drawSnowflake(ctx, width - 40, height / 2, 26, '#BAE6FD')
-    drawSnowflake(ctx, 55, height - 160, 30, '#FFFFFF')
-    drawSnowflake(ctx, width - 55, height - 160, 30, '#FFFFFF')
-  } else if (style === 'xmas_merry_and_bright') {
-    // 17. Merry & Bright: Twinkling fairy lights, sparkling stars, holiday cheer
-    drawFairyLights(ctx, width, 30)
-    drawStarSparkle(ctx, 50, 85, 20, '#FACC15')
-    drawStarSparkle(ctx, width - 50, 85, 20, '#FACC15')
-    drawChristmasBells(ctx, 60, height - 160, 38)
-    drawWrappedPresent(ctx, width - 60, height - 160, 50, '#DC2626', '#FACC15')
-  } else if (style === 'xmas_christmas_cookies') {
-    // 18. Christmas Cookies: Gingerbread characters, candy canes, holiday treats
-    drawCandyCane(ctx, 48, 65, 44)
-    drawCandyCane(ctx, width - 48, 65, 44)
-    drawGingerbreadMan(ctx, 60, height - 170, 52)
-    drawCandyCane(ctx, width - 55, height - 160, 48)
-  } else if (style === 'xmas_gift_wrapped') {
-    // 19. Gift Wrapped: Wrapped presents with big ribbon bows
-    drawRibbonBow(ctx, width / 2, 45, 46, '#DC2626')
-    drawWrappedPresent(ctx, 55, 75, 46, '#DC2626', '#FEF08A')
-    drawWrappedPresent(ctx, width - 55, 75, 46, '#15803D', '#FEF08A')
-    drawWrappedPresent(ctx, 65, height - 160, 54, '#DC2626', '#FEF08A')
-    drawWrappedPresent(ctx, width - 65, height - 160, 54, '#15803D', '#FEF08A')
-  } else if (style === 'xmas_golden_christmas') {
-    // 20. Golden Christmas: Golden bells, golden star sparkles, gold baubles
-    drawChristmasBells(ctx, width / 2, 55, 40)
-    drawStarSparkle(ctx, 50, 65, 22, '#FACC15')
-    drawStarSparkle(ctx, width - 50, 65, 22, '#FACC15')
-    drawBaubleOrnament(ctx, 45, height / 2, 22, '#FACC15')
-    drawBaubleOrnament(ctx, width - 45, height / 2, 22, '#FACC15')
-    drawStarSparkle(ctx, 55, height - 160, 24, '#FACC15')
-    drawStarSparkle(ctx, width - 55, height - 160, 24, '#FACC15')
-  } else if (style === 'xmas_frosted_window') {
-    // 21. Frosted Window: Icicles hanging, frosty snowflakes
-    drawIcicles(ctx, width, 10)
-    drawSnowflake(ctx, 50, 70, 26, 'rgba(255, 255, 255, 0.9)')
-    drawSnowflake(ctx, width - 50, 70, 26, 'rgba(255, 255, 255, 0.9)')
-    drawSnowflake(ctx, 55, height - 160, 28, 'rgba(255, 255, 255, 0.9)')
-    drawSnowflake(ctx, width - 55, height - 160, 28, 'rgba(255, 255, 255, 0.9)')
-  } else if (style === 'xmas_peppermint_candy') {
-    // 22. Peppermint Candy: Peppermint candy canes, festive red/white accents
-    drawCandyCane(ctx, 48, 65, 48)
-    drawCandyCane(ctx, width - 48, 65, 48)
-    drawCandyCane(ctx, 48, height - 160, 48)
-    drawCandyCane(ctx, width - 48, height - 160, 48)
-    drawRibbonBow(ctx, width / 2, 50, 42, '#DC2626')
-  } else if (style === 'xmas_nordic_christmas') {
-    // 23. Nordic Christmas: Scandinavian cross-stitch border, reindeer, pine trees
-    drawNordicBorder(ctx, width, height)
-    drawReindeer(ctx, 60, height - 170, 52)
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#DC2626')
-  } else if (style === 'xmas_christmas_lights') {
-    // 24. Christmas Lights: String fairy lights along top and bottom
-    drawFairyLights(ctx, width, 30)
-    drawFairyLights(ctx, width, height - 100)
-    drawStarSparkle(ctx, 50, 90, 18, '#FACC15')
-    drawStarSparkle(ctx, width - 50, 90, 18, '#38BDF8')
-  } else if (style === 'xmas_nutcracker') {
-    // 25. Nutcracker: Soldier nutcracker, holiday bells, gold accents
-    drawChristmasBells(ctx, 50, 65, 34)
-    drawChristmasBells(ctx, width - 50, 65, 34)
-    drawNutcracker(ctx, width - 65, height - 180, 65)
-    drawChristmasTree(ctx, 60, height - 160, 60, '#15803D')
-  } else if (style === 'xmas_polar_bear_christmas') {
-    // 26. Polar Bear Christmas: Cute polar bear with red scarf, snowflakes
-    drawSnowflake(ctx, 50, 65, 24, '#E2E8F0')
-    drawSnowflake(ctx, width - 50, 65, 24, '#E2E8F0')
-    drawPolarBear(ctx, 65, height - 170, 55)
-    drawSnowflake(ctx, width - 55, height - 160, 30, '#E2E8F0')
-  } else if (style === 'xmas_vintage_postcard') {
-    // 27. Vintage Christmas Postcard: Holly sprigs, bells, vintage ribbon bow
-    drawHollyBerries(ctx, 50, 60, 22)
-    drawRibbonBow(ctx, width - 50, 60, 40, '#B91C1C')
-    drawChristmasBells(ctx, 60, height - 160, 38)
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
-  } else if (style === 'xmas_christmas_sweater') {
-    // 28. Christmas Sweater: Fair Isle knit borders, trees, winter diamonds
-    drawNordicBorder(ctx, width, height)
-    drawChristmasTree(ctx, 55, 75, 45, '#FFFFFF')
-    drawChristmasTree(ctx, width - 55, 75, 45, '#FFFFFF')
-    drawReindeer(ctx, 60, height - 170, 50)
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#FFFFFF')
-  } else if (style === 'xmas_midnight_christmas') {
-    // 29. Midnight Christmas: Golden stars, moonlit sparkles, reindeer
-    drawStarSparkle(ctx, 50, 65, 22, '#FDE047')
-    drawStarSparkle(ctx, width - 50, 65, 22, '#FDE047')
-    drawStarSparkle(ctx, width / 2, 45, 26, '#FEF08A')
-    drawReindeer(ctx, 65, height - 170, 52)
-    drawStarSparkle(ctx, width - 60, height - 160, 24, '#FDE047')
-  } else if (style === 'xmas_kawaii_christmas') {
-    // 30. Kawaii Christmas: Korean kawaii Santa, Rudolph, sweet sparkles
-    drawSantaClaus(ctx, 60, height - 170, 52)
-    drawReindeer(ctx, width - 60, height - 170, 52)
-    drawStarSparkle(ctx, 50, 65, 18, '#F472B6')
-    drawStarSparkle(ctx, width - 50, 65, 18, '#F472B6')
-    drawRibbonBow(ctx, width / 2, 50, 42, '#F472B6')
-  } else if (style === 'xmas_snowman_party') {
-    // 31. Snowman Party: Cheerful snowmen with carrot noses & scarves, snowflakes
-    drawSnowflake(ctx, 50, 65, 24, '#BAE6FD')
-    drawSnowflake(ctx, width - 50, 65, 24, '#BAE6FD')
-    drawSnowman(ctx, 60, height - 170, 50)
-    drawSnowman(ctx, width - 60, height - 170, 50)
-  } else if (style === 'xmas_christmas_stockings') {
-    // 32. Christmas Stockings: Stockings hanging in corners with candy canes
-    drawChristmasStocking(ctx, 50, 75, 46, '#DC2626')
-    drawChristmasStocking(ctx, width - 50, 75, 46, '#15803D')
-    drawChristmasStocking(ctx, 55, height - 160, 48, '#DC2626')
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
-  } else if (style === 'xmas_cozy_fireplace') {
-    // 33. Cozy Fireplace: Hearth stockings, pine tree, warm glowing sparkles
-    drawStarSparkle(ctx, 50, 65, 20, '#F59E0B')
-    drawStarSparkle(ctx, width - 50, 65, 20, '#F59E0B')
-    drawChristmasStocking(ctx, 60, height - 160, 48, '#B91C1C')
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
-  } else if (style === 'xmas_starry_night') {
-    // 34. Starry Christmas Night: Bright gold star constellation, deep night aesthetic
-    drawStarSparkle(ctx, 50, 65, 22, '#FACC15')
-    drawStarSparkle(ctx, width - 50, 65, 22, '#FACC15')
-    drawStarSparkle(ctx, width / 2, 45, 26, '#FACC15')
-    drawStarSparkle(ctx, 42, height / 2, 18, '#FACC15')
-    drawStarSparkle(ctx, width - 42, height / 2, 18, '#FACC15')
-    drawStarSparkle(ctx, 55, height - 160, 24, '#FACC15')
-    drawStarSparkle(ctx, width - 55, height - 160, 24, '#FACC15')
-  } else if (style === 'xmas_pink_ribbon') {
-    // 35. Pink Ribbon Christmas: Sweet pastel ribbons, candy canes, pastel ornaments
-    drawRibbonBow(ctx, 50, 60, 42, '#F472B6')
-    drawRibbonBow(ctx, width - 50, 60, 42, '#F472B6')
-    drawCandyCane(ctx, 45, height / 2, 40)
-    drawCandyCane(ctx, width - 45, height / 2, 40)
-    drawRibbonBow(ctx, 60, height - 160, 46, '#F472B6')
-    drawWrappedPresent(ctx, width - 60, height - 160, 50, '#F472B6', '#FFFFFF')
-  } else if (style === 'xmas_christmas_market') {
-    // 36. Christmas Market: Festive pine swags, gingerbread, wooden bells
-    drawFestiveGarland(ctx, width, 30)
-    drawGingerbreadMan(ctx, 60, height - 170, 50)
-    drawChristmasBells(ctx, width - 60, height - 160, 38)
-  } else if (style === 'xmas_winter_wonderland') {
-    // 37. Winter Wonderland: Cute penguin, snowy trees, falling snowflakes
-    drawSnowflake(ctx, 50, 65, 26, '#FFFFFF')
-    drawSnowflake(ctx, width - 50, 65, 26, '#FFFFFF')
-    drawPenguin(ctx, 65, height - 170, 50)
-    drawChristmasTree(ctx, width - 60, height - 160, 65, '#047857')
-  } else if (style === 'xmas_gingerbread_friends') {
-    // 38. Gingerbread Friends: Smiling gingerbread pair, candy canes, frosting stars
-    drawCandyCane(ctx, 50, 65, 44)
-    drawCandyCane(ctx, width - 50, 65, 44)
-    drawGingerbreadMan(ctx, 60, height - 170, 50)
-    drawGingerbreadMan(ctx, width - 60, height - 170, 50)
-  } else if (style === 'xmas_holly_jolly') {
-    // 39. Holly Jolly: Jolly bells, red bows, holly berries
-    drawChristmasBells(ctx, width / 2, 50, 40)
-    drawHollyBerries(ctx, 50, 65, 22)
-    drawHollyBerries(ctx, width - 50, 65, 22)
-    drawHollyBerries(ctx, 55, height - 160, 24)
-    drawChristmasTree(ctx, width - 60, height - 160, 60, '#15803D')
-  } else if (style === 'xmas_december_memories') {
-    // 40. December Memories: Christmas wreath, ribbon bows, snowflakes, star sparkles
-    drawChristmasWreath(ctx, width / 2, 60, 48)
-    drawSnowflake(ctx, 50, 65, 24, '#FFFFFF')
-    drawSnowflake(ctx, width - 50, 65, 24, '#FFFFFF')
-    drawWrappedPresent(ctx, 60, height - 160, 52, '#DC2626', '#FACC15')
-    drawChristmasTree(ctx, width - 60, height - 160, 62, '#15803D')
-  } else {
-    // Default winter holiday accents
-    drawSnowflake(ctx, 50, 80, 20, 'rgba(255,255,255,0.7)')
-    drawSnowflake(ctx, width - 50, 80, 20, 'rgba(255,255,255,0.7)')
-    drawStarSparkle(ctx, 50, height - 140, 14, 'rgba(255,255,255,0.8)')
-    drawStarSparkle(ctx, width - 50, height - 140, 14, 'rgba(255,255,255,0.8)')
+// --- All 40 Christmas Themes with Real Graphic Decorations ---
+  else if (style.startsWith('xmas_')) {
+    // 1. Festive Background Snowfall Texture for Depth
+    drawSnowfallBackground(ctx, width, height, style.includes('dark') || style.includes('midnight') ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.45)')
+
+    // 2. Inter-Slot Festive Dividers (y = 860, 1620, 2380)
+    const dividers = [860, 1620, 2380]
+    dividers.forEach((dy, idx) => {
+      if (idx % 2 === 0) {
+        drawStarSparkle(ctx, 40, dy, 14, '#FACC15')
+        drawStarSparkle(ctx, width - 40, dy, 14, '#FACC15')
+        drawRibbonBow(ctx, width / 2, dy, 32, '#DC2626')
+      } else {
+        drawSnowflake(ctx, 40, dy, 16, '#FFFFFF')
+        drawSnowflake(ctx, width - 40, dy, 16, '#FFFFFF')
+        drawHollyBerries(ctx, width / 2, dy, 16)
+      }
+    })
+
+    // 3. Theme-Specific Oversized Graphic Compositions
+    if (style === 'xmas_classic') {
+      // 1. Classic Christmas: Large golden bells in top header, giant tree and stack of wrapped presents in footer
+      drawChristmasBells(ctx, width / 2, 60, 52)
+      drawHollyBerries(ctx, 50, 65, 30)
+      drawHollyBerries(ctx, width - 50, 65, 30)
+      drawFairyLights(ctx, width, 110)
+      drawCandyCane(ctx, 40, 500, 65)
+      drawCandyCane(ctx, width - 40, 500, 65)
+      drawCandyCane(ctx, 40, 2000, 65)
+      drawCandyCane(ctx, width - 40, 2000, 65)
+      // Large footer illustrations
+      drawWrappedPresent(ctx, 240, 3350, 120, '#DC2626', '#FACC15')
+      drawWrappedPresent(ctx, 420, 3380, 95, '#15803D', '#FEF08A')
+      drawChristmasTree(ctx, width - 260, 3340, 165, '#15803D')
+      drawChristmasStocking(ctx, width - 460, 3370, 90, '#DC2626')
+    } else if (style === 'xmas_wonderland') {
+      // 2. Christmas Wonderland: Giant snow pines, crystal snowflake storm, penguin in winter snow
+      drawSnowflake(ctx, 60, 65, 36, '#FFFFFF')
+      drawSnowflake(ctx, width - 60, 65, 36, '#FFFFFF')
+      drawSnowflake(ctx, width / 2, 60, 42, '#FFFFFF')
+      drawSnowflake(ctx, 40, 500, 32, '#E0F2FE')
+      drawSnowflake(ctx, width - 40, 500, 32, '#E0F2FE')
+      drawSnowflake(ctx, 40, 2000, 32, '#E0F2FE')
+      drawSnowflake(ctx, width - 40, 2000, 32, '#E0F2FE')
+      // Footer scene
+      drawChristmasTree(ctx, 220, 3330, 175, '#059669')
+      drawPenguin(ctx, 460, 3360, 115)
+      drawChristmasTree(ctx, width - 220, 3330, 175, '#059669')
+      drawSnowman(ctx, width - 440, 3360, 110)
+    } else if (style === 'xmas_santas_workshop') {
+      // 3. Santa's Workshop: Giant Santa, workshop toys, wrapped presents, candy canes
+      drawRibbonBow(ctx, width / 2, 55, 60, '#FACC15')
+      drawBaubleOrnament(ctx, 50, 70, 30, '#FACC15')
+      drawBaubleOrnament(ctx, width - 50, 70, 30, '#22C55E')
+      drawFairyLights(ctx, width, 110)
+      drawCandyCane(ctx, 40, 1200, 65)
+      drawCandyCane(ctx, width - 40, 1200, 65)
+      // Giant Santa and gifts in footer
+      drawSantaClaus(ctx, 240, 3340, 130)
+      drawWrappedPresent(ctx, 460, 3360, 110, '#16A34A', '#FEF08A')
+      drawWrappedPresent(ctx, 620, 3390, 85, '#DC2626', '#FEF08A')
+      drawChristmasTree(ctx, width - 220, 3340, 160, '#15803D')
+    } else if (style === 'xmas_snowy_december') {
+      // 4. Snowy December: Crystalline icicles across top, giant happy snowman, polar bear
+      drawIcicles(ctx, width, 10)
+      drawSnowflake(ctx, 50, 75, 34, '#0284C7')
+      drawSnowflake(ctx, width - 50, 75, 34, '#0284C7')
+      drawSnowflake(ctx, 40, 1200, 30, '#0284C7')
+      drawSnowflake(ctx, width - 40, 1200, 30, '#0284C7')
+      // Footer scene
+      drawSnowman(ctx, 240, 3340, 130)
+      drawPolarBear(ctx, 480, 3350, 115)
+      drawChristmasTree(ctx, width - 240, 3340, 165, '#0284C7')
+    } else if (style === 'xmas_gingerbread_house') {
+      // 5. Gingerbread House: Oversized smiling gingerbread pair, giant candy canes, gumdrop stars
+      drawCandyCane(ctx, 50, 65, 75)
+      drawCandyCane(ctx, width - 50, 65, 75)
+      drawStarSparkle(ctx, width / 2, 55, 32, '#FDE047')
+      drawCandyCane(ctx, 40, 1200, 65)
+      drawCandyCane(ctx, width - 40, 1200, 65)
+      // Gingerbread couple in footer
+      drawGingerbreadMan(ctx, 240, 3350, 125)
+      drawGingerbreadMan(ctx, 460, 3350, 125)
+      drawCandyCane(ctx, width - 260, 3340, 110)
+      drawWrappedPresent(ctx, width - 440, 3380, 95, '#854D0E', '#FEF08A')
+    } else if (style === 'xmas_candy_cane') {
+      // 6. Candy Cane: Giant crossed peppermint candy canes, oversized red bows
+      drawRibbonBow(ctx, width / 2, 60, 75, '#DC2626')
+      drawCandyCane(ctx, 55, 65, 75)
+      drawCandyCane(ctx, width - 55, 65, 75)
+      drawCandyCane(ctx, 40, 1200, 75)
+      drawCandyCane(ctx, width - 40, 1200, 75)
+      // Footer candy cane showcase
+      drawCandyCane(ctx, 220, 3340, 120)
+      drawRibbonBow(ctx, 420, 3380, 70, '#DC2626')
+      drawCandyCane(ctx, width - 220, 3340, 120)
+      drawWrappedPresent(ctx, width - 420, 3370, 105, '#DC2626', '#FFFFFF')
+    } else if (style === 'xmas_red_and_green') {
+      // 7. Red & Green: Draped pine needle garland, stocking, giant tree, wrapped gifts
+      drawFestiveGarland(ctx, width, 40)
+      drawHollyBerries(ctx, 50, 80, 30)
+      drawHollyBerries(ctx, width - 50, 80, 30)
+      drawChristmasStocking(ctx, 40, 1200, 65, '#DC2626')
+      drawChristmasStocking(ctx, width - 40, 1200, 65, '#15803D')
+      // Footer
+      drawChristmasStocking(ctx, 240, 3350, 115, '#DC2626')
+      drawWrappedPresent(ctx, 440, 3370, 105, '#15803D', '#FACC15')
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+    } else if (style === 'xmas_cozy_christmas' || style === 'xmas_cozy_fireplace') {
+      // 8 & 33. Cozy Christmas / Fireplace: Brick fireplace hearth with roaring fire, stockings, decorated tree
+      drawStarSparkle(ctx, width / 2, 55, 30, '#F59E0B')
+      drawStarSparkle(ctx, 50, 65, 26, '#F59E0B')
+      drawStarSparkle(ctx, width - 50, 65, 26, '#F59E0B')
+      drawFairyLights(ctx, width, 110)
+      drawFireplace(ctx, 320, 3340, 180)
+      drawChristmasTree(ctx, width - 260, 3330, 170, '#14532D')
+      drawWrappedPresent(ctx, width - 480, 3380, 95, '#B91C1C', '#F59E0B')
+    } else if (style === 'xmas_pink_christmas') {
+      // 9. Pink Christmas: Oversized pastel pink bows, pink pine tree, dreamy pastel gifts
+      drawRibbonBow(ctx, width / 2, 60, 80, '#F472B6')
+      drawRibbonBow(ctx, 50, 65, 55, '#F472B6')
+      drawRibbonBow(ctx, width - 50, 65, 55, '#F472B6')
+      drawBaubleOrnament(ctx, 40, 1200, 30, '#F472B6')
+      drawBaubleOrnament(ctx, width - 40, 1200, 30, '#F472B6')
+      // Footer
+      drawChristmasTree(ctx, 240, 3340, 165, '#F472B6')
+      drawWrappedPresent(ctx, 460, 3370, 110, '#F472B6', '#FFFFFF')
+      drawWrappedPresent(ctx, 620, 3390, 85, '#FBCFE8', '#DB2777')
+      drawSnowman(ctx, width - 240, 3350, 115)
+    } else if (style === 'xmas_blue_snowfall') {
+      // 10. Blue Snowfall: Giant cute polar bear, ice crystal snowflakes, snowy trees
+      drawSnowflake(ctx, width / 2, 60, 44, '#BAE6FD')
+      drawSnowflake(ctx, 50, 65, 34, '#BAE6FD')
+      drawSnowflake(ctx, width - 50, 65, 34, '#BAE6FD')
+      drawSnowflake(ctx, 40, 1200, 32, '#BAE6FD')
+      drawSnowflake(ctx, width - 40, 1200, 32, '#BAE6FD')
+      // Footer
+      drawPolarBear(ctx, 240, 3340, 130)
+      drawPenguin(ctx, 460, 3370, 105)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#0284C7')
+    } else if (style === 'xmas_christmas_ribbon') {
+      // 11. Christmas Ribbon: Flowing holiday ribbon swags, giant bows, wrapped presents
+      drawRibbonBow(ctx, width / 2, 60, 95, '#FACC15')
+      drawRibbonBow(ctx, 50, 65, 60, '#DC2626')
+      drawRibbonBow(ctx, width - 50, 65, 60, '#DC2626')
+      drawRibbonBow(ctx, 40, 1200, 48, '#DC2626')
+      drawRibbonBow(ctx, width - 40, 1200, 48, '#DC2626')
+      // Footer
+      drawWrappedPresent(ctx, 240, 3350, 125, '#DC2626', '#FACC15')
+      drawWrappedPresent(ctx, 450, 3370, 105, '#15803D', '#DC2626')
+      drawChristmasTree(ctx, width - 240, 3330, 170, '#15803D')
+    } else if (style === 'xmas_holly_and_berries') {
+      // 12. Holly & Berries: Lush holly garlands, golden bells, winter trees
+      drawChristmasBells(ctx, width / 2, 60, 52)
+      drawHollyBerries(ctx, 50, 65, 35)
+      drawHollyBerries(ctx, width - 50, 65, 35)
+      drawHollyBerries(ctx, 40, 1200, 30)
+      drawHollyBerries(ctx, width - 40, 1200, 30)
+      // Footer
+      drawChristmasTree(ctx, 240, 3330, 170, '#15803D')
+      drawHollyBerries(ctx, 460, 3380, 40)
+      drawChristmasTree(ctx, width - 240, 3330, 170, '#15803D')
+    } else if (style === 'xmas_reindeer_friends') {
+      // 13. Reindeer Friends: Giant Rudolph with glowing red nose, holiday bells, winter pines
+      drawChristmasBells(ctx, width / 2, 60, 52)
+      drawChristmasBells(ctx, 50, 65, 38)
+      drawChristmasBells(ctx, width - 50, 65, 38)
+      drawStarSparkle(ctx, 40, 1200, 24, '#EF4444')
+      drawStarSparkle(ctx, width - 40, 1200, 24, '#EF4444')
+      // Footer
+      drawReindeer(ctx, 260, 3330, 135)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#166534')
+      drawWrappedPresent(ctx, width - 480, 3370, 100, '#EF4444', '#FEF08A')
+    } else if (style === 'xmas_christmas_tree') {
+      // 14. Christmas Tree: Draped fairy lights, towering decorated pines with gold star toppers
+      drawFairyLights(ctx, width, 40)
+      drawStarSparkle(ctx, width / 2, 60, 35, '#FACC15')
+      drawChristmasTree(ctx, 50, 80, 65, '#15803D')
+      drawChristmasTree(ctx, width - 50, 80, 65, '#15803D')
+      // Footer
+      drawChristmasTree(ctx, 240, 3320, 185, '#15803D')
+      drawWrappedPresent(ctx, 460, 3370, 105, '#DC2626', '#FEF08A')
+      drawChristmasTree(ctx, width - 240, 3320, 185, '#15803D')
+    } else if (style === 'xmas_winter_village') {
+      // 15. Winter Village: Snowy cottages, snowman, pines, crystal stars
+      drawSnowflake(ctx, width / 2, 55, 38, '#FFFFFF')
+      drawSnowflake(ctx, 50, 65, 30, '#FFFFFF')
+      drawSnowflake(ctx, width - 50, 65, 30, '#FFFFFF')
+      drawSnowman(ctx, 240, 3340, 125)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#0F766E')
+      drawWrappedPresent(ctx, width - 460, 3370, 95, '#0F766E', '#FFFFFF')
+    } else if (style === 'xmas_snowflake_dreams') {
+      // 16. Snowflake Dreams: Cascading multi-layer crystal snowflakes of all sizes
+      drawSnowflake(ctx, width / 2, 60, 50, '#FFFFFF')
+      drawSnowflake(ctx, 50, 65, 38, '#FFFFFF')
+      drawSnowflake(ctx, width - 50, 65, 38, '#FFFFFF')
+      drawSnowflake(ctx, 40, 400, 32, '#BAE6FD')
+      drawSnowflake(ctx, width - 40, 400, 32, '#BAE6FD')
+      drawSnowflake(ctx, 40, 1200, 36, '#FFFFFF')
+      drawSnowflake(ctx, width - 40, 1200, 36, '#FFFFFF')
+      drawSnowflake(ctx, 40, 2000, 32, '#BAE6FD')
+      drawSnowflake(ctx, width - 40, 2000, 32, '#BAE6FD')
+      // Footer
+      drawSnowflake(ctx, 240, 3340, 65, '#FFFFFF')
+      drawPolarBear(ctx, 460, 3350, 120)
+      drawSnowflake(ctx, width - 240, 3340, 65, '#FFFFFF')
+      drawSnowman(ctx, width - 460, 3350, 115)
+    } else if (style === 'xmas_merry_and_bright') {
+      // 17. Merry & Bright: Draped multi-color fairy lights, golden bells, sparkling stars
+      drawFairyLights(ctx, width, 40)
+      drawStarSparkle(ctx, 50, 85, 30, '#FACC15')
+      drawStarSparkle(ctx, width - 50, 85, 30, '#FACC15')
+      drawFairyLights(ctx, width, 1200)
+      // Footer
+      drawChristmasBells(ctx, 240, 3340, 60)
+      drawWrappedPresent(ctx, 460, 3360, 110, '#DC2626', '#FACC15')
+      drawChristmasTree(ctx, width - 240, 3330, 170, '#15803D')
+    } else if (style === 'xmas_christmas_cookies') {
+      // 18. Christmas Cookies: Gingerbread characters, tree sugar cookies, candy canes
+      drawCandyCane(ctx, 55, 65, 70)
+      drawCandyCane(ctx, width - 55, 65, 70)
+      drawStarSparkle(ctx, width / 2, 55, 30, '#FACC15')
+      drawGingerbreadMan(ctx, 240, 3340, 125)
+      drawCandyCane(ctx, 450, 3350, 95)
+      drawGingerbreadMan(ctx, width - 240, 3340, 125)
+    } else if (style === 'xmas_gift_wrapped') {
+      // 19. Gift Wrapped: Giant ribbon bow topper, mountains of colorful wrapped gift boxes
+      drawRibbonBow(ctx, width / 2, 60, 95, '#DC2626')
+      drawWrappedPresent(ctx, 55, 75, 65, '#DC2626', '#FEF08A')
+      drawWrappedPresent(ctx, width - 55, 75, 65, '#15803D', '#FEF08A')
+      // Footer
+      drawWrappedPresent(ctx, 220, 3340, 130, '#DC2626', '#FEF08A')
+      drawWrappedPresent(ctx, 420, 3360, 110, '#15803D', '#FEF08A')
+      drawWrappedPresent(ctx, 600, 3390, 85, '#0284C7', '#FEF08A')
+      drawWrappedPresent(ctx, width - 240, 3340, 130, '#FACC15', '#DC2626')
+    } else if (style === 'xmas_golden_christmas') {
+      // 20. Golden Christmas: Golden bells, champagne star constellation, gold baubles, luxury tree
+      drawChristmasBells(ctx, width / 2, 60, 55)
+      drawStarSparkle(ctx, 50, 65, 32, '#FACC15')
+      drawStarSparkle(ctx, width - 50, 65, 32, '#FACC15')
+      drawBaubleOrnament(ctx, 40, 1200, 30, '#FACC15')
+      drawBaubleOrnament(ctx, width - 40, 1200, 30, '#FACC15')
+      // Footer
+      drawChristmasTree(ctx, 240, 3330, 175, '#CA8A04')
+      drawWrappedPresent(ctx, 460, 3360, 115, '#CA8A04', '#FEF08A')
+      drawStarSparkle(ctx, width - 240, 3340, 55, '#FACC15')
+    } else if (style === 'xmas_frosted_window') {
+      // 21. Frosted Window: Frozen stalactites, heavy frost snowflakes, winter snowman
+      drawIcicles(ctx, width, 10)
+      drawSnowflake(ctx, 50, 75, 36, '#FFFFFF')
+      drawSnowflake(ctx, width - 50, 75, 36, '#FFFFFF')
+      drawSnowflake(ctx, 40, 1200, 32, '#E0F2FE')
+      drawSnowflake(ctx, width - 40, 1200, 32, '#E0F2FE')
+      drawSnowman(ctx, 240, 3340, 130)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#0284C7')
+    } else if (style === 'xmas_peppermint_candy') {
+      // 22. Peppermint Candy: Oversized candy canes, peppermint swirl discs, holiday bows
+      drawRibbonBow(ctx, width / 2, 60, 80, '#DC2626')
+      drawCandyCane(ctx, 55, 65, 80)
+      drawCandyCane(ctx, width - 55, 65, 80)
+      drawCandyCane(ctx, 40, 1200, 75)
+      drawCandyCane(ctx, width - 40, 1200, 75)
+      // Footer
+      drawCandyCane(ctx, 240, 3340, 130)
+      drawWrappedPresent(ctx, 460, 3370, 105, '#DC2626', '#FFFFFF')
+      drawCandyCane(ctx, width - 240, 3340, 130)
+    } else if (style === 'xmas_nordic_christmas') {
+      // 23. Nordic Christmas: Scandinavian folk cross-stitch borders, reindeer family, Nordic trees
+      drawNordicBorder(ctx, width, height)
+      drawStarSparkle(ctx, width / 2, 55, 32, '#FFFFFF')
+      drawReindeer(ctx, 260, 3330, 135)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#DC2626')
+      drawWrappedPresent(ctx, width - 460, 3370, 105, '#FFFFFF', '#DC2626')
+    } else if (style === 'xmas_christmas_lights') {
+      // 24. Christmas Lights: Flowing multi-colored string fairy lights across top, gutters, and footer
+      drawFairyLights(ctx, width, 40)
+      drawFairyLights(ctx, width, 110)
+      drawFairyLights(ctx, width, height - 120)
+      drawChristmasTree(ctx, 240, 3330, 175, '#15803D')
+      drawWrappedPresent(ctx, 460, 3360, 110, '#DC2626', '#FACC15')
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+    } else if (style === 'xmas_nutcracker') {
+      // 25. Nutcracker: Giant soldier nutcracker with tall shako, holiday drums, bells
+      drawChristmasBells(ctx, width / 2, 60, 52)
+      drawChristmasBells(ctx, 50, 65, 38)
+      drawChristmasBells(ctx, width - 50, 65, 38)
+      drawNutcracker(ctx, 260, 3320, 150)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+      drawWrappedPresent(ctx, width - 460, 3370, 105, '#DC2626', '#FACC15')
+    } else if (style === 'xmas_polar_bear_christmas') {
+      // 26. Polar Bear Christmas: Giant fluffy polar bear face with red scarf, winter snowdrifts
+      drawSnowflake(ctx, width / 2, 55, 42, '#E2E8F0')
+      drawSnowflake(ctx, 50, 65, 34, '#E2E8F0')
+      drawSnowflake(ctx, width - 50, 65, 34, '#E2E8F0')
+      drawPolarBear(ctx, 260, 3340, 135)
+      drawPenguin(ctx, 480, 3360, 110)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#0284C7')
+    } else if (style === 'xmas_vintage_postcard') {
+      // 27. Vintage Postcard: Antique holly stamp, bells, vintage ribbon bow, classic Santa
+      drawRibbonBow(ctx, width / 2, 60, 80, '#B91C1C')
+      drawHollyBerries(ctx, 50, 65, 32)
+      drawChristmasBells(ctx, width - 50, 65, 40)
+      drawSantaClaus(ctx, 260, 3340, 130)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+      drawWrappedPresent(ctx, width - 460, 3370, 100, '#B91C1C', '#FEF08A')
+    } else if (style === 'xmas_christmas_sweater') {
+      // 28. Christmas Sweater: Fair Isle knit patterns, deer, holiday trees, snowflake borders
+      drawNordicBorder(ctx, width, height)
+      drawChristmasTree(ctx, 55, 75, 65, '#FFFFFF')
+      drawChristmasTree(ctx, width - 55, 75, 65, '#FFFFFF')
+      drawReindeer(ctx, 260, 3330, 130)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#FFFFFF')
+      drawSnowman(ctx, width - 460, 3350, 115)
+    } else if (style === 'xmas_midnight_christmas') {
+      // 29. Midnight Christmas: Brilliant golden crescent moon, shooting stars, reindeer
+      drawStarSparkle(ctx, width / 2, 55, 45, '#FDE047')
+      drawStarSparkle(ctx, 50, 65, 32, '#FDE047')
+      drawStarSparkle(ctx, width - 50, 65, 32, '#FDE047')
+      drawReindeer(ctx, 260, 3330, 135)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#1E3A8A')
+      drawStarSparkle(ctx, width - 460, 3360, 45, '#FEF08A')
+    } else if (style === 'xmas_kawaii_christmas') {
+      // 30. Kawaii Christmas: Cute Korean kawaii Santa & baby Rudolph, pastel ribbon bow
+      drawRibbonBow(ctx, width / 2, 60, 85, '#F472B6')
+      drawStarSparkle(ctx, 50, 65, 30, '#F472B6')
+      drawStarSparkle(ctx, width - 50, 65, 30, '#F472B6')
+      drawSantaClaus(ctx, 250, 3340, 130)
+      drawReindeer(ctx, width - 250, 3340, 130)
+      drawWrappedPresent(ctx, width / 2, 3370, 100, '#F472B6', '#FFFFFF')
+    } else if (style === 'xmas_snowman_party') {
+      // 31. Snowman Party: Two cheerful snowmen with top hats and scarves, snowfall
+      drawSnowflake(ctx, width / 2, 55, 42, '#BAE6FD')
+      drawSnowflake(ctx, 50, 65, 32, '#BAE6FD')
+      drawSnowflake(ctx, width - 50, 65, 32, '#BAE6FD')
+      drawSnowman(ctx, 260, 3340, 130)
+      drawSnowman(ctx, width - 260, 3340, 130)
+      drawChristmasTree(ctx, width / 2, 3330, 165, '#0284C7')
+    } else if (style === 'xmas_christmas_stockings') {
+      // 32. Christmas Stockings: Oversized holiday stockings stuffed with candy canes & gifts
+      drawChristmasStocking(ctx, 55, 75, 75, '#DC2626')
+      drawChristmasStocking(ctx, width - 55, 75, 75, '#15803D')
+      drawChristmasStocking(ctx, 250, 3350, 125, '#DC2626')
+      drawChristmasStocking(ctx, 450, 3350, 125, '#15803D')
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+    } else if (style === 'xmas_starry_night') {
+      // 34. Starry Christmas Night: Golden star constellation, deep night aesthetic
+      drawStarSparkle(ctx, width / 2, 60, 50, '#FACC15')
+      drawStarSparkle(ctx, 50, 65, 35, '#FACC15')
+      drawStarSparkle(ctx, width - 50, 65, 35, '#FACC15')
+      drawStarSparkle(ctx, 40, 1200, 28, '#FACC15')
+      drawStarSparkle(ctx, width - 40, 1200, 28, '#FACC15')
+      drawChristmasTree(ctx, 240, 3330, 175, '#1E1B4B')
+      drawStarSparkle(ctx, 460, 3360, 55, '#FACC15')
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#1E1B4B')
+    } else if (style === 'xmas_pink_ribbon') {
+      // 35. Pink Ribbon: Giant pastel pink ribbon bows, pastel gift boxes
+      drawRibbonBow(ctx, width / 2, 60, 95, '#F472B6')
+      drawRibbonBow(ctx, 50, 65, 60, '#F472B6')
+      drawRibbonBow(ctx, width - 50, 65, 60, '#F472B6')
+      drawRibbonBow(ctx, 250, 3350, 120, '#F472B6')
+      drawWrappedPresent(ctx, width - 250, 3360, 125, '#F472B6', '#FFFFFF')
+      drawChristmasTree(ctx, width / 2, 3330, 165, '#FBCFE8')
+    } else if (style === 'xmas_christmas_market') {
+      // 36. Christmas Market: Market awning garlands, gingerbread treats, wooden bells
+      drawFestiveGarland(ctx, width, 40)
+      drawChristmasBells(ctx, 50, 70, 42)
+      drawChristmasBells(ctx, width - 50, 70, 42)
+      drawGingerbreadMan(ctx, 240, 3340, 125)
+      drawChristmasBells(ctx, 450, 3360, 55)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+    } else if (style === 'xmas_winter_wonderland') {
+      // 37. Winter Wonderland: Cute penguin with winter earmuffs, giant snowy trees, piles of snow
+      drawSnowflake(ctx, width / 2, 55, 45, '#FFFFFF')
+      drawSnowflake(ctx, 50, 65, 35, '#FFFFFF')
+      drawSnowflake(ctx, width - 50, 65, 35, '#FFFFFF')
+      drawPenguin(ctx, 260, 3340, 130)
+      drawSnowman(ctx, 480, 3350, 115)
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#047857')
+    } else if (style === 'xmas_gingerbread_friends') {
+      // 38. Gingerbread Friends: Two smiling gingerbread friends holding hands, candy canes
+      drawCandyCane(ctx, 55, 65, 75)
+      drawCandyCane(ctx, width - 55, 65, 75)
+      drawStarSparkle(ctx, width / 2, 55, 32, '#FDE047')
+      drawGingerbreadMan(ctx, 260, 3340, 125)
+      drawGingerbreadMan(ctx, 480, 3340, 125)
+      drawCandyCane(ctx, width - 240, 3340, 110)
+    } else if (style === 'xmas_holly_jolly') {
+      // 39. Holly Jolly: Jolly golden bells, red ribbon bows, lush mistletoe berries
+      drawChristmasBells(ctx, width / 2, 60, 60)
+      drawHollyBerries(ctx, 50, 65, 35)
+      drawHollyBerries(ctx, width - 50, 65, 35)
+      drawChristmasTree(ctx, 240, 3330, 175, '#15803D')
+      drawChristmasBells(ctx, 460, 3360, 55)
+      drawWrappedPresent(ctx, width - 240, 3360, 115, '#DC2626', '#FEF08A')
+    } else if (style === 'xmas_december_memories') {
+      // 40. December Memories: Large Christmas wreath with red bow, holiday tree, wrapped gifts
+      drawChristmasWreath(ctx, width / 2, 60, 65)
+      drawSnowflake(ctx, 50, 65, 34, '#FFFFFF')
+      drawSnowflake(ctx, width - 50, 65, 34, '#FFFFFF')
+      drawWrappedPresent(ctx, 240, 3350, 125, '#DC2626', '#FACC15')
+      drawWrappedPresent(ctx, 440, 3380, 95, '#15803D', '#FACC15')
+      drawChristmasTree(ctx, width - 240, 3330, 175, '#15803D')
+    } else {
+      drawSnowflake(ctx, 50, 80, 32, 'rgba(255,255,255,0.7)')
+      drawSnowflake(ctx, width - 50, 80, 32, 'rgba(255,255,255,0.7)')
+      drawStarSparkle(ctx, 50, height - 160, 24, 'rgba(255,255,255,0.8)')
+      drawStarSparkle(ctx, width - 50, height - 160, 24, 'rgba(255,255,255,0.8)')
+    }
   }
 
   ctx.restore()
@@ -1269,6 +1392,253 @@ function drawNordicBorder(ctx: CanvasRenderingContext2D, width: number, height: 
   for (let y = 140; y < height - 160; y += 80) {
     drawStarSparkle(ctx, 40, y, 8, '#FFFFFF')
     drawStarSparkle(ctx, width - 40, y, 8, '#FFFFFF')
+  }
+  ctx.restore()
+}
+
+function drawFireplace(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save()
+  // Hearth mantel (wood)
+  ctx.fillStyle = '#78350F'
+  ctx.fillRect(cx - size * 0.5, cy - size * 0.45, size, size * 0.12)
+  // Brick pillars
+  ctx.fillStyle = '#991B1B'
+  ctx.fillRect(cx - size * 0.42, cy - size * 0.33, size * 0.22, size * 0.7)
+  ctx.fillRect(cx + size * 0.2, cy - size * 0.33, size * 0.22, size * 0.7)
+  // Firebox opening
+  ctx.fillStyle = '#1C1917'
+  ctx.fillRect(cx - size * 0.2, cy - size * 0.33, size * 0.4, size * 0.7)
+  // Hearth base
+  ctx.fillStyle = '#78350F'
+  ctx.fillRect(cx - size * 0.46, cy + size * 0.32, size * 0.92, size * 0.1)
+  // Fire glow
+  ctx.fillStyle = '#EA580C'
+  ctx.beginPath()
+  ctx.moveTo(cx - size * 0.12, cy + size * 0.32)
+  ctx.lineTo(cx, cy + size * 0.05)
+  ctx.lineTo(cx + size * 0.12, cy + size * 0.32)
+  ctx.closePath()
+  ctx.fill()
+  ctx.fillStyle = '#FACC15'
+  ctx.beginPath()
+  ctx.moveTo(cx - size * 0.07, cy + size * 0.32)
+  ctx.lineTo(cx, cy + size * 0.14)
+  ctx.lineTo(cx + size * 0.07, cy + size * 0.32)
+  ctx.closePath()
+  ctx.fill()
+  // Stockings on mantel
+  drawChristmasStocking(ctx, cx - size * 0.18, cy - size * 0.2, size * 0.35, '#DC2626')
+  drawChristmasStocking(ctx, cx + size * 0.18, cy - size * 0.2, size * 0.35, '#15803D')
+  ctx.restore()
+}
+
+function drawSnowfallBackground(ctx: CanvasRenderingContext2D, width: number, height: number, color: string = 'rgba(255, 255, 255, 0.45)') {
+  ctx.save()
+  ctx.fillStyle = color
+  const leftX = [20, 50, 30, 60, 25, 55, 35, 65, 22, 58]
+  const rightX = [width - 20, width - 50, width - 30, width - 60, width - 25, width - 55, width - 35, width - 65, width - 22, width - 58]
+  const steps = Math.max(1, Math.floor((height - 240) / 140))
+  for (let i = 0; i < steps; i++) {
+    const y = 80 + i * 140
+    const lx = leftX[i % leftX.length]
+    const rx = rightX[i % rightX.length]
+    const r = (i % 3) + 2
+    ctx.beginPath(); ctx.arc(lx, y, r, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(rx, y + 30, r, 0, Math.PI * 2); ctx.fill()
+  }
+  ctx.restore()
+}
+
+let cachedSamplePhotos: HTMLCanvasElement[] | null = null
+
+/**
+ * Returns 4 offline-safe, high-aesthetic photobooth portraits for frame previews.
+ */
+export function getSamplePhotos(): HTMLCanvasElement[] {
+  if (cachedSamplePhotos) return cachedSamplePhotos
+
+  if (typeof document === 'undefined') {
+    return []
+  }
+
+  const palettes = [
+    { bg: '#FED7AA', hair: '#451A03', clothes: '#DC2626', skin: '#FFEDD5', blush: '#FB7185' },
+    { bg: '#BAE6FD', hair: '#1E293B', clothes: '#0284C7', skin: '#FEF3C7', blush: '#F472B6' },
+    { bg: '#FBCFE8', hair: '#701A75', clothes: '#DB2777', skin: '#FFF1F2', blush: '#FDA4AF' },
+    { bg: '#BBF7D0', hair: '#14532D', clothes: '#16A34A', skin: '#FEF08A', blush: '#F472B6' },
+  ]
+
+  cachedSamplePhotos = palettes.map(p => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 400
+    canvas.height = 300
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.fillStyle = p.bg
+      ctx.fillRect(0, 0, 400, 300)
+
+      // Friendly studio silhouette pose
+      ctx.fillStyle = p.clothes
+      ctx.beginPath()
+      ctx.arc(200, 340, 150, Math.PI, 0)
+      ctx.fill()
+
+      ctx.fillStyle = p.skin
+      ctx.fillRect(180, 180, 40, 50)
+
+      ctx.beginPath()
+      ctx.arc(200, 140, 65, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.fillStyle = p.hair
+      ctx.beginPath()
+      ctx.arc(200, 125, 70, Math.PI * 0.8, Math.PI * 2.2)
+      ctx.fill()
+
+      ctx.fillStyle = p.blush
+      ctx.beginPath(); ctx.arc(165, 155, 14, 0, Math.PI * 2); ctx.fill()
+      ctx.beginPath(); ctx.arc(235, 155, 14, 0, Math.PI * 2); ctx.fill()
+
+      ctx.fillStyle = '#18181B'
+      ctx.beginPath(); ctx.arc(170, 135, 6, 0, Math.PI * 2); ctx.fill()
+      ctx.beginPath(); ctx.arc(230, 135, 6, 0, Math.PI * 2); ctx.fill()
+      ctx.lineWidth = 3
+      ctx.strokeStyle = '#18181B'
+      ctx.beginPath()
+      ctx.arc(200, 155, 16, 0.2, Math.PI - 0.2)
+      ctx.stroke()
+    }
+    return canvas
+  })
+
+  return cachedSamplePhotos
+}
+
+/**
+ * Renders any frame onto a canvas of arbitrary dimensions (thumbnail, preview, or 300 DPI export).
+ * Guarantees 100% visual parity between selection preview and final export.
+ */
+export function renderFrameToCanvas(
+  targetCanvas: HTMLCanvasElement,
+  frame: FrameTemplate,
+  layout: LayoutTypeConfig,
+  samplePhotos?: (HTMLCanvasElement | HTMLImageElement)[],
+  options?: {
+    filter?: PhotoFilter
+    filterIntensity?: number
+  }
+) {
+  const ctx = targetCanvas.getContext('2d')
+  if (!ctx) return
+
+  const targetWidth = targetCanvas.width
+  const targetHeight = targetCanvas.height
+  const baseWidth = 1200
+  const baseHeight = 3600
+
+  ctx.save()
+  // Uniform scale to 1200x3600 photobooth coordinate system
+  ctx.scale(targetWidth / baseWidth, targetHeight / baseHeight)
+
+  // 1. Frame Background
+  if (frame.gradientColors && frame.gradientColors.length >= 2) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, baseHeight)
+    const step = 1 / (frame.gradientColors.length - 1)
+    frame.gradientColors.forEach((color, idx) => {
+      gradient.addColorStop(idx * step, color)
+    })
+    ctx.fillStyle = gradient
+  } else {
+    ctx.fillStyle = frame.backgroundColor
+  }
+  ctx.fillRect(0, 0, baseWidth, baseHeight)
+
+  // 2. Draw Theme Background Decors & Christmas Vector Artwork
+  drawThemeBackgroundDecors(ctx, frame, baseWidth, baseHeight)
+
+  // 3. Draw Photo Slots
+  const photos = samplePhotos || []
+  const filter = options?.filter || 'none'
+  const intensity = options?.filterIntensity ?? 1.0
+
+  if (layout.id === 'fourCut') {
+    const slotW = AppConstants.fourCutSlotWidth
+    const slotH = AppConstants.fourCutSlotHeight
+    const marginX = AppConstants.fourCutMarginX
+    const marginTop = AppConstants.fourCutMarginTop
+    const gutter = AppConstants.fourCutGutter
+
+    for (let i = 0; i < 4; i++) {
+      const slotY = marginTop + i * (slotH + gutter)
+      if (i < photos.length && photos[i]) {
+        drawPhotoSlot(ctx, photos[i] as HTMLImageElement, marginX, slotY, slotW, slotH, frame, filter, intensity)
+      } else {
+        drawEmptySlot(ctx, marginX, slotY, slotW, slotH, frame)
+      }
+    }
+  } else if (layout.id === 'sixCut') {
+    const cols = 2
+    const slotW = AppConstants.sixCutSlotWidth
+    const slotH = AppConstants.sixCutSlotHeight
+    const marginX = AppConstants.sixCutMarginX
+    const marginTop = AppConstants.sixCutMarginTop
+    const gutterX = AppConstants.sixCutGutterX
+    const gutterY = AppConstants.sixCutGutterY
+
+    for (let i = 0; i < 6; i++) {
+      const col = i % cols
+      const row = Math.floor(i / cols)
+      const slotX = marginX + col * (slotW + gutterX)
+      const slotY = marginTop + row * (slotH + gutterY)
+      if (i < photos.length && photos[i]) {
+        drawPhotoSlot(ctx, photos[i] as HTMLImageElement, slotX, slotY, slotW, slotH, frame, filter, intensity)
+      } else {
+        drawEmptySlot(ctx, slotX, slotY, slotW, slotH, frame)
+      }
+    }
+  }
+
+  // 4. Header English Title Banner
+  ctx.save()
+  ctx.font = 'bold 36px "Outfit", "Segoe UI", sans-serif'
+  ctx.fillStyle = frame.captionColor
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(frame.englishTitle || frame.name, baseWidth / 2, 60)
+  ctx.restore()
+
+  // 5. Footer Watermark & Date
+  ctx.save()
+  ctx.font = '600 24px "Outfit", "Segoe UI", sans-serif'
+  ctx.fillStyle = frame.captionColor
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('KOREAN 4-CUT STUDIO · 2026.12.25', baseWidth / 2, 3500)
+  ctx.restore()
+
+  ctx.restore()
+}
+
+function drawEmptySlot(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, frame: FrameTemplate) {
+  ctx.save()
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)'
+  if (frame.slotCornerRadius > 0 && typeof ctx.roundRect === 'function') {
+    ctx.beginPath()
+    ctx.roundRect(x, y, w, h, frame.slotCornerRadius)
+    ctx.fill()
+  } else {
+    ctx.fillRect(x, y, w, h)
+  }
+  if (frame.slotBorderWidth > 0) {
+    ctx.strokeStyle = frame.slotBorderColor || '#FFFFFF'
+    ctx.lineWidth = frame.slotBorderWidth
+    ctx.beginPath()
+    if (frame.slotCornerRadius > 0 && typeof ctx.roundRect === 'function') {
+      ctx.roundRect(x, y, w, h, frame.slotCornerRadius)
+    } else {
+      ctx.rect(x, y, w, h)
+    }
+    ctx.stroke()
   }
   ctx.restore()
 }
