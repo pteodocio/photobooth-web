@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { CameraService } from '../../services/cameraService'
 import { getCssFilter, PHOTO_FILTERS } from '../../core/filters'
-import { Camera, RefreshCw, ArrowLeft, Sparkles, X, Info } from 'lucide-react'
+import { COUNTDOWN_OPTIONS } from '../../core/types'
+import { Camera, RefreshCw, ArrowLeft, Sparkles, X, Info, Timer, Check, Video } from 'lucide-react'
 import { sound } from '../../services/soundService'
 
 export const CameraPrepStep: React.FC = () => {
@@ -10,6 +11,8 @@ export const CameraPrepStep: React.FC = () => {
     selectedFilter,
     filterIntensity,
     selectedFrame,
+    selectedCountdown,
+    setCountdown,
     goToFrameSelect,
     startCapture,
     resetSession,
@@ -21,6 +24,8 @@ export const CameraPrepStep: React.FC = () => {
 
   const activeCssFilter = getCssFilter(selectedFilter, filterIntensity)
   const filterName = PHOTO_FILTERS.find(f => f.id === selectedFilter)?.displayName || 'Original'
+
+  const activeOption = COUNTDOWN_OPTIONS.find(opt => opt.seconds === selectedCountdown) || COUNTDOWN_OPTIONS[0]
 
   useEffect(() => {
     let isMounted = true
@@ -144,11 +149,114 @@ export const CameraPrepStep: React.FC = () => {
           </div>
         </div>
 
+        {/* Countdown Timer Selector (Requirement 1 & 2) */}
+        <div className="w-full max-w-2xl mt-4">
+          <div className="flex items-center justify-between mb-2 px-1">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-white uppercase tracking-wider">
+              <Timer size={14} className="text-[#FF385C]" />
+              <span>Choose Countdown Timer</span>
+            </div>
+            <span className="text-[11px] text-white/50 font-mono">Applies to all 4 shots</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {COUNTDOWN_OPTIONS.map(option => {
+              const isSelected = selectedCountdown === option.seconds
+              return (
+                <button
+                  key={option.seconds}
+                  type="button"
+                  data-testid={`timer-option-${option.seconds}`}
+                  onClick={() => {
+                    sound.playClick()
+                    setCountdown(option.seconds)
+                  }}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                    isSelected
+                      ? 'bg-[#FF385C]/10 border-[#FF385C] ring-1 ring-[#FF385C] shadow-lg shadow-[#FF385C]/15 text-white'
+                      : 'bg-white/5 border-white/10 hover:border-white/20 text-white/70 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-base font-bold font-mono tracking-tight flex items-center gap-1.5">
+                      <span className={`text-lg font-black ${isSelected ? 'text-[#FF385C]' : 'text-white'}`}>
+                        {option.seconds}s
+                      </span>
+                      <span className="text-xs font-semibold text-white/90">{option.label}</span>
+                    </span>
+                    {isSelected ? (
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FF385C] text-white text-[9px] font-bold font-mono tracking-wider">
+                        <Check size={10} strokeWidth={3} />
+                        SELECTED
+                      </span>
+                    ) : (
+                      <span className="w-3.5 h-3.5 rounded-full border border-white/30" />
+                    )}
+                  </div>
+
+                  <p className="text-[11px] text-white/60 leading-tight">
+                    {option.description}
+                  </p>
+
+                  <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-mono mt-0.5">
+                    <Video size={10} />
+                    <span>{option.estimatedBtsDuration}</span>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Session Configuration Summary (Requirement 6) */}
+        <div className="w-full max-w-2xl mt-3 p-3 sm:p-3.5 rounded-2xl bg-[#111116] border border-white/10 flex flex-col gap-2">
+          <div className="flex items-center justify-between text-xs font-bold text-white/80 border-b border-white/5 pb-1.5">
+            <span className="flex items-center gap-1.5 uppercase tracking-wider text-[11px] text-white/90">
+              <Sparkles size={12} className="text-[#FF385C]" />
+              Session Summary
+            </span>
+            <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Locked for Session
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            {/* Filter */}
+            <div className="flex flex-col p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-[10px] text-white/40 uppercase">Selected Filter</span>
+              <span className="font-semibold text-white truncate mt-0.5">{filterName}</span>
+            </div>
+
+            {/* Frame */}
+            <div className="flex flex-col p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-[10px] text-white/40 uppercase">Selected Frame</span>
+              <span className="font-semibold text-white truncate mt-0.5">{selectedFrame.name}</span>
+            </div>
+
+            {/* Countdown Timer */}
+            <div className="flex flex-col p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-[10px] text-white/40 uppercase">Countdown Timer</span>
+              <span className="font-bold text-[#FF385C] font-mono truncate mt-0.5">
+                {activeOption.label}
+              </span>
+            </div>
+
+            {/* BTS Recording */}
+            <div className="flex flex-col p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-[10px] text-white/40 uppercase">BTS Recording</span>
+              <span className="font-semibold text-emerald-400 text-[11px] truncate mt-0.5">
+                Active ({activeOption.estimatedBtsDuration})
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Clear Instructions Banner */}
-        <div className="mt-3 max-w-md w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 text-xs text-white/70">
+        <div className="mt-3 max-w-2xl w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 text-xs text-white/70">
           <Info size={16} className="text-[#FF385C] shrink-0" />
           <span>
-            Get ready for <strong className="text-white">4 automatic shots</strong> with a <strong className="text-white">3-second countdown</strong> each. Change poses between shots!
+            Get ready for <strong className="text-white">4 automatic shots</strong> with a <strong className="text-white">{selectedCountdown}-second countdown</strong> each. Change poses between shots!
           </span>
         </div>
       </div>

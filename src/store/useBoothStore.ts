@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type {
   BoothSessionStatus,
   CapturedPhoto,
+  CountdownDuration,
   FrameTemplate,
   LayoutTypeConfig,
   PhotoFilter,
@@ -21,6 +22,7 @@ interface BoothState {
   selectedFilter: PhotoFilter
   filterIntensity: number
   selectedStamp: string
+  selectedCountdown: CountdownDuration
   compositeDataUrl: string | null
   videoBlob: Blob | null
   videoUrl: string | null
@@ -49,6 +51,7 @@ interface BoothState {
   setFilter: (filter: PhotoFilter) => void
   setFilterIntensity: (intensity: number) => void
   setStamp: (stampText: string) => void
+  setCountdown: (seconds: CountdownDuration) => void
   setCompositeDataUrl: (url: string | null) => void
   setVideoBlob: (blob: Blob | null) => void
   setVideoUrl: (url: string | null) => void
@@ -72,6 +75,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   selectedFilter: 'none',
   filterIntensity: 1.0,
   selectedStamp: KOREAN_STAMPS[0].text,
+  selectedCountdown: 3,
   compositeDataUrl: null,
   videoBlob: null,
   videoUrl: null,
@@ -211,6 +215,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   setFilterIntensity: intensity => set({ filterIntensity: Math.max(0, Math.min(1, intensity)) }),
 
   setStamp: stampText => set({ selectedStamp: stampText }),
+
+  setCountdown: seconds => set({ selectedCountdown: seconds }),
 
   setCompositeDataUrl: url => set({ compositeDataUrl: url, status: 'exportReady' }),
 

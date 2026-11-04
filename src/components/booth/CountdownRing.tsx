@@ -44,7 +44,10 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
         />
       </svg>
       {/* Center number */}
-      <span className={`absolute text-3xl font-black font-mono tracking-tight ${isUrgent ? 'text-[#FF385C] animate-pulse' : 'text-white'}`}>
+      <span
+        data-testid="countdown-number"
+        className={`absolute text-3xl font-black font-mono tracking-tight ${isUrgent ? 'text-[#FF385C] animate-pulse' : 'text-white'}`}
+      >
         {secondsRemaining}
       </span>
     </div>

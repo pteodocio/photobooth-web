@@ -26,6 +26,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     selectedFilter,
     filterIntensity,
     selectedStamp,
+    selectedCountdown,
     sessionId,
     passcode,
     capturedPhotos,
@@ -36,7 +37,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     setVideoUrl,
   } = useBoothStore()
 
-  const [secondsRemaining, setSecondsRemaining] = useState(AppConstants.defaultCountdownSeconds)
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(selectedCountdown)
   const [isFlashing, setIsFlashing] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [isCompositing, setIsCompositing] = useState(false)
@@ -67,9 +68,9 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     const photoIndex = capturedPhotos.length
     recordShot(photoDataUrl)
 
-    // Continue recording briefly after the photo is taken (~700ms) to capture post-photo laughter and reactions
+    // Continue recording briefly after the photo is taken (~1200ms) to capture post-photo laughter and reactions
     if (VideoRecorderService.isRecordingShot()) {
-      await new Promise(r => setTimeout(r, 700))
+      await new Promise(r => setTimeout(r, 1200))
     }
 
     let clipUrl: string | undefined
@@ -156,7 +157,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       setTimeout(() => {
         setIsPaused(false)
         isCapturingRef.current = false
-        setSecondsRemaining(AppConstants.defaultShotIntervalSeconds)
+        setSecondsRemaining(selectedCountdown)
         if (streamRef.current) {
           VideoRecorderService.startShotRecording(streamRef.current, nextCount)
         }
@@ -171,6 +172,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     selectedFilter,
     filterIntensity,
     selectedStamp,
+    selectedCountdown,
     sessionId,
     passcode,
     setCompositeDataUrl,
@@ -211,7 +213,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     }
   }, [facingMode])
 
-  // Automated 3-Second Countdown Timer
+  // Automated Countdown Timer
   useEffect(() => {
     if (isCompositing || isPaused) return
 
@@ -219,17 +221,17 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       setSecondsRemaining(prev => {
         if (prev <= 1) {
           triggerCapture()
-          return AppConstants.defaultShotIntervalSeconds
+          return selectedCountdown
         }
 
-        // Sound cues for 3, 2, 1
-        sound.playCountdownBeep(prev === 2)
+        // Sound cues for countdown
+        sound.playCountdownBeep(prev === 2 || prev === 1)
         return prev - 1
       })
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [triggerCapture, isCompositing, isPaused])
+  }, [triggerCapture, isCompositing, isPaused, selectedCountdown])
 
   const toggleCamera = () => {
     sound.playClick()
@@ -273,6 +275,10 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           <span className="text-xs text-[#FF385C] font-medium flex items-center gap-1">
             <Sparkles size={11} />
             {currentFilterObj.displayName}
+          </span>
+          <span className="text-xs text-white/50">·</span>
+          <span className="text-xs text-white font-mono font-semibold">
+            {selectedCountdown}s
           </span>
         </div>
 
@@ -346,15 +352,16 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
             </div>
           </div>
 
-          {/* Countdown Ring: Exact 3s timer */}
+          {/* Countdown Ring: Exact selected timer */}
           {!isPaused && !isCompositing && (
             <div className="absolute top-4 left-4 pointer-events-none drop-shadow-xl flex items-center gap-2">
               <CountdownRing
                 secondsRemaining={secondsRemaining}
-                totalSeconds={AppConstants.defaultShotIntervalSeconds}
+                totalSeconds={selectedCountdown}
               />
-              <div className="px-2.5 py-1 rounded-md bg-black/60 border border-white/10 text-[11px] font-bold text-white">
-                SHOT {currentShotIndex}/{selectedLayout.slotCount}
+              <div className="px-2.5 py-1 rounded-md bg-black/60 border border-white/10 text-[11px] font-bold text-white flex items-center gap-1">
+                <span>Photo {currentShotIndex} of {selectedLayout.slotCount}</span>
+                <span className="sr-only">SHOT {currentShotIndex}/{selectedLayout.slotCount}</span>
               </div>
             </div>
           )}
@@ -367,7 +374,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
             >
               <span className="w-2 h-2 rounded-full bg-[#FF385C] animate-pulse" />
               <span className="text-[10px] font-bold font-mono tracking-wider text-white uppercase">
-                REC BTS
+                REC BTS ({selectedCountdown}s)
               </span>
             </div>
           )}
