@@ -7,14 +7,35 @@
   --color-bg-surface: #FFFFFF;
   --color-bg-surface-subdued: #F4F1EC;
   --color-bg-surface-warm: #EFECE6;
-  --color-border-subtle: rgba(0, 0, 0, 0.06);
-  --color-border-strong: rgba(0, 0, 0, 0.12);
+  --color-border-subtle: rgba(28, 25, 23, 0.06);
+  --color-border-strong: rgba(28, 25, 23, 0.12);
   --color-brand-primary: #FF4D6D;
   --color-brand-hover: #E11D48;
   --color-brand-subtle: #FFF0F3;
   --color-text-main: #1C1917;
   --color-text-muted: #78716C;
   --color-text-subtle: #A8A29E;
+  --color-scrollbar-track: #F4F1EC;
+  --color-scrollbar-thumb: #D6D1C7;
+  --color-scrollbar-hover: #FF4D6D;
+  --color-dispenser-slot: #E7E5E0;
+  --shadow-photo-card: 0 2px 4px rgba(0, 0, 0, 0.04), 0 12px 24px rgba(0, 0, 0, 0.08), 0 24px 48px rgba(0, 0, 0, 0.06);
+  --shadow-soft-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+@theme {
+  --color-studio-base: var(--color-bg-base);
+  --color-studio-surface: var(--color-bg-surface);
+  --color-studio-subdued: var(--color-bg-surface-subdued);
+  --color-studio-warm: var(--color-bg-surface-warm);
+  --color-studio-border: var(--color-border-subtle);
+  --color-studio-border-strong: var(--color-border-strong);
+  --color-studio-main: var(--color-text-main);
+  --color-studio-muted: var(--color-text-muted);
+  --color-studio-subtle: var(--color-text-subtle);
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-hover: var(--color-brand-hover);
+  --color-brand-subtle: var(--color-brand-subtle);
 }
 
 @layer base {
@@ -39,14 +60,14 @@
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #F4F1EC;
+  background: var(--color-scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #D6D1C7;
+  background: var(--color-scrollbar-thumb);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF4D6D;
+  background: var(--color-scrollbar-hover);
 }
 
 /* Authentic studio flash */
@@ -94,21 +115,18 @@
 
 /* Physical photo paper shadow */
 .photo-card-shadow {
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    0 12px 24px rgba(0, 0, 0, 0.08),
-    0 24px 48px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-photo-card);
 }
 
 /* Soft minimalist card shadow */
 .soft-card-shadow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-soft-card);
 }
 
 /* Darkroom light texture */
 .subtle-grid-bg {
   background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(to right, var(--color-border-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border-subtle) 1px, transparent 1px);
   background-size: 24px 24px;
 }

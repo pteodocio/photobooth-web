@@ -28,16 +28,16 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
   const isFiltered = selectedFilter !== 'none'
 
   return (
-    <div className="flex flex-col gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 select-none">
+    <div className="flex flex-col gap-3 p-4 rounded-2xl bg-white border border-black/[0.06] shadow-xs select-none">
       {/* Header with Reset and Intensity */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-black/[0.05]">
         <div className="flex items-center gap-2">
-          <Sparkles size={14} className="text-[#FF385C]" />
-          <span className="text-xs font-bold text-white uppercase tracking-wider">
+          <Sparkles size={14} className="text-[#FF4D6D]" />
+          <span className="text-xs font-semibold text-[#1C1917]">
             Photo Filters (40 Styles)
           </span>
           {isFiltered && (
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FF385C]/20 text-[#FF385C] font-semibold">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFF0F3] text-[#FF4D6D] font-medium border border-[#FF4D6D]/20">
               Active
             </span>
           )}
@@ -51,9 +51,9 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
               onSelectFilter('none')
               setFilterIntensity(1.0)
             }}
-            className="flex items-center gap-1 text-[11px] text-white/50 hover:text-white transition-colors duration-150 cursor-pointer self-start sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="flex items-center gap-1 text-[11px] text-[#78716C] hover:text-[#1C1917] transition-colors duration-150 cursor-pointer self-start sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
-            <RotateCcw size={12} />
+            <RotateCcw size={11} />
             <span>Reset to Original</span>
           </button>
         )}
@@ -69,10 +69,10 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
               sound.playClick()
               setActiveCategory(cat.id)
             }}
-            className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+            className={`px-3 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               activeCategory === cat.id
-                ? 'bg-white text-black font-semibold shadow'
-                : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                ? 'bg-[#1C1917] text-white shadow-xs'
+                : 'bg-[#FAF8F5] text-[#78716C] hover:text-[#1C1917] hover:bg-[#F4F1EC] border border-black/[0.04]'
             }`}
           >
             {cat.name}
@@ -82,10 +82,10 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
 
       {/* Intensity Slider (Visible when any filter is active) */}
       {isFiltered && (
-        <div className="flex items-center gap-3 p-2.5 rounded-xl bg-black/40 border border-white/10">
-          <div className="flex items-center gap-1.5 text-xs text-white/80 font-medium min-w-[110px]">
-            <Sliders size={13} className="text-[#FF385C]" />
-            <span>Intensity: {Math.round(filterIntensity * 100)}%</span>
+        <div className="flex items-center gap-3 p-2.5 rounded-xl bg-[#FAF8F5] border border-black/[0.04]">
+          <div className="flex items-center gap-1.5 text-xs text-[#1C1917] font-medium min-w-[110px]">
+            <Sliders size={13} className="text-[#FF4D6D]" />
+            <span>Filter Intensity: {Math.round(filterIntensity * 100)}%</span>
           </div>
 
           <input
@@ -95,7 +95,7 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
             step="0.05"
             value={filterIntensity}
             onChange={e => setFilterIntensity(parseFloat(e.target.value))}
-            className="flex-1 accent-[#FF385C] h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="flex-1 accent-[#FF4D6D] h-1.5 bg-black/[0.06] rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           />
 
           <button
@@ -104,7 +104,7 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
               sound.playClick()
               setFilterIntensity(1.0)
             }}
-            className="text-[11px] text-white/40 hover:text-white transition-colors duration-150 px-2 py-0.5 rounded bg-white/5 border border-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="text-[11px] text-[#78716C] hover:text-[#1C1917] transition-colors duration-150 px-2 py-0.5 rounded bg-white border border-black/[0.06] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
             100%
           </button>
@@ -124,23 +124,23 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
                 sound.playClick()
                 onSelectFilter(filter.id)
               }}
-              className={`flex flex-col items-center justify-between p-2 rounded-xl text-center transition-[transform,opacity,border-color,background-color] duration-150 cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+              className={`flex flex-col items-center justify-between p-2 rounded-xl text-center transition-[transform,opacity,border-color,background-color] duration-150 cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                 isSelected
-                  ? 'bg-white/15 border-[#FF385C] ring-2 ring-[#FF385C] shadow-lg scale-105'
-                  : 'bg-white/5 border-white/5 hover:bg-white/10'
+                  ? 'bg-white border-[#FF4D6D] ring-2 ring-[#FF4D6D]/20 shadow-xs'
+                  : 'bg-white border-black/[0.06] hover:border-black/[0.12] hover:bg-[#FDFBF7]'
               }`}
             >
               {/* Filter swatch bubble */}
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-800 mb-1.5 relative shadow-sm">
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-100 mb-1.5 relative shadow-xs">
                 <div
-                  className="w-full h-full bg-gradient-to-tr from-amber-200 via-rose-300 to-sky-300"
+                  className="w-full h-full bg-gradient-to-tr from-amber-100 via-rose-100 to-sky-100"
                 />
                 {isSelected && (
-                  <div className="absolute inset-0 bg-[#FF385C]/20 border-2 border-[#FF385C] rounded-full" />
+                  <div className="absolute inset-0 bg-[#FF4D6D]/10 border-2 border-[#FF4D6D] rounded-full" />
                 )}
               </div>
 
-              <span className="text-[10px] font-medium text-white/90 truncate w-full leading-tight">
+              <span className="text-[10px] font-medium text-[#1C1917] truncate w-full leading-tight">
                 {filter.displayName}
               </span>
             </button>

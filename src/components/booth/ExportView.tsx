@@ -294,7 +294,7 @@ export const ExportView: React.FC = () => {
             title="Download Animated BTS Strip (MP4)"
           >
             <Video size={14} className="text-[#FF4D6D]" />
-            <span>{isExportingVideo ? 'Generating...' : 'Download Video'}</span>
+            <span>{isExportingVideo ? 'Generating…' : 'Download Video'}</span>
           </button>
 
           <button
@@ -342,7 +342,7 @@ export const ExportView: React.FC = () => {
                 <img src={qrCodeDataUrl} alt="QR Code" className="w-44 h-44 block" />
               ) : (
                 <div className="w-44 h-44 bg-neutral-100 flex items-center justify-center">
-                  <span className="text-xs text-[#78716C]">Generating QR...</span>
+                  <span className="text-xs text-[#78716C]">Generating QR…</span>
                 </div>
               )}
             </div>
