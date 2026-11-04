@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { LiveMotionReel } from './LiveMotionReel'
-import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check, Camera } from 'lucide-react'
+import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check, Camera, Video } from 'lucide-react'
 import QRCode from 'qrcode'
 import confetti from 'canvas-confetti'
 import { sound } from '../../services/soundService'
+import { SyncService } from '../../services/syncService'
 
 export const ExportView: React.FC = () => {
   const {
@@ -13,6 +14,7 @@ export const ExportView: React.FC = () => {
     selectedPhotoIds,
     selectedFrame,
     selectedPrintFormat,
+    videoUrl,
     sessionId,
     resetSession,
     retakePhotos,
@@ -23,7 +25,7 @@ export const ExportView: React.FC = () => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('')
   const [copied, setCopied] = useState(false)
 
-  const downloadUrl = `https://photobooth.app/strip?s=${sessionId}`
+  const downloadUrl = SyncService.getSessionUrl(sessionId)
 
   // Sound whirr + celebration on mount
   useEffect(() => {
@@ -58,6 +60,17 @@ export const ExportView: React.FC = () => {
     const a = document.createElement('a')
     a.href = compositeDataUrl
     a.download = `photobooth_strip_${sessionId}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  const handleDownloadVideo = () => {
+    sound.playClick()
+    if (!videoUrl) return
+    const a = document.createElement('a')
+    a.href = videoUrl
+    a.download = `photobooth_bts_${sessionId}.webm`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -147,6 +160,17 @@ export const ExportView: React.FC = () => {
               )}
             </div>
           </div>
+        ) : videoUrl ? (
+          <div className="w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden border-2 border-[#2E2E3E] photo-card-shadow bg-black">
+            <video
+              src={videoUrl}
+              controls
+              autoPlay
+              loop
+              playsInline
+              className="w-full h-full object-cover block"
+            />
+          </div>
         ) : (
           <LiveMotionReel photos={selectedPhotosList} frame={selectedFrame} />
         )}
@@ -190,12 +214,22 @@ export const ExportView: React.FC = () => {
             <span>QR Code</span>
           </button>
 
+          {videoUrl && (
+            <button
+              onClick={handleDownloadVideo}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer"
+            >
+              <Video size={15} className="text-[#FF385C]" />
+              <span>Download Video</span>
+            </button>
+          )}
+
           <button
             onClick={handleDownload}
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold shadow-xl shadow-[#FF385C]/20 transition-all active:scale-95 cursor-pointer"
           >
             <Download size={15} />
-            <span>Download PNG</span>
+            <span>Download Strip</span>
           </button>
         </div>
       </div>
@@ -216,10 +250,10 @@ export const ExportView: React.FC = () => {
 
             <h3 className="text-base font-bold text-white flex items-center justify-center gap-2">
               <QrIcon size={18} className="text-[#FF385C]" />
-              Scan to Download
+              Scan to Download Strip & Video
             </h3>
             <p className="text-xs text-white/50 mt-1">
-              Scan with your phone camera to download your photo strip.
+              Scan with your phone camera to view and download your photobooth strip and video!
             </p>
 
             {/* QR Card Container */}

@@ -17,4 +17,31 @@ describe('SyncService Tests', () => {
     expect(data?.sessionId).toBe('session_test_999')
     expect(data?.compositeUrl).toBeDefined()
   })
+
+  it('stores and retrieves session data with video in local cache', async () => {
+    const videoBlob = new Blob(['mock-video-bytes'], { type: 'video/webm' })
+    const sessionId = 'session_cache_test'
+
+    // Mock fetch for Supabase upload returning fresh Response on each call
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(new Blob(['mock-data'])))
+    )
+
+    await SyncService.uploadSession(
+      sessionId,
+      'data:image/png;base64,mockStrip',
+      'Pastel Dream',
+      '파스텔 드림',
+      'fourCut',
+      'none',
+      'BEST SHOT 👑',
+      videoBlob
+    )
+
+    const session = await SyncService.fetchSession(sessionId)
+    expect(session).toBeDefined()
+    expect(session?.sessionId).toBe(sessionId)
+    expect(session?.compositeUrl).toBeDefined()
+    expect(session?.videoUrl).toBeDefined()
+  })
 })

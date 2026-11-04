@@ -26,6 +26,7 @@ export const ContactSheet: React.FC = () => {
     setStamp,
     setCompositeDataUrl,
     sessionId,
+    videoBlob,
   } = useBoothStore()
 
   const [isCompositing, setIsCompositing] = useState(false)
@@ -48,6 +49,8 @@ export const ContactSheet: React.FC = () => {
       const today = new Date()
       const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
 
+      const sessionUrl = SyncService.getSessionUrl(sessionId)
+
       const compositeUrl = await renderStrip({
         photoDataUrls: orderedPhotos,
         frame: selectedFrame,
@@ -58,7 +61,7 @@ export const ContactSheet: React.FC = () => {
         stampText: selectedStamp,
         dateString,
         studioWatermark: 'KOREAN 4-CUT STUDIO',
-        qrData: `https://photobooth.app/strip?s=${sessionId}`,
+        qrData: sessionUrl,
       })
 
       setCompositeDataUrl(compositeUrl)
@@ -71,7 +74,8 @@ export const ContactSheet: React.FC = () => {
         selectedFrame.englishTitle || selectedFrame.name,
         selectedLayout.id,
         selectedFilter,
-        selectedStamp
+        selectedStamp,
+        videoBlob
       ).catch(() => {})
     } catch (err) {
       console.error('Failed to render strip:', err)

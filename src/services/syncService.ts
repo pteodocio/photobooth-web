@@ -11,18 +11,34 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 export interface SessionData {
   sessionId: string
   compositeUrl: string
+  videoUrl?: string
   frameName: string
   koreanTitle: string
   timestamp: number
   photoUrls?: string[]
 }
 
+// In-memory cache for fast local retrieval and offline preview
+const localSessionCache = new Map<string, SessionData>()
+
 export class SyncService {
   private static localServerPort = 8080
 
   static getSessionUrl(sessionId: string): string {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://photobooth.app'
-    return `${origin}/strip?s=${sessionId}`
+    const configuredUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_PUBLIC_URL) || ''
+    if (configuredUrl) {
+      const cleanUrl = configuredUrl.replace(/\/+$/, '')
+      return `${cleanUrl}/?s=${sessionId}`
+    }
+
+    if (typeof window !== 'undefined') {
+      const origin = window.location.origin
+      const pathname = window.location.pathname.endsWith('/')
+        ? window.location.pathname
+        : window.location.pathname
+      return `${origin}${pathname}?s=${sessionId}`
+    }
+    return `https://photobooth.app/?s=${sessionId}`
   }
 
   // Upload completed session to Supabase Cloud Storage & Database
@@ -33,35 +49,69 @@ export class SyncService {
     koreanTitle: string,
     layout: string,
     filter: string,
-    stampText: string
-  ): Promise<string | null> {
+    stampText: string,
+    videoBlob?: Blob | null
+  ): Promise<{ compositeUrl: string | null; videoUrl: string | null }> {
+    let compositePublicUrl: string | null = null
+    let videoPublicUrl: string | null = null
+
+    // Store in local cache first for instant retrieval
+    localSessionCache.set(sessionId, {
+      sessionId,
+      compositeUrl: compositeDataUrl,
+      videoUrl: videoBlob ? URL.createObjectURL(videoBlob) : undefined,
+      frameName,
+      koreanTitle,
+      timestamp: Date.now(),
+    })
+
     try {
-      // 1. Convert DataURL to Blob
+      // 1. Upload photo strip to Supabase Storage Bucket
       const res = await fetch(compositeDataUrl)
       const blob = await res.blob()
-      const filePath = `strips/${sessionId}.png`
+      const stripFilePath = `strips/${sessionId}.png`
 
-      // 2. Upload to Supabase Storage Bucket
       const { error: uploadError } = await supabase.storage
         .from('photobooth-strips')
-        .upload(filePath, blob, {
+        .upload(stripFilePath, blob, {
           contentType: 'image/png',
           upsert: true,
         })
 
-      if (uploadError) {
-        console.warn('Supabase storage upload error:', uploadError)
-        return null
+      if (!uploadError) {
+        const { data: publicUrlData } = supabase.storage
+          .from('photobooth-strips')
+          .getPublicUrl(stripFilePath)
+        compositePublicUrl = publicUrlData.publicUrl
+      } else {
+        console.warn('Supabase strip upload warning:', uploadError)
       }
 
-      // 3. Get Public URL
-      const { data: publicUrlData } = supabase.storage
-        .from('photobooth-strips')
-        .getPublicUrl(filePath)
+      // 2. Upload video if recorded
+      if (videoBlob && videoBlob.size > 0) {
+        const isMp4 = videoBlob.type.includes('mp4')
+        const videoExt = isMp4 ? 'mp4' : 'webm'
+        const videoFilePath = `videos/${sessionId}.${videoExt}`
 
-      const publicUrl = publicUrlData.publicUrl
+        const { error: videoUploadError } = await supabase.storage
+          .from('photobooth-strips')
+          .upload(videoFilePath, videoBlob, {
+            contentType: videoBlob.type || 'video/webm',
+            upsert: true,
+          })
 
-      // 4. Save metadata record to booth_sessions table
+        if (!videoUploadError) {
+          const { data: videoUrlData } = supabase.storage
+            .from('photobooth-strips')
+            .getPublicUrl(videoFilePath)
+          videoPublicUrl = videoUrlData.publicUrl
+        } else {
+          console.warn('Supabase video upload warning:', videoUploadError)
+        }
+      }
+
+      // 3. Save metadata record to booth_sessions table
+      const finalCompositeUrl = compositePublicUrl || compositeDataUrl
       const { error: dbError } = await supabase.from('booth_sessions').upsert({
         id: sessionId,
         frame_id: frameName.toLowerCase().replace(/\s+/g, '_'),
@@ -70,23 +120,39 @@ export class SyncService {
         layout,
         filter,
         stamp_text: stampText,
-        composite_url: publicUrl,
+        composite_url: finalCompositeUrl,
+        video_url: videoPublicUrl,
       })
 
       if (dbError) {
-        console.warn('Supabase db upsert error:', dbError)
+        console.warn('Supabase db upsert warning:', dbError)
       }
 
-      return publicUrl
+      // Update cache with public URLs if available
+      if (compositePublicUrl || videoPublicUrl) {
+        const cached = localSessionCache.get(sessionId)
+        if (cached) {
+          if (compositePublicUrl) cached.compositeUrl = compositePublicUrl
+          if (videoPublicUrl) cached.videoUrl = videoPublicUrl
+        }
+      }
+
+      return { compositeUrl: compositePublicUrl, videoUrl: videoPublicUrl }
     } catch (e) {
       console.warn('Failed to upload session to Supabase:', e)
-      return null
+      return { compositeUrl: null, videoUrl: null }
     }
   }
 
-  // Fetch session data from Supabase Cloud or Local LAN
+  // Fetch session data from Cache, Supabase Cloud, or Local LAN
   static async fetchSession(sessionId: string): Promise<SessionData | null> {
-    // 1. Query Supabase Database
+    // 1. Check local session cache first
+    const cached = localSessionCache.get(sessionId)
+    if (cached) {
+      return cached
+    }
+
+    // 2. Query Supabase Database
     try {
       const { data, error } = await supabase
         .from('booth_sessions')
@@ -95,14 +161,17 @@ export class SyncService {
         .maybeSingle()
 
       if (!error && data && data.composite_url) {
-        return {
+        const sessionData: SessionData = {
           sessionId: data.id,
           compositeUrl: data.composite_url,
+          videoUrl: data.video_url || undefined,
           frameName: data.frame_name,
           koreanTitle: data.korean_title || '',
           timestamp: new Date(data.created_at).getTime(),
           photoUrls: data.photo_urls || [],
         }
+        localSessionCache.set(sessionId, sessionData)
+        return sessionData
       }
     } catch (err) {
       console.warn('Supabase fetch failed, attempting local fallback:', err)

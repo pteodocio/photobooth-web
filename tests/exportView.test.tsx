@@ -21,7 +21,7 @@ describe('ExportView Component Tests', () => {
     render(<ExportView />)
     expect(screen.getByTestId('printer-dispenser-slot')).toBeInTheDocument()
     expect(screen.getByAltText('Printed Film Strip')).toBeInTheDocument()
-    expect(screen.getByText('Download PNG')).toBeInTheDocument()
+    expect(screen.getByText(/Download Strip/i)).toBeInTheDocument()
   })
 
   it('toggles between Printed Strip and Live Motion Reel', () => {
@@ -37,6 +37,6 @@ describe('ExportView Component Tests', () => {
     const qrBtn = screen.getByText('QR Code')
     fireEvent.click(qrBtn)
 
-    expect(screen.getByText('Scan to Download')).toBeInTheDocument()
+    expect(screen.getByText(/Scan to Download/i)).toBeInTheDocument()
   })
 })

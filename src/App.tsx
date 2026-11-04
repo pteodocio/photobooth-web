@@ -21,11 +21,27 @@ export function App() {
   const [isRetrieveModalOpen, setIsRetrieveModalOpen] = useState(false)
   const [activeSessionQuery, setActiveSessionQuery] = useState<string | null>(null)
 
-  // Parse URL query parameter `?s=<sessionId>` on load
+  // Parse URL query parameter `?s=<sessionId>` or route on load
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const sessionParam = params.get('s')
+      const searchParams = new URLSearchParams(window.location.search)
+      let sessionParam = searchParams.get('s')
+
+      // Also check hash (e.g. #/strip?s=...)
+      if (!sessionParam && window.location.hash) {
+        const hashQuery = window.location.hash.split('?')[1]
+        if (hashQuery) {
+          const hashParams = new URLSearchParams(hashQuery)
+          sessionParam = hashParams.get('s')
+        }
+      }
+
+      // Also check path segments (e.g. /strip/session_123)
+      if (!sessionParam && window.location.pathname.includes('/strip')) {
+        const parts = window.location.pathname.split('/strip/')
+        if (parts[1]) sessionParam = parts[1].replace(/\/+$/, '')
+      }
+
       if (sessionParam) {
         setActiveSessionQuery(sessionParam)
       }

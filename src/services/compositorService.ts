@@ -129,7 +129,11 @@ export async function renderStrip(job: CompositeJob): Promise<string> {
   ctx.restore()
 
   // 7. Scannable White QR Sticker Card
-  const qrTarget = job.qrData || `https://photobooth.app/strip?s=${Date.now()}`
+  const defaultUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${window.location.pathname}?s=${Date.now()}`
+      : `https://photobooth.app/?s=${Date.now()}`
+  const qrTarget = job.qrData || defaultUrl
   await drawQrCodeBadge(ctx, qrTarget, 980, 3250, 140)
 
   // 8. Twin Strip Assembly (if format is twinStrip)

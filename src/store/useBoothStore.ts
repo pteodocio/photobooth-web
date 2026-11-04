@@ -22,6 +22,8 @@ interface BoothState {
   filterIntensity: number
   selectedStamp: string
   compositeDataUrl: string | null
+  videoBlob: Blob | null
+  videoUrl: string | null
   sessionId: string
 
   // Actions
@@ -43,6 +45,8 @@ interface BoothState {
   setFilterIntensity: (intensity: number) => void
   setStamp: (stampText: string) => void
   setCompositeDataUrl: (url: string | null) => void
+  setVideoBlob: (blob: Blob | null) => void
+  setVideoUrl: (url: string | null) => void
   resetSession: () => void
 }
 
@@ -59,6 +63,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   filterIntensity: 1.0,
   selectedStamp: KOREAN_STAMPS[0].text,
   compositeDataUrl: null,
+  videoBlob: null,
+  videoUrl: null,
   sessionId: `session_${Date.now()}`,
 
   setStatus: status => set({ status }),
@@ -75,6 +81,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       capturedPhotos: [],
       selectedPhotoIds: [],
       compositeDataUrl: null,
+      videoBlob: null,
+      videoUrl: null,
       sessionId: `session_${Date.now()}`,
     }),
 
@@ -90,6 +98,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       capturedPhotos: [],
       selectedPhotoIds: [],
       compositeDataUrl: null,
+      videoBlob: null,
+      videoUrl: null,
     }),
 
   retakePhotos: () =>
@@ -98,6 +108,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       capturedPhotos: [],
       selectedPhotoIds: [],
       compositeDataUrl: null,
+      videoBlob: null,
+      videoUrl: null,
     }),
 
   startSession: () =>
@@ -106,6 +118,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       capturedPhotos: [],
       selectedPhotoIds: [],
       compositeDataUrl: null,
+      videoBlob: null,
+      videoUrl: null,
       sessionId: `session_${Date.now()}`,
     }),
 
@@ -162,12 +176,18 @@ export const useBoothStore = create<BoothState>((set, get) => ({
 
   setCompositeDataUrl: url => set({ compositeDataUrl: url, status: 'exportReady' }),
 
+  setVideoBlob: blob => set({ videoBlob: blob }),
+
+  setVideoUrl: url => set({ videoUrl: url }),
+
   resetSession: () =>
     set({
       status: 'idle',
       capturedPhotos: [],
       selectedPhotoIds: [],
       compositeDataUrl: null,
+      videoBlob: null,
+      videoUrl: null,
       selectedFilter: 'none',
       filterIntensity: 1.0,
       selectedStamp: KOREAN_STAMPS[0].text,

@@ -9,6 +9,7 @@ import { sound } from '../../services/soundService'
 import { getCssFilter, PHOTO_FILTERS } from '../../core/filters'
 import { renderStrip } from '../../services/compositorService'
 import { SyncService } from '../../services/syncService'
+import { VideoRecorderService } from '../../services/videoRecorderService'
 
 interface WebcamViewfinderProps {
   onExit: () => void
@@ -27,6 +28,8 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     capturedPhotos,
     recordShot,
     setCompositeDataUrl,
+    setVideoBlob,
+    setVideoUrl,
   } = useBoothStore()
 
   const [secondsRemaining, setSecondsRemaining] = useState(AppConstants.defaultCountdownSeconds)
@@ -64,6 +67,18 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         const allPhotos = [...capturedPhotos.map(p => p.dataUrl), photoDataUrl]
         const today = new Date()
         const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
+        const sessionUrl = SyncService.getSessionUrl(sessionId)
+
+        let videoBlob = await VideoRecorderService.stopRecording()
+        if (!videoBlob && allPhotos.length > 0) {
+          videoBlob = await VideoRecorderService.createVideoFromPhotos(allPhotos)
+        }
+
+        if (videoBlob) {
+          setVideoBlob(videoBlob)
+          const localUrl = URL.createObjectURL(videoBlob)
+          setVideoUrl(localUrl)
+        }
 
         const compositeUrl = await renderStrip({
           photoDataUrls: allPhotos,
@@ -75,7 +90,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           stampText: selectedStamp,
           dateString,
           studioWatermark: 'KOREAN 4-CUT STUDIO',
-          qrData: `https://photobooth.app/strip?s=${sessionId}`,
+          qrData: sessionUrl,
         })
 
         setCompositeDataUrl(compositeUrl)
@@ -87,7 +102,8 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           selectedFrame.englishTitle || selectedFrame.name,
           selectedLayout.id,
           selectedFilter,
-          selectedStamp
+          selectedStamp,
+          videoBlob
         ).catch(() => {})
       } catch (err) {
         console.error('Failed to composite strip:', err)
@@ -120,8 +136,13 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     async function initCamera() {
       if (videoRef.current) {
         try {
-          await CameraService.startCamera(videoRef.current, facingMode)
-          if (active) setCameraError(null)
+          const stream = await CameraService.startCamera(videoRef.current, facingMode)
+          if (active) {
+            setCameraError(null)
+            if (stream) {
+              VideoRecorderService.startRecording(stream)
+            }
+          }
         } catch (err: unknown) {
           if (active) {
             setCameraError(err instanceof Error ? err.message : 'Camera access failed')
