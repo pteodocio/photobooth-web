@@ -350,41 +350,43 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
                 </div>
 
                 {/* Video Player Container */}
-                <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-black border border-white/10 shadow-2xl group flex items-center justify-center">
-                  <video
-                    ref={videoRef}
-                    src={videoUrl}
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
-                    className="w-full h-full object-cover block cursor-pointer"
-                    onClick={togglePlay}
-                  />
-
-                  {/* Minimalist In-Video Floating Controls */}
-                  <div className="absolute bottom-3 inset-x-3 flex items-center justify-between pointer-events-none">
-                    <button
-                      type="button"
+                <div className="w-full flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-[#0E0E14] border border-white/10 shadow-2xl min-h-[300px]">
+                  <div className="relative max-h-[58vh] sm:max-h-[64vh] w-auto flex items-center justify-center rounded-xl overflow-hidden group">
+                    <video
+                      ref={videoRef}
+                      src={videoUrl}
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      className="max-h-[58vh] sm:max-h-[64vh] w-auto object-contain rounded-xl block photo-card-shadow cursor-pointer"
                       onClick={togglePlay}
-                      className="pointer-events-auto p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition-transform active:scale-90 cursor-pointer"
-                      title={isPlaying ? 'Pause' : 'Play'}
-                    >
-                      {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-                    </button>
+                    />
 
-                    <div className="px-3 py-1 rounded-xl bg-black/60 backdrop-blur-md text-[11px] font-semibold text-white/90 border border-white/10 truncate max-w-[180px]">
-                      Live Motion
+                    {/* Minimalist In-Video Floating Controls */}
+                    <div className="absolute bottom-3 inset-x-3 flex items-center justify-between pointer-events-none">
+                      <button
+                        type="button"
+                        onClick={togglePlay}
+                        className="pointer-events-auto p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition-transform active:scale-90 cursor-pointer"
+                        title={isPlaying ? 'Pause' : 'Play'}
+                      >
+                        {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                      </button>
+
+                      <div className="px-3 py-1 rounded-xl bg-black/60 backdrop-blur-md text-[11px] font-semibold text-white/90 border border-white/10 truncate max-w-[180px]">
+                        Live Motion
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={toggleMute}
+                        className="pointer-events-auto p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition-transform active:scale-90 cursor-pointer"
+                        title={isMuted ? 'Unmute' : 'Mute'}
+                      >
+                        {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                      </button>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={toggleMute}
-                      className="pointer-events-auto p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition-transform active:scale-90 cursor-pointer"
-                      title={isMuted ? 'Unmute' : 'Mute'}
-                    >
-                      {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                    </button>
                   </div>
                 </div>
 

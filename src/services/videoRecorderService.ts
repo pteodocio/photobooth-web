@@ -6,6 +6,7 @@ export interface CreateMotionStripVideoParams {
   frame: FrameTemplate
   layout: LayoutTypeConfig
   rawVideoBlob?: Blob | null
+  btsClipBlobs?: (Blob | string)[]
   filter?: string
   filterIntensity?: number
   stampText?: string
@@ -21,6 +22,87 @@ export class VideoRecorderService {
   private static recorder: MediaRecorder | null = null
   private static chunks: Blob[] = []
   private static recordedBlob: Blob | null = null
+
+  // Per-shot BTS recorder for individual photo panel clips
+  private static shotRecorder: MediaRecorder | null = null
+  private static shotChunks: Blob[] = []
+  private static activeShotIndex = 0
+
+  /**
+   * Starts recording the video stream from the user's camera for a specific photo shot.
+   */
+  static startShotRecording(stream: MediaStream, shotIndex = 0): void {
+    if (typeof MediaRecorder === 'undefined' || !stream || stream.getVideoTracks().length === 0) {
+      return
+    }
+
+    try {
+      this.shotChunks = []
+      this.activeShotIndex = shotIndex
+
+      let options: MediaRecorderOptions | undefined
+      if (typeof MediaRecorder.isTypeSupported === 'function') {
+        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+          options = { mimeType: 'video/webm;codecs=vp9' }
+        } else if (MediaRecorder.isTypeSupported('video/webm')) {
+          options = { mimeType: 'video/webm' }
+        } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+          options = { mimeType: 'video/mp4' }
+        }
+      }
+
+      const recorder = new MediaRecorder(stream, options)
+      recorder.ondataavailable = (event: BlobEvent) => {
+        if (event.data && event.data.size > 0) {
+          this.shotChunks.push(event.data)
+        }
+      }
+
+      recorder.start(250)
+      this.shotRecorder = recorder
+    } catch (err) {
+      console.warn('VideoRecorderService: Could not start per-shot MediaRecorder:', err)
+    }
+  }
+
+  /**
+   * Stops recording the BTS clip for the current shot and returns the Blob.
+   */
+  static stopShotRecording(): Promise<Blob | null> {
+    return new Promise(resolve => {
+      if (!this.shotRecorder || this.shotRecorder.state === 'inactive') {
+        if (this.shotChunks.length > 0) {
+          const blob = new Blob(this.shotChunks, { type: 'video/webm' })
+          resolve(blob)
+        } else {
+          resolve(null)
+        }
+        return
+      }
+
+      this.shotRecorder.onstop = () => {
+        const mimeType = this.shotRecorder?.mimeType || 'video/webm'
+        const blob = new Blob(this.shotChunks, { type: mimeType })
+        this.shotRecorder = null
+        resolve(blob)
+      }
+
+      try {
+        this.shotRecorder.stop()
+      } catch (err) {
+        console.warn('VideoRecorderService: Error stopping shot recorder:', err)
+        resolve(null)
+      }
+    })
+  }
+
+  static isRecordingShot(): boolean {
+    return this.shotRecorder !== null && this.shotRecorder.state === 'recording'
+  }
+
+  static getActiveShotIndex(): number {
+    return this.activeShotIndex
+  }
 
   /**
    * Starts recording the video stream from the user's camera.
@@ -105,7 +187,7 @@ export class VideoRecorderService {
    * inside the photobooth strip frame with live motion.
    */
   static async createMotionStripVideo(params: CreateMotionStripVideoParams): Promise<Blob | null> {
-    const { photoDataUrls, frame, layout, filter = 'none', filterIntensity = 1.0, stampText, dateString, passcode } = params
+    const { photoDataUrls, btsClipBlobs, frame, layout, filter = 'none', filterIntensity = 1.0, stampText, dateString, passcode } = params
 
     if (typeof document === 'undefined' || typeof MediaRecorder === 'undefined') {
       return new Blob(['mock-motion-strip-video'], { type: 'video/webm' })
@@ -151,6 +233,36 @@ export class VideoRecorderService {
         )
       )
 
+      // Preload distinct BTS video clips for each photo panel if provided
+      const videoElements: (HTMLVideoElement | null)[] =
+        btsClipBlobs && btsClipBlobs.length > 0
+          ? await Promise.all(
+              btsClipBlobs.map(
+                clip =>
+                  new Promise<HTMLVideoElement | null>(resolve => {
+                    try {
+                      const vid = document.createElement('video')
+                      vid.crossOrigin = 'anonymous'
+                      vid.muted = true
+                      vid.loop = true
+                      vid.playsInline = true
+                      const url = typeof clip === 'string' ? clip : URL.createObjectURL(clip)
+                      vid.src = url
+                      vid.onloadeddata = () => {
+                        vid.play().catch(() => {})
+                        resolve(vid)
+                      }
+                      vid.onerror = () => resolve(null)
+                      // Fallback timeout if video metadata takes long in test/headless env
+                      setTimeout(() => resolve(vid), 400)
+                    } catch {
+                      resolve(null)
+                    }
+                  })
+              )
+            )
+          : []
+
       recorder.start()
 
       // Layout coordinates (scaled for video canvas)
@@ -192,7 +304,7 @@ export class VideoRecorderService {
         ctx.fillText(frame.englishTitle || frame.name, canvas.width / 2, marginTop / 2)
         ctx.restore()
 
-        // 3. Render Photo Slots with Live Motion Pulse
+        // 3. Render Photo Slots: Draw BTS video clip if available for that slot, or photo with live motion
         const slotCount = isSixCut ? 6 : 4
         for (let i = 0; i < slotCount; i++) {
           const col = i % cols
@@ -212,47 +324,81 @@ export class VideoRecorderService {
           }
           ctx.clip()
 
-          // Draw Photo with subtle live breathing zoom
-          const img = images[i % images.length]
-          if (img && img.width > 0) {
+          // Check if slot has its dedicated BTS video clip
+          const clipVid = videoElements[i]
+          const hasPlayableVideo = clipVid && clipVid.videoWidth > 0 && !clipVid.paused
+
+          if (hasPlayableVideo) {
             ctx.save()
             if (cssFilter && cssFilter !== 'none') {
               ctx.filter = cssFilter
             }
 
-            // Organic breathing motion (subtle 3% zoom wave)
-            const zoom = 1.0 + 0.03 * Math.sin(time * 3 + i * 1.2)
-            const cx = sx + slotW / 2
-            const cy = sy + slotH / 2
-            ctx.translate(cx, cy)
-            ctx.scale(zoom, zoom)
-            ctx.translate(-cx, -cy)
-
-            // Aspect fill into slot
+            // Aspect fill video into slot
             const targetAspect = slotW / slotH
-            const srcAspect = img.width / img.height
-            let sW = img.width
-            let sH = img.height
+            const srcAspect = clipVid.videoWidth / clipVid.videoHeight
+            let sW = clipVid.videoWidth
+            let sH = clipVid.videoHeight
             let sX = 0
             let sY = 0
             if (srcAspect > targetAspect) {
-              sW = img.height * targetAspect
-              sX = (img.width - sW) / 2
+              sW = clipVid.videoHeight * targetAspect
+              sX = (clipVid.videoWidth - sW) / 2
             } else {
-              sH = img.width / targetAspect
-              sY = (img.height - sH) / 2
+              sH = clipVid.videoWidth / targetAspect
+              sY = (clipVid.videoHeight - sH) / 2
             }
 
             try {
-              ctx.drawImage(img, sX, sY, sW, sH, sx, sy, slotW, slotH)
+              ctx.drawImage(clipVid, sX, sY, sW, sH, sx, sy, slotW, slotH)
             } catch {
               ctx.fillStyle = '#222'
               ctx.fillRect(sx, sy, slotW, slotH)
             }
             ctx.restore()
           } else {
-            ctx.fillStyle = '#1B1B22'
-            ctx.fillRect(sx, sy, slotW, slotH)
+            // Draw Photo with subtle live breathing zoom
+            const img = images[i % images.length]
+            if (img && img.width > 0) {
+              ctx.save()
+              if (cssFilter && cssFilter !== 'none') {
+                ctx.filter = cssFilter
+              }
+
+              // Organic breathing motion (subtle 3% zoom wave)
+              const zoom = 1.0 + 0.03 * Math.sin(time * 3 + i * 1.2)
+              const cx = sx + slotW / 2
+              const cy = sy + slotH / 2
+              ctx.translate(cx, cy)
+              ctx.scale(zoom, zoom)
+              ctx.translate(-cx, -cy)
+
+              // Aspect fill into slot
+              const targetAspect = slotW / slotH
+              const srcAspect = img.width / img.height
+              let sW = img.width
+              let sH = img.height
+              let sX = 0
+              let sY = 0
+              if (srcAspect > targetAspect) {
+                sW = img.height * targetAspect
+                sX = (img.width - sW) / 2
+              } else {
+                sH = img.width / targetAspect
+                sY = (img.height - sH) / 2
+              }
+
+              try {
+                ctx.drawImage(img, sX, sY, sW, sH, sx, sy, slotW, slotH)
+              } catch {
+                ctx.fillStyle = '#222'
+                ctx.fillRect(sx, sy, slotW, slotH)
+              }
+              ctx.restore()
+            } else {
+              ctx.fillStyle = '#1B1B22'
+              ctx.fillRect(sx, sy, slotW, slotH)
+            }
           }
 
           ctx.restore()
@@ -314,6 +460,14 @@ export class VideoRecorderService {
 
       return new Promise(resolve => {
         recorder.onstop = () => {
+          videoElements.forEach(v => {
+            if (v) {
+              try {
+                v.pause()
+                v.src = ''
+              } catch {}
+            }
+          })
           const blob = new Blob(recordedChunks, { type: mimeType })
           resolve(blob)
         }

@@ -17,6 +17,8 @@ interface WebcamViewfinderProps {
 
 export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const isCapturingRef = useRef(false)
   const {
     selectedFrame,
     selectedLayout,
@@ -28,6 +30,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     passcode,
     capturedPhotos,
     recordShot,
+    attachBtsClipToPhoto,
     setCompositeDataUrl,
     setVideoBlob,
     setVideoUrl,
@@ -43,8 +46,11 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
   const activeCssFilter = getCssFilter(selectedFilter, filterIntensity)
   const currentFilterObj = PHOTO_FILTERS.find(f => f.id === selectedFilter) || PHOTO_FILTERS[0]
 
-  // Trigger snapshot
+  // Trigger snapshot & BTS clip recording
   const triggerCapture = useCallback(async () => {
+    if (isCapturingRef.current) return
+    isCapturingRef.current = true
+
     sound.playShutterSound()
     setIsFlashing(true)
     setTimeout(() => setIsFlashing(false), AppConstants.flashDurationMs + 40)
@@ -58,14 +64,33 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       }
     }
 
+    const photoIndex = capturedPhotos.length
     recordShot(photoDataUrl)
 
-    const nextCount = capturedPhotos.length + 1
+    // Continue recording briefly after the photo is taken (~700ms) to capture post-photo laughter and reactions
+    if (VideoRecorderService.isRecordingShot()) {
+      await new Promise(r => setTimeout(r, 700))
+    }
+
+    let clipUrl: string | undefined
+    try {
+      const shotBlob = await VideoRecorderService.stopShotRecording()
+      if (shotBlob) {
+        clipUrl = URL.createObjectURL(shotBlob)
+        attachBtsClipToPhoto(photoIndex, clipUrl)
+      }
+    } catch (err) {
+      console.warn('VideoRecorderService: Could not stop shot recording:', err)
+    }
+
+    const nextCount = photoIndex + 1
     if (nextCount >= selectedLayout.slotCount) {
-      // Completed all 4 shots! Auto-composite strip immediately and transition to exportReady
+      // Completed all shots! Auto-composite strip immediately and transition to exportReady
       setIsCompositing(true)
       try {
         const allPhotos = [...capturedPhotos.map(p => p.dataUrl), photoDataUrl]
+        const statePhotos = useBoothStore.getState().capturedPhotos
+        const allClips = statePhotos.map(p => p.btsClipUrl).filter((u): u is string => !!u)
         const today = new Date()
         const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
         const videoQrUrl = SyncService.getVideoPageUrl(sessionId)
@@ -73,6 +98,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         let rawVideoBlob = await VideoRecorderService.stopRecording()
         let videoBlob = await VideoRecorderService.createMotionStripVideo({
           rawVideoBlob,
+          btsClipBlobs: allClips,
           photoDataUrls: allPhotos,
           frame: selectedFrame,
           layout: selectedLayout,
@@ -121,13 +147,19 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         ).catch(() => {})
       } catch (err) {
         console.error('Failed to composite strip:', err)
+      } finally {
+        isCapturingRef.current = false
       }
     } else {
       // Short pause between shots
       setIsPaused(true)
       setTimeout(() => {
         setIsPaused(false)
+        isCapturingRef.current = false
         setSecondsRemaining(AppConstants.defaultShotIntervalSeconds)
+        if (streamRef.current) {
+          VideoRecorderService.startShotRecording(streamRef.current, nextCount)
+        }
       }, 1000)
     }
   }, [
@@ -140,7 +172,10 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     filterIntensity,
     selectedStamp,
     sessionId,
+    passcode,
     setCompositeDataUrl,
+    setVideoBlob,
+    setVideoUrl,
   ])
 
   // Camera setup
@@ -153,8 +188,10 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           const stream = await CameraService.startCamera(videoRef.current, facingMode)
           if (active) {
             setCameraError(null)
+            streamRef.current = stream || null
             if (stream) {
               VideoRecorderService.startRecording(stream)
+              VideoRecorderService.startShotRecording(stream, 0)
             }
           }
         } catch (err: unknown) {
@@ -169,6 +206,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
 
     return () => {
       active = false
+      VideoRecorderService.stopShotRecording().catch(() => {})
       CameraService.stopCamera()
     }
   }, [facingMode])
@@ -320,6 +358,19 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
               </div>
             </div>
           )}
+
+          {/* BTS Recording Live Indicator */}
+          {!isCompositing && (
+            <div
+              data-testid="bts-recording-indicator"
+              className="absolute top-4 right-4 pointer-events-none drop-shadow-xl flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/65 border border-white/15 backdrop-blur-md"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#FF385C] animate-pulse" />
+              <span className="text-[10px] font-bold font-mono tracking-wider text-white uppercase">
+                REC BTS
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -329,7 +380,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
 
         <button
           onClick={handleManualShoot}
-          disabled={isCompositing}
+          disabled={isCompositing || isPaused}
           className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-all transform active:scale-95 cursor-pointer disabled:opacity-50"
         >
           <Camera size={16} />

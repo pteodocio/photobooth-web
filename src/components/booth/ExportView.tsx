@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
-import { LiveMotionReel } from './LiveMotionReel'
-import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check, Camera, Video } from 'lucide-react'
+import { AnimatedBtsStrip } from './AnimatedBtsStrip'
+import { Download, QrCode as QrIcon, RotateCcw, X, Copy, Check, Camera, Video, Film, Sparkles } from 'lucide-react'
 import QRCode from 'qrcode'
 import confetti from 'canvas-confetti'
 import { sound } from '../../services/soundService'
 import { SyncService } from '../../services/syncService'
+import { VideoRecorderService } from '../../services/videoRecorderService'
 
 export const ExportView: React.FC = () => {
   const {
@@ -13,10 +14,16 @@ export const ExportView: React.FC = () => {
     capturedPhotos,
     selectedPhotoIds,
     selectedFrame,
+    selectedLayout,
+    selectedFilter,
+    filterIntensity,
+    selectedStamp,
     selectedPrintFormat,
     videoUrl,
     sessionId,
     passcode,
+    setVideoBlob,
+    setVideoUrl,
     resetSession,
     retakePhotos,
   } = useBoothStore()
@@ -25,6 +32,7 @@ export const ExportView: React.FC = () => {
   const [showQrModal, setShowQrModal] = useState(false)
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('')
   const [copied, setCopied] = useState(false)
+  const [isExportingVideo, setIsExportingVideo] = useState(false)
 
   const downloadUrl = SyncService.getVideoPageUrl(sessionId)
 
@@ -60,18 +68,49 @@ export const ExportView: React.FC = () => {
     if (!compositeDataUrl) return
     const a = document.createElement('a')
     a.href = compositeDataUrl
-    a.download = `photobooth_strip_${sessionId}.png`
+    a.download = `photobooth_strip_${passcode || sessionId}.png`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
   }
 
-  const handleDownloadVideo = () => {
+  const handleDownloadVideo = async () => {
     sound.playClick()
-    if (!videoUrl) return
+    let targetUrl = videoUrl
+
+    if (!targetUrl) {
+      setIsExportingVideo(true)
+      try {
+        const today = new Date()
+        const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
+        const allClips = selectedPhotosList.map(p => p.btsClipUrl).filter((u): u is string => !!u)
+        const blob = await VideoRecorderService.createMotionStripVideo({
+          photoDataUrls: selectedPhotosList.map(p => p.dataUrl),
+          btsClipBlobs: allClips,
+          frame: selectedFrame,
+          layout: selectedLayout,
+          filter: selectedFilter,
+          filterIntensity,
+          stampText: selectedStamp,
+          dateString,
+          passcode,
+        })
+        if (blob) {
+          setVideoBlob(blob)
+          targetUrl = URL.createObjectURL(blob)
+          setVideoUrl(targetUrl)
+        }
+      } catch (err) {
+        console.warn('Could not generate motion strip video for download:', err)
+      } finally {
+        setIsExportingVideo(false)
+      }
+    }
+
+    if (!targetUrl) return
     const a = document.createElement('a')
-    a.href = videoUrl
-    a.download = `photobooth_bts_${sessionId}.webm`
+    a.href = targetUrl
+    a.download = `photobooth_bts_strip_${passcode || sessionId}.mp4`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -96,7 +135,7 @@ export const ExportView: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-[#09090C] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/10">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10 gap-3">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
             Your Film Strip
@@ -114,33 +153,36 @@ export const ExportView: React.FC = () => {
           </div>
         </div>
 
-        {/* View Mode Toggle */}
+        {/* View Mode Toggle: Output A (Photo Strip) vs Output B (Animated BTS Strip) */}
         <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
           <button
             onClick={() => {
               sound.playClick()
               setActiveTab('strip')
             }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'strip'
                 ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
             }`}
           >
-            {selectedPrintFormat.displayName}
+            <Film size={13} />
+            <span>Photo Strip</span>
           </button>
           <button
             onClick={() => {
               sound.playClick()
               setActiveTab('reel')
             }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'reel'
                 ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
             }`}
           >
-            Live Motion Reel
+            <Video size={13} />
+            <span>Live Motion Reel</span>
+            <span className="text-[10px] opacity-75 font-mono">BTS</span>
           </button>
         </div>
       </div>
@@ -149,6 +191,13 @@ export const ExportView: React.FC = () => {
       <div className="my-6 flex-1 flex flex-col items-center justify-center">
         {activeTab === 'strip' ? (
           <div className="flex flex-col items-center">
+            {/* Output A Badge */}
+            <div className="mb-2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] text-white/60 font-mono">
+              <span>OUTPUT A</span>
+              <span>·</span>
+              <span>TRADITIONAL PHOTO STRIP</span>
+            </div>
+
             {/* Mechanical Dispenser Slot Mouth */}
             <div
               data-testid="printer-dispenser-slot"
@@ -167,26 +216,31 @@ export const ExportView: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center w-full">
+            {/* Output B Badge */}
+            <div className="mb-2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FF385C]/10 border border-[#FF385C]/20 text-[10px] text-[#FF385C] font-mono font-semibold">
+              <Sparkles size={11} />
+              <span>OUTPUT B</span>
+              <span>·</span>
+              <span>ANIMATED BTS PHOTO STRIP</span>
+            </div>
+
             {/* Mechanical Dispenser Slot Mouth */}
             <div
               className="w-48 sm:w-64 h-2.5 bg-[#1B1B1F] rounded-full border border-white/20 shadow-inner mb-[-6px] z-10"
             />
 
-            {/* Sliding Dispensed Motion Strip */}
-            <div className="dispense-slide-down photo-card-shadow rounded-2xl overflow-hidden max-h-[66vh] border border-white/10 bg-[#0E0E12] flex items-center justify-center">
-              {videoUrl ? (
-                <video
-                  src={videoUrl}
-                  controls
-                  autoPlay
-                  loop
-                  playsInline
-                  className="h-full max-h-[64vh] w-auto object-contain block rounded-2xl"
-                />
-              ) : (
-                <LiveMotionReel photos={selectedPhotosList} frame={selectedFrame} />
-              )}
+            {/* Sliding Dispensed Animated BTS Strip */}
+            <div className="dispense-slide-down photo-card-shadow rounded-2xl overflow-hidden max-h-[72vh] border border-white/10 bg-[#0E0E12] flex items-center justify-center p-2 sm:p-3">
+              <AnimatedBtsStrip
+                photos={selectedPhotosList}
+                frame={selectedFrame}
+                layout={selectedLayout}
+                filter={selectedFilter}
+                filterIntensity={filterIntensity}
+                stampText={selectedStamp}
+                passcode={passcode}
+              />
             </div>
           </div>
         )}
@@ -230,15 +284,15 @@ export const ExportView: React.FC = () => {
             <span>QR Code</span>
           </button>
 
-          {videoUrl && (
-            <button
-              onClick={handleDownloadVideo}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer"
-            >
-              <Video size={15} className="text-[#FF385C]" />
-              <span>Download Video</span>
-            </button>
-          )}
+          <button
+            onClick={handleDownloadVideo}
+            disabled={isExportingVideo}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer disabled:opacity-50"
+            title="Download Animated BTS Strip (MP4)"
+          >
+            <Video size={15} className="text-[#FF385C]" />
+            <span>{isExportingVideo ? 'Generating...' : 'Download Video'}</span>
+          </button>
 
           <button
             onClick={handleDownload}

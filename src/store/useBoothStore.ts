@@ -24,6 +24,7 @@ interface BoothState {
   compositeDataUrl: string | null
   videoBlob: Blob | null
   videoUrl: string | null
+  btsClips: string[]
   sessionId: string
   passcode: string
 
@@ -39,7 +40,10 @@ interface BoothState {
   startCapture: () => void
   retakePhotos: () => void
   startSession: () => void
-  recordShot: (dataUrl: string) => void
+  recordShot: (dataUrl: string, btsClipUrl?: string) => void
+  attachBtsClipToPhoto: (photoIndex: number, clipUrl: string) => void
+  addBtsClip: (clipUrl: string) => void
+  setBtsClips: (clips: string[]) => void
   togglePhotoSelection: (id: string) => void
   reorderSelectedPhotos: (fromIndex: number, toIndex: number) => void
   setFilter: (filter: PhotoFilter) => void
@@ -71,6 +75,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   compositeDataUrl: null,
   videoBlob: null,
   videoUrl: null,
+  btsClips: [],
   sessionId: `session_${Date.now()}`,
   passcode: generatePasscode(),
 
@@ -90,6 +95,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       compositeDataUrl: null,
       videoBlob: null,
       videoUrl: null,
+      btsClips: [],
       sessionId: `session_${Date.now()}`,
       passcode: generatePasscode(),
     }),
@@ -108,6 +114,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       compositeDataUrl: null,
       videoBlob: null,
       videoUrl: null,
+      btsClips: [],
     }),
 
   retakePhotos: () =>
@@ -118,6 +125,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       compositeDataUrl: null,
       videoBlob: null,
       videoUrl: null,
+      btsClips: [],
     }),
 
   startSession: () =>
@@ -128,20 +136,23 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       compositeDataUrl: null,
       videoBlob: null,
       videoUrl: null,
+      btsClips: [],
       sessionId: `session_${Date.now()}`,
       passcode: generatePasscode(),
     }),
 
-  recordShot: dataUrl => {
-    const { capturedPhotos, selectedLayout } = get()
+  recordShot: (dataUrl, btsClipUrl) => {
+    const { capturedPhotos, selectedLayout, btsClips } = get()
     const nextIndex = capturedPhotos.length
     const newPhoto: CapturedPhoto = {
       id: `photo_${nextIndex}_${Date.now()}`,
       index: nextIndex,
       dataUrl,
       timestamp: Date.now(),
+      btsClipUrl,
     }
     const updatedPhotos = [...capturedPhotos, newPhoto]
+    const updatedClips = btsClipUrl ? [...btsClips, btsClipUrl] : btsClips
 
     // If burst count is reached, auto transition to contact sheet with first slotCount pre-selected
     if (updatedPhotos.length >= selectedLayout.burstCount) {
@@ -151,12 +162,30 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       set({
         capturedPhotos: updatedPhotos,
         selectedPhotoIds: autoSelectedIds,
+        btsClips: updatedClips,
         status: 'contactSheet',
       })
     } else {
-      set({ capturedPhotos: updatedPhotos })
+      set({ capturedPhotos: updatedPhotos, btsClips: updatedClips })
     }
   },
+
+  attachBtsClipToPhoto: (photoIndex, clipUrl) => {
+    const { capturedPhotos, btsClips } = get()
+    const updatedPhotos = capturedPhotos.map((p, idx) =>
+      idx === photoIndex ? { ...p, btsClipUrl: clipUrl } : p
+    )
+    const updatedClips = [...btsClips]
+    updatedClips[photoIndex] = clipUrl
+    set({ capturedPhotos: updatedPhotos, btsClips: updatedClips })
+  },
+
+  addBtsClip: clipUrl => {
+    const { btsClips } = get()
+    set({ btsClips: [...btsClips, clipUrl] })
+  },
+
+  setBtsClips: clips => set({ btsClips: clips }),
 
   togglePhotoSelection: id => {
     const { selectedPhotoIds, selectedLayout } = get()
@@ -199,6 +228,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       compositeDataUrl: null,
       videoBlob: null,
       videoUrl: null,
+      btsClips: [],
       selectedFilter: 'none',
       filterIntensity: 1.0,
       selectedStamp: KOREAN_STAMPS[0].text,

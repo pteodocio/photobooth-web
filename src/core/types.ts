@@ -93,6 +93,7 @@ export interface CapturedPhoto {
   index: number
   dataUrl: string
   timestamp: number
+  btsClipUrl?: string
 }
 
 export interface CompositeJob {
@@ -107,6 +108,7 @@ export interface CompositeJob {
   studioWatermark: string
   qrData?: string
   passcode?: string
+  btsClips?: string[]
 }
 
 export type BoothSessionStatus =
