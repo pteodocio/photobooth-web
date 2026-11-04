@@ -80,31 +80,65 @@ export class SyncService {
     return this.getVideoPageUrl(sessionId)
   }
 
-  static async fetchVideo(token: string): Promise<{ videoUrl: string; title: string } | null> {
+  static async fetchVideo(token: string): Promise<{
+    videoUrl?: string
+    compositeUrl?: string
+    title: string
+    passcode?: string
+  } | null> {
     const sessionId = this.decodeVideoToken(token)
 
     // 1. Check local session cache first
-    const cached = localSessionCache.get(sessionId)
-    if (cached && cached.videoUrl) {
-      return { videoUrl: cached.videoUrl, title: cached.frameName || 'Photobooth Video' }
+    const cached = localSessionCache.get(sessionId) || localSessionCache.get(token)
+    if (cached && (cached.videoUrl || cached.compositeUrl)) {
+      return {
+        videoUrl: cached.videoUrl,
+        compositeUrl: cached.compositeUrl,
+        title: cached.frameName || 'Photobooth Strip',
+        passcode: cached.passcode,
+      }
     }
 
-    // 2. Query Supabase
+    // 2. Check localStorage recent sessions
+    const recents = this.getRecentSessions()
+    const matchRecent = recents.find(r => r.token === token || r.token === this.encodeVideoToken(sessionId))
+    if (matchRecent && (matchRecent.videoUrl || matchRecent.compositeUrl)) {
+      return {
+        videoUrl: matchRecent.videoUrl,
+        compositeUrl: matchRecent.compositeUrl,
+        title: matchRecent.frameName || 'Photobooth Strip',
+        passcode: matchRecent.passcode,
+      }
+    }
+
+    // 3. Query Supabase
     try {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('booth_sessions')
-        .select('video_url, frame_name')
+        .select('video_url, composite_url, frame_name, passcode')
         .eq('id', sessionId)
         .maybeSingle()
 
-      if (!error && data && data.video_url) {
+      if (!data && sessionId !== token) {
+        const fallback = await supabase
+          .from('booth_sessions')
+          .select('video_url, composite_url, frame_name, passcode')
+          .eq('id', token)
+          .maybeSingle()
+        data = fallback.data
+        error = fallback.error
+      }
+
+      if (!error && data && (data.video_url || data.composite_url)) {
         return {
-          videoUrl: data.video_url,
-          title: data.frame_name || 'Photobooth Video',
+          videoUrl: data.video_url || undefined,
+          compositeUrl: data.composite_url || undefined,
+          title: data.frame_name || 'Photobooth Strip',
+          passcode: data.passcode || undefined,
         }
       }
     } catch (err) {
-      console.warn('Failed to fetch video:', err)
+      console.warn('Failed to fetch video/strip:', err)
     }
 
     return null

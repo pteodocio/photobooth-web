@@ -3,7 +3,6 @@ import { useBoothStore } from './store/useBoothStore'
 import { HeroSection } from './components/showcase/HeroSection'
 import { FrameShowcase } from './components/showcase/FrameShowcase'
 import { SessionRetrieveModal } from './components/showcase/SessionRetrieveModal'
-import { StripViewerRoute } from './components/showcase/StripViewerRoute'
 import { VideoViewerPage } from './components/showcase/VideoViewerPage'
 import { FramePickerModal } from './components/booth/FramePickerModal'
 import { PreCaptureFilterStep } from './components/booth/PreCaptureFilterStep'
@@ -58,7 +57,7 @@ export function App() {
     }
   }, [])
 
-  // 1. Dedicated Photobooth Video Page (Primary QR Target)
+  // 1. Dedicated Photobooth Memories Page (Photo Strip & Video Side by Side)
   if (activeVideoToken) {
     return (
       <VideoViewerPage
@@ -71,11 +70,11 @@ export function App() {
     )
   }
 
-  // 2. Legacy /strip route viewer
+  // 2. Photobooth Strip / Session Query Viewer (Photo Strip & Video Side by Side)
   if (activeSessionQuery) {
     return (
-      <StripViewerRoute
-        sessionId={activeSessionQuery}
+      <VideoViewerPage
+        token={activeSessionQuery}
         onBack={() => {
           setActiveSessionQuery(null)
           window.history.pushState({}, '', window.location.pathname)
@@ -197,12 +196,8 @@ export function App() {
       <SessionRetrieveModal
         isOpen={isRetrieveModalOpen}
         onClose={() => setIsRetrieveModalOpen(false)}
-        onRetrieve={(token, type) => {
-          if (type === 'strip') {
-            setActiveSessionQuery(token)
-          } else {
-            setActiveVideoToken(token)
-          }
+        onRetrieve={token => {
+          setActiveVideoToken(token)
         }}
       />
     </div>

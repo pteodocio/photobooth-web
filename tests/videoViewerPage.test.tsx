@@ -51,4 +51,53 @@ describe('VideoViewerPage Component Tests', () => {
       expect(screen.getByText('Video Not Found')).toBeInTheDocument()
     })
   })
+
+  it('renders photo strip and video side by side with a download button for each', async () => {
+    vi.spyOn(SyncService, 'fetchVideo').mockResolvedValue({
+      compositeUrl: 'https://example.com/photobooth_strip.png',
+      videoUrl: 'https://example.com/photobooth_video.webm',
+      title: 'Gingerbread House',
+      passcode: '4829',
+    })
+
+    const onBack = vi.fn()
+    render(<VideoViewerPage token="k4c_side_by_side_token" onBack={onBack} />)
+
+    // Wait for media to load
+    await waitFor(() => {
+      expect(screen.getByText('Gingerbread House')).toBeInTheDocument()
+    })
+
+    // Passcode badge is rendered
+    expect(screen.getByText('CODE: 4829')).toBeInTheDocument()
+
+    // Both sections are present
+    expect(screen.getByText('Photo Strip')).toBeInTheDocument()
+    expect(screen.getByText('Behind-the-Scenes Video')).toBeInTheDocument()
+
+    // Strip image is rendered
+    const stripImg = screen.getByAltText('Photo Strip')
+    expect(stripImg).toBeInTheDocument()
+    expect(stripImg).toHaveAttribute('src', 'https://example.com/photobooth_strip.png')
+
+    // Video element is rendered
+    const video = document.querySelector('video')
+    expect(video).toBeInTheDocument()
+    expect(video).toHaveAttribute('src', 'https://example.com/photobooth_video.webm')
+
+    // BOTH download buttons are present
+    const downloadStripBtn = screen.getByRole('button', { name: /Download Strip/i })
+    const downloadVideoBtn = screen.getByRole('button', { name: /Download Video/i })
+
+    expect(downloadStripBtn).toBeInTheDocument()
+    expect(downloadVideoBtn).toBeInTheDocument()
+
+    // Mock fetch for strip download
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Blob(['mock-png-data'], { type: 'image/png' })))
+    fireEvent.click(downloadStripBtn)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Strip Downloaded!|Downloading Strip/i)).toBeInTheDocument()
+    })
+  })
 })
