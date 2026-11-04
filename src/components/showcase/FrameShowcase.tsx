@@ -21,7 +21,7 @@ const CATEGORIES = [
 ]
 
 export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndStart }) => {
-  const { selectedFrame, selectFrame } = useBoothStore()
+  const { selectFrame } = useBoothStore()
   const [activeCategory, setActiveCategory] = useState('All')
   const [previewLayout, setPreviewLayout] = useState(LayoutType.fourCut)
 
@@ -31,7 +31,7 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
       : BUNDLED_FRAMES.filter(f => f.category === activeCategory)
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 border-t border-white/5">
+    <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 border-t border-white/5 select-none">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -46,11 +46,12 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
         {/* Layout Switcher (4-Cut vs 6-Cut) */}
         <div className="flex items-center p-1 bg-white/5 rounded-xl border border-white/10 self-start sm:self-auto">
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setPreviewLayout(LayoutType.fourCut)
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
               previewLayout.id === 'fourCut'
                 ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
@@ -60,11 +61,12 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
             4-Cut (1x4)
           </button>
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setPreviewLayout(LayoutType.sixCut)
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
               previewLayout.id === 'sixCut'
                 ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
@@ -81,11 +83,12 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
         {CATEGORIES.map(category => (
           <button
             key={category}
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveCategory(category)
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
               activeCategory === category
                 ? 'bg-white text-black font-semibold shadow'
                 : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/5'
@@ -103,7 +106,7 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
             key={frame.id}
             frame={frame}
             layout={previewLayout}
-            isSelected={selectedFrame.id === frame.id}
+            isSelected={false}
             onClick={() => {
               selectFrame(frame)
               onSelectFrameAndStart()

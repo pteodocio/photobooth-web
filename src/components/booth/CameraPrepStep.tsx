@@ -3,8 +3,9 @@ import { useBoothStore } from '../../store/useBoothStore'
 import { CameraService } from '../../services/cameraService'
 import { getCssFilter, PHOTO_FILTERS } from '../../core/filters'
 import { COUNTDOWN_OPTIONS } from '../../core/types'
-import { Camera, RefreshCw, ArrowLeft, Sparkles, X, Info, Timer, Check, Video } from 'lucide-react'
+import { Camera, RefreshCw, ArrowLeft, Sparkles, Info, Timer, Check, Video } from 'lucide-react'
 import { sound } from '../../services/soundService'
+import { PhotoboothStepHeader } from './PhotoboothStepHeader'
 
 export const CameraPrepStep: React.FC = () => {
   const {
@@ -60,34 +61,19 @@ export const CameraPrepStep: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-4 sm:p-6 select-none max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1 rounded-full bg-[#FF385C]/20 border border-[#FF385C]/30 text-[#FF385C] text-xs font-bold uppercase tracking-wider">
-            Step 3 of 4
-          </div>
-          <div>
-            <h1 className="text-lg sm:text-xl font-bold text-white">Camera Preparation</h1>
-            <p className="text-xs text-white/50">Align your face inside the framing guide</p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-3 sm:p-6 select-none max-w-5xl mx-auto">
+      {/* Unified 7-Stage Header */}
+      <PhotoboothStepHeader
+        currentStep={3}
+        stepTitle="Camera Preparation"
+        stepSubtitle="Choose your pose timer and align in the studio viewfinder"
+        legacyStepText="Step 3 of 4"
+        onExit={resetSession}
+      />
 
-        <button
-          onClick={() => {
-            sound.playClick()
-            resetSession()
-          }}
-          className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10 transition-colors cursor-pointer"
-          title="Exit"
-        >
-          <X size={18} />
-        </button>
-      </div>
-
-      {/* Main Viewfinder Stage with Live Filter */}
-      <div className="my-4 flex-1 flex flex-col items-center justify-center">
-        <div className="relative aspect-[4/3] w-full max-w-2xl max-h-[60vh] bg-black rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+      {/* Main Viewfinder Stage with Live Filter & Framing Guides */}
+      <div className="my-2 flex-1 flex flex-col items-center justify-center">
+        <div className="relative aspect-[4/3] w-full max-w-2xl max-h-[52vh] bg-black rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
           {/* Mirrored live video stream with active CSS filter */}
           <video
             ref={videoRef}
@@ -109,10 +95,10 @@ export const CameraPrepStep: React.FC = () => {
           {/* Framing Guides and Head Alignment Silhouette */}
           <div className="absolute inset-4 pointer-events-none">
             {/* Corners */}
-            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#FF385C] rounded-tl-sm" />
-            <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#FF385C] rounded-tr-sm" />
-            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#FF385C] rounded-bl-sm" />
-            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#FF385C] rounded-br-sm" />
+            <div className="absolute top-0 left-0 w-7 h-7 border-t-2 border-l-2 border-[#FF385C] rounded-tl-sm" />
+            <div className="absolute top-0 right-0 w-7 h-7 border-t-2 border-r-2 border-[#FF385C] rounded-tr-sm" />
+            <div className="absolute bottom-0 left-0 w-7 h-7 border-b-2 border-l-2 border-[#FF385C] rounded-bl-sm" />
+            <div className="absolute bottom-0 right-0 w-7 h-7 border-b-2 border-r-2 border-[#FF385C] rounded-br-sm" />
 
             {/* Subtle center crosshair */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-35 pointer-events-none">
@@ -121,7 +107,7 @@ export const CameraPrepStep: React.FC = () => {
             </div>
 
             {/* Oval Face Alignment Guide */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-64 border border-dashed border-white/25 rounded-full pointer-events-none opacity-50" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-60 border border-dashed border-white/25 rounded-full pointer-events-none opacity-50" />
           </div>
 
           {/* Top Info Bar inside Viewfinder */}
@@ -140,8 +126,9 @@ export const CameraPrepStep: React.FC = () => {
 
             {/* Switch Camera Button */}
             <button
+              type="button"
               onClick={toggleCamera}
-              className="pointer-events-auto p-2 rounded-full bg-black/70 hover:bg-black/90 text-white/80 hover:text-white border border-white/15 backdrop-blur-md transition-colors cursor-pointer"
+              className="pointer-events-auto p-2 rounded-full bg-black/70 hover:bg-black/90 text-white/80 hover:text-white border border-white/15 backdrop-blur-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
               title="Switch Camera"
             >
               <RefreshCw size={14} />
@@ -149,8 +136,8 @@ export const CameraPrepStep: React.FC = () => {
           </div>
         </div>
 
-        {/* Countdown Timer Selector (Requirement 1 & 2) */}
-        <div className="w-full max-w-2xl mt-4">
+        {/* Countdown Timer Selector (Requirement 1, 2, 3) */}
+        <div className="w-full max-w-2xl mt-3.5">
           <div className="flex items-center justify-between mb-2 px-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-white uppercase tracking-wider">
               <Timer size={14} className="text-[#FF385C]" />
@@ -171,7 +158,7 @@ export const CameraPrepStep: React.FC = () => {
                     sound.playClick()
                     setCountdown(option.seconds)
                   }}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                  className={`p-3 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 cursor-pointer flex flex-col justify-between gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                     isSelected
                       ? 'bg-[#FF385C]/10 border-[#FF385C] ring-1 ring-[#FF385C] shadow-lg shadow-[#FF385C]/15 text-white'
                       : 'bg-white/5 border-white/10 hover:border-white/20 text-white/70 hover:text-white'
@@ -208,7 +195,7 @@ export const CameraPrepStep: React.FC = () => {
           </div>
         </div>
 
-        {/* Session Configuration Summary (Requirement 6) */}
+        {/* Session Configuration Summary */}
         <div className="w-full max-w-2xl mt-3 p-3 sm:p-3.5 rounded-2xl bg-[#111116] border border-white/10 flex flex-col gap-2">
           <div className="flex items-center justify-between text-xs font-bold text-white/80 border-b border-white/5 pb-1.5">
             <span className="flex items-center gap-1.5 uppercase tracking-wider text-[11px] text-white/90">
@@ -253,8 +240,8 @@ export const CameraPrepStep: React.FC = () => {
         </div>
 
         {/* Clear Instructions Banner */}
-        <div className="mt-3 max-w-2xl w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 text-xs text-white/70">
-          <Info size={16} className="text-[#FF385C] shrink-0" />
+        <div className="mt-3 max-w-2xl w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2.5 text-xs text-white/70">
+          <Info size={15} className="text-[#FF385C] shrink-0" />
           <span>
             Get ready for <strong className="text-white">4 automatic shots</strong> with a <strong className="text-white">{selectedCountdown}-second countdown</strong> each. Change poses between shots!
           </span>
@@ -262,21 +249,23 @@ export const CameraPrepStep: React.FC = () => {
       </div>
 
       {/* Bottom Controls Bar */}
-      <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+      <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-4">
         <button
+          type="button"
           onClick={() => {
             sound.playClick()
             goToFrameSelect()
           }}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
         >
           <ArrowLeft size={15} />
           <span>Change Frame</span>
         </button>
 
         <button
+          type="button"
           onClick={handleStartShooting}
-          className="flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-all transform active:scale-95 cursor-pointer"
+          className="flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
         >
           <Camera size={16} />
           <span>Start Photobooth (4 Shots)</span>

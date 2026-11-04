@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import type { CapturedPhoto, FrameTemplate } from '../../core/types'
+import { Heart } from 'lucide-react'
 
 interface LiveMotionReelProps {
   photos: CapturedPhoto[]
@@ -56,7 +57,7 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
                 borderWidth: isActive ? 2 : (frame.slotBorderWidth ? 1.5 : 1),
                 borderRadius: Math.max(frame.slotCornerRadius / 3, 6),
               }}
-              className={`relative flex-1 rounded-xl overflow-hidden bg-black/60 transition-all duration-300 ${
+              className={`relative flex-1 rounded-xl overflow-hidden bg-black/60 transition-[transform,opacity,box-shadow] duration-300 ${
                 isActive ? 'scale-[1.03] shadow-lg shadow-[#FF385C]/25 ring-1 ring-[#FF385C]' : 'opacity-90'
               }`}
             >
@@ -76,7 +77,7 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
         })}
       </div>
 
-      {/* Footer Branding & Animated Heart Sticker */}
+      {/* Footer Branding & Animated Heart Icon */}
       <div className="pt-1 px-1 text-center flex flex-col items-center">
         <span
           style={{ color: frame.captionColor || '#FFF' }}
@@ -84,8 +85,8 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
         >
           KOREAN 4-CUT STUDIO
         </span>
-        <div className="mt-0.5 animate-pulse text-[#FF385C] text-xs">
-          ♥
+        <div className="mt-0.5 animate-pulse text-[#FF385C]">
+          <Heart size={12} className="fill-current" />
         </div>
       </div>
     </div>

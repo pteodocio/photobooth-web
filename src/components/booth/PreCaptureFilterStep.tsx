@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { PHOTO_FILTERS, FILTER_CATEGORIES, getCssFilter } from '../../core/filters'
 import { CameraService } from '../../services/cameraService'
-import { Sparkles, Sliders, RotateCcw, ArrowRight, X, Camera, RefreshCw } from 'lucide-react'
+import { Sparkles, Sliders, RotateCcw, ArrowRight, Camera, RefreshCw } from 'lucide-react'
 import { sound } from '../../services/soundService'
+import { PhotoboothStepHeader } from './PhotoboothStepHeader'
 
 export const PreCaptureFilterStep: React.FC = () => {
   const {
@@ -56,33 +57,18 @@ export const PreCaptureFilterStep: React.FC = () => {
   const currentFilterObj = PHOTO_FILTERS.find(f => f.id === selectedFilter) || PHOTO_FILTERS[0]
 
   return (
-    <div className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-4 sm:p-6 select-none max-w-5xl mx-auto">
-      {/* Top Navigation Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1 rounded-full bg-[#FF385C]/20 border border-[#FF385C]/30 text-[#FF385C] text-xs font-bold uppercase tracking-wider">
-            Step 1 of 4
-          </div>
-          <div>
-            <h1 className="text-lg sm:text-xl font-bold text-white">Choose Photo Filter</h1>
-            <p className="text-xs text-white/50">Pick your look before entering the booth</p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            sound.playClick()
-            resetSession()
-          }}
-          className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10 transition-colors cursor-pointer"
-          title="Exit"
-        >
-          <X size={18} />
-        </button>
-      </div>
+    <div className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-3 sm:p-6 select-none max-w-6xl mx-auto">
+      {/* Unified 7-Stage Header */}
+      <PhotoboothStepHeader
+        currentStep={1}
+        stepTitle="Choose Photo Filter"
+        stepSubtitle="Select from 40 authentic Korean studio filters"
+        legacyStepText="Step 1 of 4"
+        onExit={resetSession}
+      />
 
       {/* Main Content Area: Live Viewfinder + Filter Selector */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-4 flex-1 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 my-2 flex-1 items-start">
         {/* Left Column: Live Camera Filter Viewfinder (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-3">
           <div className="relative aspect-[4/3] w-full bg-black rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
@@ -93,7 +79,7 @@ export const PreCaptureFilterStep: React.FC = () => {
               autoPlay
               muted
               style={{ filter: activeCssFilter }}
-              className="w-full h-full object-cover transform -scale-x-100 transition-all duration-200"
+              className="w-full h-full object-cover transform -scale-x-100"
             />
 
             {!cameraActive && (
@@ -101,11 +87,11 @@ export const PreCaptureFilterStep: React.FC = () => {
                 style={{ filter: activeCssFilter }}
                 className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#1A1A24] to-[#0E0E14]"
               >
-                <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mb-3">
-                  <Camera size={32} className="text-white/60" />
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-3">
+                  <Camera size={28} className="text-white/60" />
                 </div>
                 <p className="text-sm font-semibold text-white">Live Camera Preview</p>
-                <p className="text-xs text-white/40 mt-1">Filter effect active on face</p>
+                <p className="text-xs text-white/40 mt-1">Real-time studio filter simulation</p>
               </div>
             )}
 
@@ -123,8 +109,9 @@ export const PreCaptureFilterStep: React.FC = () => {
             {/* Camera switch button */}
             {cameraActive && (
               <button
+                type="button"
                 onClick={toggleCamera}
-                className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/15 backdrop-blur-md cursor-pointer transition-colors"
+                className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/15 backdrop-blur-md cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
                 title="Switch Camera"
               >
                 <RefreshCw size={13} />
@@ -160,15 +147,16 @@ export const PreCaptureFilterStep: React.FC = () => {
                 step="0.05"
                 value={filterIntensity}
                 onChange={e => setFilterIntensity(parseFloat(e.target.value))}
-                className="flex-1 accent-[#FF385C] h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                className="flex-1 accent-[#FF385C] h-2 bg-white/20 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
               />
               <button
+                type="button"
                 onClick={() => {
                   sound.playClick()
                   setFilter('none')
                   setFilterIntensity(1.0)
                 }}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/60 hover:text-white border border-white/10 transition-colors cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/60 hover:text-white border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
               >
                 <RotateCcw size={11} />
                 <span>Reset</span>
@@ -184,11 +172,12 @@ export const PreCaptureFilterStep: React.FC = () => {
             {FILTER_CATEGORIES.map(cat => (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => {
                   sound.playClick()
                   setActiveCategory(cat.id)
                 }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                   activeCategory === cat.id
                     ? 'bg-white text-black shadow-md'
                     : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
@@ -208,17 +197,18 @@ export const PreCaptureFilterStep: React.FC = () => {
               return (
                 <button
                   key={filter.id}
+                  type="button"
                   onClick={() => {
                     sound.playClick()
                     setFilter(filter.id)
                   }}
-                  className={`group relative flex flex-col items-center p-2.5 rounded-xl transition-all cursor-pointer text-left border ${
+                  className={`group relative flex flex-col items-center p-2.5 rounded-xl transition-[transform,opacity,border-color,background-color] duration-150 cursor-pointer text-left border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                     isSelected
                       ? 'bg-[#1E1E28] ring-2 ring-[#FF385C] border-transparent shadow-lg shadow-[#FF385C]/20 scale-[1.02]'
                       : 'bg-[#13131A] hover:bg-[#1A1A24] border-white/5 hover:border-white/15'
                   }`}
                 >
-                  {/* Swatch Preview Circle */}
+                  {/* Swatch Preview Box */}
                   <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-neutral-800 mb-2 relative">
                     <div
                       style={{ filter: previewCss }}
@@ -252,11 +242,12 @@ export const PreCaptureFilterStep: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={() => {
             sound.playClick()
             goToFrameSelect()
           }}
-          className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-xs shadow-xl shadow-[#FF385C]/25 transition-all transform active:scale-95 cursor-pointer"
+          className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-xs shadow-xl shadow-[#FF385C]/25 transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
         >
           <span>Next: Choose Frame</span>
           <ArrowRight size={15} />

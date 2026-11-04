@@ -68,7 +68,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     const photoIndex = capturedPhotos.length
     recordShot(photoDataUrl)
 
-    // Continue recording briefly after the photo is taken (~1200ms) to capture post-photo laughter and reactions
+    // Continue recording briefly after the photo is taken (~1200ms) to capture post-photo reactions
     if (VideoRecorderService.isRecordingShot()) {
       await new Promise(r => setTimeout(r, 1200))
     }
@@ -96,7 +96,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
         const videoQrUrl = SyncService.getVideoPageUrl(sessionId)
 
-        let rawVideoBlob = await VideoRecorderService.stopRecording()
+        const rawVideoBlob = await VideoRecorderService.stopRecording()
         let videoBlob = await VideoRecorderService.createMotionStripVideo({
           rawVideoBlob,
           btsClipBlobs: allClips,
@@ -175,6 +175,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     selectedCountdown,
     sessionId,
     passcode,
+    attachBtsClipToPhoto,
     setCompositeDataUrl,
     setVideoBlob,
     setVideoUrl,
@@ -264,7 +265,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       {/* Top Controls Bar */}
       <div className="relative z-20 flex items-center justify-between w-full max-w-3xl mx-auto">
         {/* Frame & Filter Info Pill */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md">
           <div
             className="w-2.5 h-2.5 rounded-full shadow-sm"
             style={{ backgroundColor: selectedFrame.gradientColors[0] || selectedFrame.backgroundColor }}
@@ -285,26 +286,28 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={toggleCamera}
             title="Switch Camera"
-            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer"
+            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <RefreshCw size={15} />
           </button>
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               onExit()
             }}
             title="Exit Booth"
-            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer"
+            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <X size={15} />
           </button>
         </div>
       </div>
 
-      {/* Main 4:3 Viewfinder Stage */}
+      {/* Main 4:3 Viewfinder Stage - Undisputed Hero */}
       <div className="relative z-10 flex-1 flex items-center justify-center my-2">
         <div
           data-testid="viewfinder-framing-mask"
@@ -386,9 +389,10 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         <RollingFilmstrip photos={capturedPhotos} layout={selectedLayout} />
 
         <button
+          type="button"
           onClick={handleManualShoot}
           disabled={isCompositing || isPaused}
-          className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-all transform active:scale-95 cursor-pointer disabled:opacity-50"
+          className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-transform duration-150 transform active:scale-95 cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
         >
           <Camera size={16} />
           <span>Take Photo</span>

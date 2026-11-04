@@ -7,6 +7,7 @@ import confetti from 'canvas-confetti'
 import { sound } from '../../services/soundService'
 import { SyncService } from '../../services/syncService'
 import { VideoRecorderService } from '../../services/videoRecorderService'
+import { PhotoboothStepHeader } from './PhotoboothStepHeader'
 
 export const ExportView: React.FC = () => {
   const {
@@ -133,34 +134,33 @@ export const ExportView: React.FC = () => {
       : capturedPhotos
 
   return (
-    <div className="w-full min-h-screen bg-[#09090C] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
-      {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/10 gap-3">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-            Your Film Strip
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#FF385C]/20 text-[#FF385C] font-semibold">
-              Ready
-            </span>
-          </h2>
-          <div className="flex flex-wrap items-center gap-2 mt-1">
-            <span className="text-xs text-white/50">
-              {selectedFrame.name} · {selectedPrintFormat.displayName}
-            </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-white font-mono text-[11px] font-semibold tracking-wider">
-              CODE: {passcode}
-            </span>
-          </div>
+    <div className="w-full min-h-screen bg-[#08080B] text-[#F3F3F6] p-3 sm:p-6 flex flex-col justify-between max-w-5xl mx-auto select-none">
+      {/* Unified 7-Stage Header */}
+      <PhotoboothStepHeader
+        currentStep={6}
+        stepTitle="Your Film Strip is Ready"
+        stepSubtitle={`${selectedFrame.name} · ${selectedPrintFormat.displayName} · Code: ${passcode}`}
+        onExit={resetSession}
+      />
+
+      {/* Sub-bar: Passcode Pill and Output Switcher */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-2 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-white/50">Passcode:</span>
+          <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-white/10 border border-white/10 text-white font-mono text-xs font-semibold tracking-wider">
+            CODE: {passcode}
+          </span>
         </div>
 
         {/* View Mode Toggle: Output A (Photo Strip) vs Output B (Animated BTS Strip) */}
         <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-xl border border-white/10">
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveTab('strip')
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
               activeTab === 'strip'
                 ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
@@ -170,11 +170,12 @@ export const ExportView: React.FC = () => {
             <span>Photo Strip</span>
           </button>
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveTab('reel')
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
               activeTab === 'reel'
                 ? 'bg-[#FF385C] text-white shadow'
                 : 'text-white/60 hover:text-white'
@@ -188,7 +189,7 @@ export const ExportView: React.FC = () => {
       </div>
 
       {/* Main Display Stage */}
-      <div className="my-6 flex-1 flex flex-col items-center justify-center">
+      <div className="my-5 flex-1 flex flex-col items-center justify-center">
         {activeTab === 'strip' ? (
           <div className="flex flex-col items-center">
             {/* Output A Badge */}
@@ -246,26 +247,28 @@ export const ExportView: React.FC = () => {
         )}
       </div>
 
-      {/* Action Buttons Toolbar */}
-      <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Action Buttons Toolbar (Stage 7) */}
+      <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               retakePhotos()
             }}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <Camera size={15} className="text-[#FF385C]" />
             <span>Retake Photos</span>
           </button>
 
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               resetSession()
             }}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <RotateCcw size={14} />
             <span>New Strip</span>
@@ -274,20 +277,22 @@ export const ExportView: React.FC = () => {
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setShowQrModal(true)
             }}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <QrIcon size={15} className="text-[#00F0FF]" />
             <span>QR Code</span>
           </button>
 
           <button
+            type="button"
             onClick={handleDownloadVideo}
             disabled={isExportingVideo}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
             title="Download Animated BTS Strip (MP4)"
           >
             <Video size={15} className="text-[#FF385C]" />
@@ -295,8 +300,9 @@ export const ExportView: React.FC = () => {
           </button>
 
           <button
+            type="button"
             onClick={handleDownload}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold shadow-xl shadow-[#FF385C]/20 transition-all active:scale-95 cursor-pointer"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold shadow-xl shadow-[#FF385C]/20 transition-transform duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <Download size={15} />
             <span>Download Strip</span>
@@ -309,11 +315,12 @@ export const ExportView: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
           <div className="relative w-full max-w-sm bg-[#141419] border border-white/10 rounded-2xl p-6 shadow-2xl text-center">
             <button
+              type="button"
               onClick={() => {
                 sound.playClick()
                 setShowQrModal(false)
               }}
-              className="absolute top-4 right-4 text-white/50 hover:text-white cursor-pointer"
+              className="absolute top-4 right-4 text-white/50 hover:text-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
             >
               <X size={18} />
             </button>
@@ -346,8 +353,9 @@ export const ExportView: React.FC = () => {
             <div className="flex items-center gap-2 p-2.5 bg-black/40 rounded-xl border border-white/10 text-xs text-white/70 justify-between">
               <span className="truncate">{downloadUrl}</span>
               <button
+                type="button"
                 onClick={handleCopyLink}
-                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
                 title="Copy Link"
               >
                 {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}

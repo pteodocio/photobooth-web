@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { BUNDLED_FRAMES } from '../../core/frames'
 import { FrameThumbnail } from './FrameThumbnail'
-import { ArrowLeft, ArrowRight, X, Sparkles, Eye } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Sparkles, Eye } from 'lucide-react'
 import { sound } from '../../services/soundService'
 import { renderFrameToCanvas, getSamplePhotos } from '../../services/compositorService'
+import { PhotoboothStepHeader } from './PhotoboothStepHeader'
 
 export const PreCaptureFrameStep: React.FC = () => {
   const {
@@ -50,37 +51,17 @@ export const PreCaptureFrameStep: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-3 sm:p-6 select-none max-w-7xl mx-auto">
-      {/* Top Header Bar */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1 rounded-full bg-[#FF385C]/20 border border-[#FF385C]/30 text-[#FF385C] text-xs font-bold uppercase tracking-wider">
-            Step 2 of 4
-          </div>
-          <div>
-            <h1 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-              Choose Frame Design
-              <span className="text-xs font-normal text-white/50 hidden sm:inline">
-                · Click any frame to inspect the live preview
-              </span>
-            </h1>
-            <p className="text-xs text-white/50 sm:hidden">Click any frame to inspect preview</p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => {
-            sound.playClick()
-            resetSession()
-          }}
-          className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10 transition-colors cursor-pointer"
-          title="Exit"
-        >
-          <X size={18} />
-        </button>
-      </div>
+      {/* Unified 7-Stage Header */}
+      <PhotoboothStepHeader
+        currentStep={2}
+        stepTitle="Choose Frame Design"
+        stepSubtitle="Pick from 40 festive Christmas and studio frames"
+        legacyStepText="Step 2 of 4"
+        onExit={resetSession}
+      />
 
       {/* Main Split-Screen Stage: Left Large Preview Inspector + Right Frame Gallery */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 my-3 flex-1 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 my-2 flex-1 items-start">
         {/* Left Column: Larger Frame Preview Inspector (5 cols) */}
         <div className="lg:col-span-5 flex flex-col items-center justify-center p-4 rounded-2xl bg-[#0D0D14] border border-white/10 shadow-2xl relative">
           <div className="flex items-center justify-between w-full mb-3 pb-2 border-b border-white/10 text-xs">
@@ -122,11 +103,12 @@ export const PreCaptureFrameStep: React.FC = () => {
             {categories.map(cat => (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => {
                   sound.playClick()
                   setActiveCategory(cat.id)
                 }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                   activeCategory === cat.id
                     ? cat.id === 'Christmas'
                       ? 'bg-gradient-to-r from-[#DC2626] to-[#15803D] text-white shadow-lg shadow-red-500/25'
@@ -159,11 +141,12 @@ export const PreCaptureFrameStep: React.FC = () => {
       {/* Bottom Navigation Toolbar */}
       <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-4">
         <button
+          type="button"
           onClick={() => {
             sound.playClick()
             goToFilterSelect()
           }}
-          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
         >
           <ArrowLeft size={15} />
           <span>Back to Filters</span>
@@ -174,15 +157,16 @@ export const PreCaptureFrameStep: React.FC = () => {
             <div>
               Selected: <span className="font-semibold text-white">{selectedFrame.name}</span>
             </div>
-            <div className="text-[10px] text-white/40">4 Photos · 3s Timer</div>
+            <div className="text-[10px] text-white/40">4 Photos · Customizable Timer</div>
           </div>
 
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               goToCameraPrep()
             }}
-            className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-xs shadow-xl shadow-[#FF385C]/25 transition-all transform active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-xs shadow-xl shadow-[#FF385C]/25 transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <span>Confirm & Next: Camera Setup</span>
             <ArrowRight size={15} />

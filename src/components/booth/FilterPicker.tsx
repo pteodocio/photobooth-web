@@ -45,12 +45,13 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
 
         {isFiltered && (
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               onSelectFilter('none')
               setFilterIntensity(1.0)
             }}
-            className="flex items-center gap-1 text-[11px] text-white/50 hover:text-white transition-colors cursor-pointer self-start sm:self-auto"
+            className="flex items-center gap-1 text-[11px] text-white/50 hover:text-white transition-colors duration-150 cursor-pointer self-start sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <RotateCcw size={12} />
             <span>Reset to Original</span>
@@ -63,11 +64,12 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
         {FILTER_CATEGORIES.map(cat => (
           <button
             key={cat.id}
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveCategory(cat.id)
             }}
-            className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
               activeCategory === cat.id
                 ? 'bg-white text-black font-semibold shadow'
                 : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
@@ -93,48 +95,54 @@ export const FilterPicker: React.FC<FilterPickerProps> = ({
             step="0.05"
             value={filterIntensity}
             onChange={e => setFilterIntensity(parseFloat(e.target.value))}
-            className="flex-1 accent-[#FF385C] h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer"
+            className="flex-1 accent-[#FF385C] h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           />
 
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setFilterIntensity(1.0)
             }}
-            className="text-[10px] px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white/70 hover:text-white cursor-pointer"
+            className="text-[11px] text-white/40 hover:text-white transition-colors duration-150 px-2 py-0.5 rounded bg-white/5 border border-white/10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             100%
           </button>
         </div>
       )}
 
-      {/* Scrollable Filters Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 max-h-56 overflow-y-auto pr-1">
-        {filteredList.map(f => {
-          const isSelected = selectedFilter === f.id
+      {/* Filter Swatches Grid */}
+      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-1 scrollbar-thin">
+        {filteredList.map(filter => {
+          const isSelected = selectedFilter === filter.id
+
           return (
             <button
-              key={f.id}
+              key={filter.id}
+              type="button"
               onClick={() => {
                 sound.playClick()
-                onSelectFilter(f.id)
+                onSelectFilter(filter.id)
               }}
-              className={`flex flex-col items-center justify-between p-2 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`flex flex-col items-center justify-between p-2 rounded-xl text-center transition-[transform,opacity,border-color,background-color] duration-150 cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                 isSelected
-                  ? 'bg-white/15 border-[#FF385C] text-white ring-2 ring-[#FF385C]/60 scale-[1.02] shadow-md'
-                  : 'bg-white/5 border-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                  ? 'bg-white/15 border-[#FF385C] ring-2 ring-[#FF385C] shadow-lg scale-105'
+                  : 'bg-white/5 border-white/5 hover:bg-white/10'
               }`}
             >
-              {/* Miniature gradient preview swatch */}
-              <div
-                style={{ background: f.previewGradient }}
-                className="w-full h-8 rounded-lg mb-1.5 shadow-inner border border-white/10 flex items-center justify-center text-[9px] font-bold text-white/90"
-              >
-                {f.id === 'none' ? 'RAW' : 'FX'}
+              {/* Filter swatch bubble */}
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-800 mb-1.5 relative shadow-sm">
+                <div
+                  className="w-full h-full bg-gradient-to-tr from-amber-200 via-rose-300 to-sky-300"
+                />
+                {isSelected && (
+                  <div className="absolute inset-0 bg-[#FF385C]/20 border-2 border-[#FF385C] rounded-full" />
+                )}
               </div>
 
-              <span className="text-[11px] font-bold truncate w-full">{f.displayName}</span>
-              <span className="text-[9px] text-white/40 truncate w-full mt-0.5">{f.description}</span>
+              <span className="text-[10px] font-medium text-white/90 truncate w-full leading-tight">
+                {filter.displayName}
+              </span>
             </button>
           )
         })}

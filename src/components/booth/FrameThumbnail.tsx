@@ -32,8 +32,16 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
-      className={`relative group cursor-pointer flex flex-col items-center p-2 rounded-xl transition-all duration-200 select-none ${
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
+      className={`relative group cursor-pointer flex flex-col items-center p-2 rounded-xl transition-[transform,opacity,border-color,background-color] duration-150 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
         isSelected
           ? 'bg-[#181824] ring-2 ring-[#FF385C] shadow-xl shadow-[#FF385C]/25 scale-[1.03]'
           : 'bg-[#121217] hover:bg-[#1A1A22] border border-white/10 hover:border-white/20'
@@ -52,7 +60,7 @@ export const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
           ref={canvasRef}
           width={180}
           height={540}
-          className="w-full h-full object-cover block transition-transform duration-200 group-hover:scale-[1.02]"
+          className="w-full h-full object-cover block transition-transform duration-150 group-hover:scale-[1.02]"
         />
       </div>
 

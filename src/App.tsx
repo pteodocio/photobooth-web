@@ -83,7 +83,7 @@ export function App() {
     )
   }
 
-  // 2. In-Booth Active Flows (Pre-capture sequence: Filter -> Frame -> Camera Prep -> 4 Shots with 3s Timer -> Final Strip)
+  // 3. In-Booth Active Flows (Pre-capture sequence: Filter -> Frame -> Camera Prep -> 4 Shots with Timer -> Final Strip)
   if (status === 'filterSelect') {
     return <PreCaptureFilterStep />
   }
@@ -108,13 +108,13 @@ export function App() {
     return <ExportView />
   }
 
-  // 3. Simple Showcase & Landing Page
+  // 4. Showcase & Landing Page
   return (
     <div className="min-h-screen bg-[#0B0B0E] text-[#F3F3F6] flex flex-col justify-between selection:bg-[#FF385C] selection:text-white">
       {/* Navigation Header */}
-      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between border-b border-white/5">
+      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#181820] border border-white/10 flex items-center justify-center font-bold text-[#FF385C] text-sm">
+          <div className="w-9 h-9 rounded-xl bg-[#181820] border border-white/10 flex items-center justify-center font-black text-[#FF385C] text-sm shadow-md">
             4C
           </div>
           <div>
@@ -126,24 +126,26 @@ export function App() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setIsRetrieveModalOpen(true)
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs font-medium border border-white/10 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs font-medium border border-white/10 transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <QrCode size={14} />
             <span>Find Photos</span>
           </button>
 
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               startBooth()
             }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold transition-all shadow-md shadow-[#FF385C]/20 cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold transition-transform duration-150 shadow-md shadow-[#FF385C]/20 cursor-pointer transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <Camera size={14} />
             <span>Start Booth</span>
@@ -171,14 +173,14 @@ export function App() {
         />
       </main>
 
-      {/* Simple Footer */}
+      {/* Footer */}
       <footer className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/40">
-        <div>© 2026 Korean 4-Cut Photobooth. All rights reserved.</div>
+        <div>© 2026 Korean 4-Cut Photobooth Studio. All rights reserved.</div>
         <div className="flex items-center gap-4">
           <a
             href="/apk/photobooth-release.apk"
             download="photobooth-release.apk"
-            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
           >
             <Smartphone size={13} />
             <span>Android APK (54.9 MB)</span>

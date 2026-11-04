@@ -18,8 +18,13 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
   const isUrgent = secondsRemaining <= 3
 
   return (
-    <div className={`relative flex items-center justify-center ${isUrgent ? 'scale-105 transition-transform' : ''}`}>
-      <svg width={size} height={size} className="transform -rotate-90">
+    <div className={`relative flex items-center justify-center ${isUrgent ? 'scale-105 transition-transform duration-150' : ''}`}>
+      <svg
+        width={size}
+        height={size}
+        aria-hidden="true"
+        className="transform -rotate-90"
+      >
         {/* Background track circle */}
         <circle
           cx={size / 2}
@@ -40,7 +45,7 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           fill="transparent"
-          className="transition-all duration-300 ease-linear"
+          className="transition-[stroke-dashoffset] duration-300 ease-linear"
         />
       </svg>
       {/* Center number */}

@@ -103,7 +103,7 @@ export const ContactSheet: React.FC = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0A0E] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
+    <div className="w-full min-h-screen bg-[#08080B] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
@@ -147,7 +147,7 @@ export const ContactSheet: React.FC = () => {
               return (
                 <div
                   key={photoId}
-                  className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-[#FF385C] bg-black shadow-lg flex flex-col justify-between group transition-all"
+                  className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-[#FF385C] bg-black shadow-lg flex flex-col justify-between group transition-[transform,opacity] duration-150"
                 >
                   <img
                     src={photo.dataUrl}
@@ -162,16 +162,18 @@ export const ContactSheet: React.FC = () => {
                   {/* Reorder Buttons */}
                   <div className="absolute bottom-1.5 inset-x-1.5 flex justify-between opacity-85 group-hover:opacity-100 transition-opacity">
                     <button
+                      type="button"
                       onClick={() => handleMoveLeft(idx)}
                       disabled={idx === 0}
-                      className="p-1 rounded-md bg-black/80 hover:bg-black text-white disabled:opacity-20 cursor-pointer"
+                      className="p-1 rounded-md bg-black/80 hover:bg-black text-white disabled:opacity-20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
                     >
                       <ChevronLeft size={13} />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleMoveRight(idx)}
                       disabled={idx === selectedPhotoIds.length - 1}
-                      className="p-1 rounded-md bg-black/80 hover:bg-black text-white disabled:opacity-20 cursor-pointer"
+                      className="p-1 rounded-md bg-black/80 hover:bg-black text-white disabled:opacity-20 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
                     >
                       <ChevronRight size={13} />
                     </button>
@@ -195,8 +197,16 @@ export const ContactSheet: React.FC = () => {
               return (
                 <div
                   key={photo.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handlePhotoClick(photo.id)}
-                  className={`relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer border transition-all ${
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handlePhotoClick(photo.id)
+                    }
+                  }}
+                  className={`relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer border transition-[transform,opacity,border-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                     isSelected
                       ? 'border-[#FF385C] ring-2 ring-[#FF385C]/60 scale-[1.02] shadow-md'
                       : 'border-white/10 opacity-70 hover:opacity-100 bg-white/5'
@@ -240,11 +250,12 @@ export const ContactSheet: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 p-1 bg-black/40 rounded-xl border border-white/10">
             <button
+              type="button"
               onClick={() => {
                 sound.playClick()
                 setPrintFormat(PrintFormat.singleStrip)
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                 selectedPrintFormat.id === 'singleStrip'
                   ? 'bg-white text-black font-bold shadow'
                   : 'text-white/60 hover:text-white'
@@ -253,11 +264,12 @@ export const ContactSheet: React.FC = () => {
               Single Strip
             </button>
             <button
+              type="button"
               onClick={() => {
                 sound.playClick()
                 setPrintFormat(PrintFormat.twinStrip)
               }}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
                 selectedPrintFormat.id === 'twinStrip'
                   ? 'bg-[#FF385C] text-white font-bold shadow'
                   : 'text-white/60 hover:text-white'
@@ -278,9 +290,10 @@ export const ContactSheet: React.FC = () => {
         </span>
 
         <button
+          type="button"
           onClick={handlePrint}
           disabled={!isReadyToPrint || isCompositing}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs shadow-xl shadow-[#FF385C]/20 transition-all active:scale-95 cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs shadow-xl shadow-[#FF385C]/20 transition-transform duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
         >
           <Printer size={16} />
           <span>{isCompositing ? 'Rendering...' : 'Print Strip'}</span>
