@@ -68,11 +68,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     const photoIndex = capturedPhotos.length
     recordShot(photoDataUrl)
 
-    // Continue recording briefly after the photo is taken (~1200ms) to capture post-photo reactions
-    if (VideoRecorderService.isRecordingShot()) {
-      await new Promise(r => setTimeout(r, 1200))
-    }
-
+    // Stop BTS clip recording immediately when the photo is captured so the video duration dynamically matches the countdown timer
     let clipUrl: string | undefined
     try {
       const shotBlob = await VideoRecorderService.stopShotRecording()
@@ -108,6 +104,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           stampText: selectedStamp,
           dateString,
           passcode,
+          durationSeconds: selectedCountdown,
         })
         if (!videoBlob) {
           videoBlob = rawVideoBlob
@@ -257,7 +254,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       {isCompositing && (
         <div className="fixed inset-0 z-50 bg-[#18181B]/90 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
           <Loader2 size={36} className="text-[#FF4D6D] animate-spin mb-3" />
-          <h3 className="text-lg font-semibold text-white mb-0.5">Printing Film Strip...</h3>
+          <h3 className="text-lg font-semibold text-white mb-0.5">Printing Film Strip…</h3>
           <p className="text-xs text-white/50">{currentFilterObj.displayName} · {selectedFrame.name}</p>
         </div>
       )}
@@ -307,7 +304,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       <div className="relative z-10 flex-1 flex items-center justify-center my-2">
         <div
           data-testid="viewfinder-framing-mask"
-          className="relative aspect-[4/3] w-full max-w-2xl max-h-[66vh] rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-black"
+          className="relative aspect-[4/3] w-full max-w-2xl max-h-[66vh] rounded-2xl overflow-hidden border border-white/15 shadow-lg bg-black"
         >
           {/* Mirrored Video Stream with Filter Applied */}
           <video
@@ -334,7 +331,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
               <div className="px-4 py-2 rounded-full bg-white text-[#1C1917] font-semibold text-xs shadow-lg">
                 Photo {capturedPhotos.length} of {selectedLayout.slotCount} Captured!
               </div>
-              <p className="text-xs text-white/70 mt-1.5 font-medium">Get ready for next shot...</p>
+              <p className="text-xs text-white/70 mt-1.5 font-medium">Get ready for next shot…</p>
             </div>
           )}
 
@@ -366,8 +363,8 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
               data-testid="bts-recording-indicator"
               className="absolute top-4 right-4 pointer-events-none drop-shadow-md flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 border border-white/10 backdrop-blur-xs"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D6D] animate-pulse" />
-              <span className="text-[10px] font-mono font-medium tracking-wide text-white uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D6D] motion-safe:animate-pulse" />
+              <span className="text-[10px] font-medium tracking-normal text-white">
                 REC BTS ({selectedCountdown}s)
               </span>
             </div>

@@ -90,21 +90,21 @@ export const COUNTDOWN_OPTIONS: CountdownOption[] = [
     label: '3 Seconds',
     description: 'Quick and easy poses.',
     recommendedFor: 'Fast paced & candid',
-    estimatedBtsDuration: '~4–5s BTS footage',
+    estimatedBtsDuration: '3s BTS video',
   },
   {
     seconds: 5,
     label: '5 Seconds',
     description: 'Enough time to prepare.',
     recommendedFor: 'Balanced & natural',
-    estimatedBtsDuration: '~6–7s BTS footage',
+    estimatedBtsDuration: '5s BTS video',
   },
   {
     seconds: 10,
     label: '10 Seconds',
     description: 'More time for creative poses.',
     recommendedFor: 'Group poses & creative setup',
-    estimatedBtsDuration: '~11–12s BTS footage',
+    estimatedBtsDuration: '10s BTS video',
   },
 ]
 

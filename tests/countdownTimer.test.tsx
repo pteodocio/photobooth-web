@@ -34,15 +34,15 @@ describe('Customizable Photo Countdown Timer & BTS Duration Tests', () => {
     // Verify all 3 options are rendered
     expect(screen.getAllByText('3 Seconds').length).toBeGreaterThan(0)
     expect(screen.getByText('Quick and easy poses.')).toBeInTheDocument()
-    expect(screen.getByText('~4–5s BTS footage')).toBeInTheDocument()
+    expect(screen.getByText('3s BTS video')).toBeInTheDocument()
 
     expect(screen.getAllByText('5 Seconds').length).toBeGreaterThan(0)
     expect(screen.getByText('Enough time to prepare.')).toBeInTheDocument()
-    expect(screen.getByText('~6–7s BTS footage')).toBeInTheDocument()
+    expect(screen.getByText('5s BTS video')).toBeInTheDocument()
 
     expect(screen.getAllByText('10 Seconds').length).toBeGreaterThan(0)
     expect(screen.getByText('More time for creative poses.')).toBeInTheDocument()
-    expect(screen.getByText('~11–12s BTS footage')).toBeInTheDocument()
+    expect(screen.getByText('10s BTS video')).toBeInTheDocument()
 
     // 3s is selected by default
     expect(useBoothStore.getState().selectedCountdown).toBe(3)
@@ -81,7 +81,7 @@ describe('Customizable Photo Countdown Timer & BTS Duration Tests', () => {
 
     // Verify 5s countdown is shown in the summary
     expect(screen.getAllByText('5 Seconds').length).toBeGreaterThan(0)
-    expect(screen.getByText(/Active \(~6–7s BTS footage\)/i)).toBeInTheDocument()
+    expect(screen.getByText(/Active \(5s BTS video\)/i)).toBeInTheDocument()
   })
 
   it('applies the 5-second timer to the camera countdown in WebcamViewfinder', () => {

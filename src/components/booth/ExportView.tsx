@@ -20,6 +20,7 @@ export const ExportView: React.FC = () => {
     filterIntensity,
     selectedStamp,
     selectedPrintFormat,
+    selectedCountdown,
     videoUrl,
     sessionId,
     passcode,
@@ -94,6 +95,7 @@ export const ExportView: React.FC = () => {
           stampText: selectedStamp,
           dateString,
           passcode,
+          durationSeconds: selectedCountdown,
         })
         if (blob) {
           setVideoBlob(blob)

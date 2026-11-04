@@ -172,4 +172,24 @@ describe('Behind-the-Scenes (BTS) Recording Feature Tests', () => {
     expect(videoBlob).toBeDefined()
     expect(videoBlob?.size).toBeGreaterThan(0)
   })
+
+  it('generates motion strip video with durationSeconds dynamically matching selected countdown (3s, 5s, 10s)', async () => {
+    const photoUrls = [
+      'data:image/png;base64,s1',
+      'data:image/png;base64,s2',
+      'data:image/png;base64,s3',
+      'data:image/png;base64,s4',
+    ]
+
+    for (const duration of [3, 5, 10] as const) {
+      const videoBlob = await VideoRecorderService.createMotionStripVideo({
+        photoDataUrls: photoUrls,
+        frame: mockFrame,
+        layout: LayoutType.fourCut,
+        durationSeconds: duration,
+      })
+      expect(videoBlob).toBeDefined()
+      expect(VideoRecorderService.calculateTotalFrames(duration, 30)).toBe(duration * 30)
+    }
+  })
 })

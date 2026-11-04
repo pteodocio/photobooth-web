@@ -12,6 +12,7 @@ export interface CreateMotionStripVideoParams {
   stampText?: string
   dateString?: string
   passcode?: string
+  durationSeconds?: number
 }
 
 /**
@@ -29,6 +30,13 @@ export class VideoRecorderService {
   private static activeShotIndex = 0
 
   /**
+   * Calculates total animation frames given duration in seconds and frame rate.
+   */
+  static calculateTotalFrames(durationSeconds = 3, fps = 30): number {
+    return Math.max(1, Math.round((durationSeconds || 3) * fps))
+  }
+
+  /**
    * Starts recording the video stream from the user's camera for a specific photo shot.
    */
   static startShotRecording(stream: MediaStream, shotIndex = 0): void {
@@ -37,6 +45,13 @@ export class VideoRecorderService {
     }
 
     try {
+      // Clean up previous active shot recorder if still running
+      if (this.shotRecorder && this.shotRecorder.state !== 'inactive') {
+        try {
+          this.shotRecorder.stop()
+        } catch {}
+      }
+      this.shotRecorder = null
       this.shotChunks = []
       this.activeShotIndex = shotIndex
 
@@ -67,6 +82,7 @@ export class VideoRecorderService {
 
   /**
    * Stops recording the BTS clip for the current shot and returns the Blob.
+   * Resolves immediately when recording finishes at countdown zero.
    */
   static stopShotRecording(): Promise<Blob | null> {
     return new Promise(resolve => {
@@ -80,18 +96,43 @@ export class VideoRecorderService {
         return
       }
 
+      let resolved = false
+      const timeoutId = setTimeout(() => {
+        if (!resolved) {
+          resolved = true
+          const mimeType = this.shotRecorder?.mimeType || 'video/webm'
+          const blob = this.shotChunks.length > 0 ? new Blob(this.shotChunks, { type: mimeType }) : null
+          this.shotRecorder = null
+          resolve(blob)
+        }
+      }, 800)
+
       this.shotRecorder.onstop = () => {
-        const mimeType = this.shotRecorder?.mimeType || 'video/webm'
-        const blob = new Blob(this.shotChunks, { type: mimeType })
-        this.shotRecorder = null
-        resolve(blob)
+        if (!resolved) {
+          resolved = true
+          clearTimeout(timeoutId)
+          const mimeType = this.shotRecorder?.mimeType || 'video/webm'
+          const blob = this.shotChunks.length > 0 ? new Blob(this.shotChunks, { type: mimeType }) : null
+          this.shotRecorder = null
+          resolve(blob)
+        }
       }
 
       try {
+        if (typeof this.shotRecorder.requestData === 'function') {
+          this.shotRecorder.requestData()
+        }
         this.shotRecorder.stop()
       } catch (err) {
         console.warn('VideoRecorderService: Error stopping shot recorder:', err)
-        resolve(null)
+        if (!resolved) {
+          resolved = true
+          clearTimeout(timeoutId)
+          const mimeType = this.shotRecorder?.mimeType || 'video/webm'
+          const blob = this.shotChunks.length > 0 ? new Blob(this.shotChunks, { type: mimeType }) : null
+          this.shotRecorder = null
+          resolve(blob)
+        }
       }
     })
   }
@@ -157,19 +198,42 @@ export class VideoRecorderService {
         return
       }
 
+      let resolved = false
+      const timeoutId = setTimeout(() => {
+        if (!resolved) {
+          resolved = true
+          const mimeType = this.recorder?.mimeType || 'video/webm'
+          const blob = this.chunks.length > 0 ? new Blob(this.chunks, { type: mimeType }) : this.recordedBlob
+          this.recordedBlob = blob
+          this.recorder = null
+          resolve(blob)
+        }
+      }, 800)
+
       this.recorder.onstop = () => {
-        const mimeType = this.recorder?.mimeType || 'video/webm'
-        const blob = new Blob(this.chunks, { type: mimeType })
-        this.recordedBlob = blob
-        this.recorder = null
-        resolve(blob)
+        if (!resolved) {
+          resolved = true
+          clearTimeout(timeoutId)
+          const mimeType = this.recorder?.mimeType || 'video/webm'
+          const blob = new Blob(this.chunks, { type: mimeType })
+          this.recordedBlob = blob
+          this.recorder = null
+          resolve(blob)
+        }
       }
 
       try {
+        if (typeof this.recorder.requestData === 'function') {
+          this.recorder.requestData()
+        }
         this.recorder.stop()
       } catch (err) {
         console.warn('VideoRecorderService: Error stopping recorder:', err)
-        resolve(this.recordedBlob)
+        if (!resolved) {
+          resolved = true
+          clearTimeout(timeoutId)
+          resolve(this.recordedBlob)
+        }
       }
     })
   }
@@ -266,7 +330,8 @@ export class VideoRecorderService {
       recorder.start()
 
       // Layout coordinates (scaled for video canvas)
-      const totalFrames = 90 // 3 seconds at 30fps
+      const durationSeconds = params.durationSeconds || 3
+      const totalFrames = this.calculateTotalFrames(durationSeconds, 30)
       const scaleX = canvas.width / 1200
 
       const slotW = isSixCut ? 310 : 520
@@ -441,15 +506,22 @@ export class VideoRecorderService {
           ctx.fillText(`CODE: ${passcode}`, canvas.width / 2, footerY + 50)
         }
 
-        // Animated Pulsing Heart at Bottom (matching authentic Korean reference video)
+        // Animated Pulsing Heart at Bottom (matching authentic Korean reference video, vector path)
         const heartPulse = 1.0 + 0.15 * Math.sin(time * 6)
         const heartY = canvas.height - (isSixCut ? 15 : 45)
         ctx.save()
         ctx.translate(canvas.width / 2, heartY)
         ctx.scale(heartPulse, heartPulse)
         ctx.fillStyle = '#FF385C'
-        ctx.font = '18px "Segoe UI", sans-serif'
-        ctx.fillText('♥', 0, 0)
+        ctx.beginPath()
+        ctx.moveTo(0, 3)
+        ctx.bezierCurveTo(0, 0, -3, -6, -7, -6)
+        ctx.bezierCurveTo(-12, -6, -12, 1, -12, 1)
+        ctx.bezierCurveTo(-12, 6, -6, 11, 0, 16)
+        ctx.bezierCurveTo(6, 11, 12, 6, 12, 1)
+        ctx.bezierCurveTo(12, 1, 12, -6, 7, -6)
+        ctx.bezierCurveTo(3, -6, 0, 0, 0, 3)
+        ctx.fill()
         ctx.restore()
 
         ctx.restore()
