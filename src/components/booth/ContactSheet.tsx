@@ -49,7 +49,7 @@ export const ContactSheet: React.FC = () => {
       const today = new Date()
       const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
 
-      const sessionUrl = SyncService.getSessionUrl(sessionId)
+      const videoQrUrl = SyncService.getVideoPageUrl(sessionId)
 
       const compositeUrl = await renderStrip({
         photoDataUrls: orderedPhotos,
@@ -61,7 +61,7 @@ export const ContactSheet: React.FC = () => {
         stampText: selectedStamp,
         dateString,
         studioWatermark: 'KOREAN 4-CUT STUDIO',
-        qrData: sessionUrl,
+        qrData: videoQrUrl,
       })
 
       setCompositeDataUrl(compositeUrl)

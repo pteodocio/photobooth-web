@@ -1,13 +1,30 @@
 @import "tailwindcss";
 
+:root {
+  --color-bg-base: #08080B;
+  --color-bg-surface: #111116;
+  --color-bg-surface-raised: #181822;
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-brand-primary: #FF385C;
+  --color-brand-hover: #E02649;
+  --color-text-main: #F3F3F6;
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+}
+
 @layer base {
-  body {
-    background-color: #0B0B0E;
-    color: #F3F3F6;
+  html, body {
+    overflow-x: clip;
+    background-color: var(--color-bg-base);
+    color: var(--color-text-main);
     font-family: 'Outfit', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  button:focus-visible, a:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
   }
 }
 

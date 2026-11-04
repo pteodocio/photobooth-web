@@ -25,7 +25,7 @@ export const ExportView: React.FC = () => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('')
   const [copied, setCopied] = useState(false)
 
-  const downloadUrl = SyncService.getSessionUrl(sessionId)
+  const downloadUrl = SyncService.getVideoPageUrl(sessionId)
 
   // Sound whirr + celebration on mount
   useEffect(() => {
@@ -250,10 +250,10 @@ export const ExportView: React.FC = () => {
 
             <h3 className="text-base font-bold text-white flex items-center justify-center gap-2">
               <QrIcon size={18} className="text-[#FF385C]" />
-              Scan to Download Strip & Video
+              Scan for Video
             </h3>
             <p className="text-xs text-white/50 mt-1">
-              Scan with your phone camera to view and download your photobooth strip and video!
+              Scan with your phone camera to watch your video and download it directly.
             </p>
 
             {/* QR Card Container */}

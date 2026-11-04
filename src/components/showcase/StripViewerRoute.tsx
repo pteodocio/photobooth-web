@@ -233,7 +233,6 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
                 <span>{data.frameName}</span>
                 <span className="text-xs text-white/50 font-normal">· {data.koreanTitle}</span>
               </h3>
-              <p className="text-[11px] text-white/40 mt-0.5">Session ID: {sessionId}</p>
             </div>
           </div>
         ) : (

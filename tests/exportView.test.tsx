@@ -37,6 +37,6 @@ describe('ExportView Component Tests', () => {
     const qrBtn = screen.getByText('QR Code')
     fireEvent.click(qrBtn)
 
-    expect(screen.getByText(/Scan to Download/i)).toBeInTheDocument()
+    expect(screen.getByText(/Scan for Video/i)).toBeInTheDocument()
   })
 })

@@ -24,21 +24,79 @@ const localSessionCache = new Map<string, SessionData>()
 export class SyncService {
   private static localServerPort = 8080
 
-  static getSessionUrl(sessionId: string): string {
+  static encodeVideoToken(sessionId: string): string {
+    try {
+      const clean = sessionId.replace(/^session_/, '')
+      if (typeof btoa !== 'undefined') {
+        return btoa(clean).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      }
+      return clean
+    } catch {
+      return sessionId
+    }
+  }
+
+  static decodeVideoToken(token: string): string {
+    try {
+      if (typeof atob !== 'undefined') {
+        let base64 = token.replace(/-/g, '+').replace(/_/g, '/')
+        while (base64.length % 4) base64 += '='
+        const decoded = atob(base64)
+        return decoded.startsWith('session_') ? decoded : `session_${decoded}`
+      }
+      return token.startsWith('session_') ? token : `session_${token}`
+    } catch {
+      return token.startsWith('session_') ? token : `session_${token}`
+    }
+  }
+
+  static getVideoPageUrl(sessionId: string): string {
+    const token = this.encodeVideoToken(sessionId)
     const configuredUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_PUBLIC_URL) || ''
     if (configuredUrl) {
       const cleanUrl = configuredUrl.replace(/\/+$/, '')
-      return `${cleanUrl}/?s=${sessionId}`
+      return `${cleanUrl}/?v=${token}`
     }
 
     if (typeof window !== 'undefined') {
       const origin = window.location.origin
-      const pathname = window.location.pathname.endsWith('/')
-        ? window.location.pathname
-        : window.location.pathname
-      return `${origin}${pathname}?s=${sessionId}`
+      return `${origin}/?v=${token}`
     }
-    return `https://photobooth.app/?s=${sessionId}`
+    return `https://photobooth.app/?v=${token}`
+  }
+
+  static getSessionUrl(sessionId: string): string {
+    return this.getVideoPageUrl(sessionId)
+  }
+
+  static async fetchVideo(token: string): Promise<{ videoUrl: string; title: string } | null> {
+    const sessionId = this.decodeVideoToken(token)
+
+    // 1. Check local session cache first
+    const cached = localSessionCache.get(sessionId)
+    if (cached && cached.videoUrl) {
+      return { videoUrl: cached.videoUrl, title: cached.frameName || 'Photobooth Video' }
+    }
+
+    // 2. Query Supabase
+    try {
+      const { data, error } = await supabase
+        .from('booth_sessions')
+        .select('video_url, frame_name')
+        .eq('id', sessionId)
+        .maybeSingle()
+
+      if (!error && data && data.video_url) {
+        return {
+          videoUrl: data.video_url,
+          title: data.frame_name || 'Photobooth Video',
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch video:', err)
+    }
+
+    return null
   }
 
   // Upload completed session to Supabase Cloud Storage & Database

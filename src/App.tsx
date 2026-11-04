@@ -4,6 +4,7 @@ import { HeroSection } from './components/showcase/HeroSection'
 import { FrameShowcase } from './components/showcase/FrameShowcase'
 import { SessionRetrieveModal } from './components/showcase/SessionRetrieveModal'
 import { StripViewerRoute } from './components/showcase/StripViewerRoute'
+import { VideoViewerPage } from './components/showcase/VideoViewerPage'
 import { FramePickerModal } from './components/booth/FramePickerModal'
 import { PreCaptureFilterStep } from './components/booth/PreCaptureFilterStep'
 import { PreCaptureFrameStep } from './components/booth/PreCaptureFrameStep'
@@ -20,35 +21,57 @@ export function App() {
   const [isFramePickerOpen, setIsFramePickerOpen] = useState(false)
   const [isRetrieveModalOpen, setIsRetrieveModalOpen] = useState(false)
   const [activeSessionQuery, setActiveSessionQuery] = useState<string | null>(null)
+  const [activeVideoToken, setActiveVideoToken] = useState<string | null>(null)
 
-  // Parse URL query parameter `?s=<sessionId>` or route on load
+  // Parse URL query parameters (`?v=<token>` or `?s=<sessionId>`) on load
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search)
+      let videoParam = searchParams.get('v')
       let sessionParam = searchParams.get('s')
 
-      // Also check hash (e.g. #/strip?s=...)
-      if (!sessionParam && window.location.hash) {
+      // Also check hash (e.g. #/video?v=... or #/?v=...)
+      if (window.location.hash) {
         const hashQuery = window.location.hash.split('?')[1]
         if (hashQuery) {
           const hashParams = new URLSearchParams(hashQuery)
-          sessionParam = hashParams.get('s')
+          if (!videoParam) videoParam = hashParams.get('v')
+          if (!sessionParam) sessionParam = hashParams.get('s')
         }
       }
 
-      // Also check path segments (e.g. /strip/session_123)
+      // Also check path segments (e.g. /video/token or /strip/sessionId)
+      if (window.location.pathname.includes('/video')) {
+        const parts = window.location.pathname.split('/video/')
+        if (parts[1]) videoParam = parts[1].replace(/\/+$/, '')
+      }
       if (!sessionParam && window.location.pathname.includes('/strip')) {
         const parts = window.location.pathname.split('/strip/')
         if (parts[1]) sessionParam = parts[1].replace(/\/+$/, '')
       }
 
-      if (sessionParam) {
+      if (videoParam) {
+        setActiveVideoToken(videoParam)
+      } else if (sessionParam) {
         setActiveSessionQuery(sessionParam)
       }
     }
   }, [])
 
-  // 1. Direct /strip route viewer
+  // 1. Dedicated Photobooth Video Page (Primary QR Target)
+  if (activeVideoToken) {
+    return (
+      <VideoViewerPage
+        token={activeVideoToken}
+        onBack={() => {
+          setActiveVideoToken(null)
+          window.history.pushState({}, '', window.location.pathname)
+        }}
+      />
+    )
+  }
+
+  // 2. Legacy /strip route viewer
   if (activeSessionQuery) {
     return (
       <StripViewerRoute

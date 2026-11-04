@@ -67,7 +67,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         const allPhotos = [...capturedPhotos.map(p => p.dataUrl), photoDataUrl]
         const today = new Date()
         const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
-        const sessionUrl = SyncService.getSessionUrl(sessionId)
+        const videoQrUrl = SyncService.getVideoPageUrl(sessionId)
 
         let videoBlob = await VideoRecorderService.stopRecording()
         if (!videoBlob && allPhotos.length > 0) {
@@ -90,7 +90,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           stampText: selectedStamp,
           dateString,
           studioWatermark: 'KOREAN 4-CUT STUDIO',
-          qrData: sessionUrl,
+          qrData: videoQrUrl,
         })
 
         setCompositeDataUrl(compositeUrl)

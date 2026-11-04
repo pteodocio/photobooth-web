@@ -6,9 +6,17 @@ describe('SyncService Tests', () => {
     vi.restoreAllMocks()
   })
 
-  it('generates correct cloud and LAN retrieval URLs', () => {
-    const sessionUrl = SyncService.getSessionUrl('session_12345')
-    expect(sessionUrl).toContain('session_12345')
+  it('generates clean video retrieval URLs without exposing raw backend session id', () => {
+    const rawSessionId = 'session_12345'
+    const token = SyncService.encodeVideoToken(rawSessionId)
+    expect(token).not.toContain('session_')
+
+    const decoded = SyncService.decodeVideoToken(token)
+    expect(decoded).toBe(rawSessionId)
+
+    const videoUrl = SyncService.getVideoPageUrl(rawSessionId)
+    expect(videoUrl).toContain('?v=' + token)
+    expect(videoUrl).not.toContain('session_12345')
   })
 
   it('fetches session strip via mock fallback when offline', async () => {
