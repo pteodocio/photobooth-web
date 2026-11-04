@@ -166,19 +166,29 @@ export const ExportView: React.FC = () => {
               )}
             </div>
           </div>
-        ) : videoUrl ? (
-          <div className="w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden border-2 border-[#2E2E3E] photo-card-shadow bg-black">
-            <video
-              src={videoUrl}
-              controls
-              autoPlay
-              loop
-              playsInline
-              className="w-full h-full object-cover block"
-            />
-          </div>
         ) : (
-          <LiveMotionReel photos={selectedPhotosList} frame={selectedFrame} />
+          <div className="flex flex-col items-center">
+            {/* Mechanical Dispenser Slot Mouth */}
+            <div
+              className="w-48 sm:w-64 h-2.5 bg-[#1B1B1F] rounded-full border border-white/20 shadow-inner mb-[-6px] z-10"
+            />
+
+            {/* Sliding Dispensed Motion Strip */}
+            <div className="dispense-slide-down photo-card-shadow rounded-2xl overflow-hidden max-h-[66vh] border border-white/10 bg-[#0E0E12] flex items-center justify-center">
+              {videoUrl ? (
+                <video
+                  src={videoUrl}
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                  className="h-full max-h-[64vh] w-auto object-contain block rounded-2xl"
+                />
+              ) : (
+                <LiveMotionReel photos={selectedPhotosList} frame={selectedFrame} />
+              )}
+            </div>
+          </div>
         )}
       </div>
 

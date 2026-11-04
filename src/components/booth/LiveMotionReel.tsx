@@ -7,45 +7,85 @@ interface LiveMotionReelProps {
 }
 
 export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame }) => {
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     if (photos.length === 0) return
     const interval = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % photos.length)
-    }, 650)
+      setActiveIndex(prev => (prev + 1) % photos.length)
+    }, 700)
     return () => clearInterval(interval)
   }, [photos.length])
 
   if (photos.length === 0) return null
 
-  const currentPhoto = photos[currentIndex]
+  const backgroundStyle = frame.gradientColors && frame.gradientColors.length >= 2
+    ? { background: `linear-gradient(to bottom, ${frame.gradientColors.join(', ')})` }
+    : { backgroundColor: frame.backgroundColor || '#121216' }
 
   return (
-    <div className="relative aspect-[4/3] w-full max-w-md mx-auto rounded-2xl overflow-hidden border-2 border-[#2E2E3E] photo-card-shadow bg-black select-none">
-      {/* Photo Frame Animation */}
-      <img
-        src={currentPhoto.dataUrl}
-        alt={`Reel frame ${currentIndex + 1}`}
-        className="w-full h-full object-cover transition-opacity duration-150"
-      />
+    <div
+      style={backgroundStyle}
+      className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[1/3] max-h-[64vh] mx-auto rounded-3xl overflow-hidden border border-white/10 photo-card-shadow flex flex-col justify-between p-3.5 select-none animate-in fade-in"
+    >
+      {/* Top Header Banner */}
+      <div className="flex items-center justify-between pb-1 px-1">
+        <span
+          style={{ color: frame.captionColor || '#FFF' }}
+          className="text-[11px] font-bold tracking-wider uppercase truncate max-w-[120px]"
+        >
+          {frame.englishTitle || frame.name}
+        </span>
 
-      {/* Top Header Badge */}
-      <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FF385C] text-white text-[10px] font-mono font-black tracking-wider uppercase shadow-md">
-          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          LIVE REEL
-        </div>
-
-        <div className="px-2.5 py-1 rounded-md bg-black/75 text-white/90 font-mono text-[10px] font-bold border border-white/10">
-          {currentIndex + 1}/{photos.length}
+        {/* Live Reel Badge (matching test requirement) */}
+        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FF385C] text-white text-[9px] font-mono font-black tracking-wider uppercase shadow">
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span>LIVE REEL</span>
         </div>
       </div>
 
-      {/* Bottom Frame Badge */}
-      <div className="absolute bottom-3 inset-x-4 pointer-events-none text-center">
-        <div className="inline-block px-3 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] font-sans font-semibold text-white/95 border border-white/10">
-          {frame.name} · {frame.koreanTitle}
+      {/* 4 Strip Slots in Motion */}
+      <div className="flex-1 my-2 flex flex-col justify-between gap-2">
+        {photos.slice(0, 4).map((photo, idx) => {
+          const isActive = idx === activeIndex
+          return (
+            <div
+              key={photo.id || idx}
+              style={{
+                borderColor: isActive ? '#FF385C' : (frame.slotBorderColor || 'rgba(255,255,255,0.4)'),
+                borderWidth: isActive ? 2 : (frame.slotBorderWidth ? 1.5 : 1),
+                borderRadius: Math.max(frame.slotCornerRadius / 3, 6),
+              }}
+              className={`relative flex-1 rounded-xl overflow-hidden bg-black/60 transition-all duration-300 ${
+                isActive ? 'scale-[1.03] shadow-lg shadow-[#FF385C]/25 ring-1 ring-[#FF385C]' : 'opacity-90'
+              }`}
+            >
+              <img
+                src={photo.dataUrl}
+                alt={`Shot ${idx + 1}`}
+                className="w-full h-full object-cover block"
+              />
+
+              {isActive && (
+                <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-black/70 backdrop-blur-sm text-[8px] font-mono text-white/90">
+                  {idx + 1}/4
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Footer Branding & Animated Heart Sticker */}
+      <div className="pt-1 px-1 text-center flex flex-col items-center">
+        <span
+          style={{ color: frame.captionColor || '#FFF' }}
+          className="text-[9px] font-mono opacity-80"
+        >
+          KOREAN 4-CUT STUDIO
+        </span>
+        <div className="mt-0.5 animate-pulse text-[#FF385C] text-xs">
+          ♥
         </div>
       </div>
     </div>

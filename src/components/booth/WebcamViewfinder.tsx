@@ -70,9 +70,20 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
         const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`
         const videoQrUrl = SyncService.getVideoPageUrl(sessionId)
 
-        let videoBlob = await VideoRecorderService.stopRecording()
-        if (!videoBlob && allPhotos.length > 0) {
-          videoBlob = await VideoRecorderService.createVideoFromPhotos(allPhotos)
+        let rawVideoBlob = await VideoRecorderService.stopRecording()
+        let videoBlob = await VideoRecorderService.createMotionStripVideo({
+          rawVideoBlob,
+          photoDataUrls: allPhotos,
+          frame: selectedFrame,
+          layout: selectedLayout,
+          filter: selectedFilter,
+          filterIntensity,
+          stampText: selectedStamp,
+          dateString,
+          passcode,
+        })
+        if (!videoBlob) {
+          videoBlob = rawVideoBlob
         }
 
         if (videoBlob) {
