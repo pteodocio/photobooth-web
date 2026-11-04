@@ -25,6 +25,7 @@ interface BoothState {
   videoBlob: Blob | null
   videoUrl: string | null
   sessionId: string
+  passcode: string
 
   // Actions
   setStatus: (status: BoothSessionStatus) => void
@@ -47,7 +48,12 @@ interface BoothState {
   setCompositeDataUrl: (url: string | null) => void
   setVideoBlob: (blob: Blob | null) => void
   setVideoUrl: (url: string | null) => void
+  setPasscode: (code: string) => void
   resetSession: () => void
+}
+
+export function generatePasscode(): string {
+  return Math.floor(1000 + Math.random() * 9000).toString()
 }
 
 const defaultFrame = BUNDLED_FRAMES.find(f => f.id === 'pastel_dream') || BUNDLED_FRAMES[0]
@@ -66,6 +72,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
   videoBlob: null,
   videoUrl: null,
   sessionId: `session_${Date.now()}`,
+  passcode: generatePasscode(),
 
   setStatus: status => set({ status }),
 
@@ -84,6 +91,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       videoBlob: null,
       videoUrl: null,
       sessionId: `session_${Date.now()}`,
+      passcode: generatePasscode(),
     }),
 
   goToFrameSelect: () => set({ status: 'frameSelect' }),
@@ -121,6 +129,7 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       videoBlob: null,
       videoUrl: null,
       sessionId: `session_${Date.now()}`,
+      passcode: generatePasscode(),
     }),
 
   recordShot: dataUrl => {
@@ -180,6 +189,8 @@ export const useBoothStore = create<BoothState>((set, get) => ({
 
   setVideoUrl: url => set({ videoUrl: url }),
 
+  setPasscode: code => set({ passcode: code }),
+
   resetSession: () =>
     set({
       status: 'idle',
@@ -192,5 +203,6 @@ export const useBoothStore = create<BoothState>((set, get) => ({
       filterIntensity: 1.0,
       selectedStamp: KOREAN_STAMPS[0].text,
       sessionId: `session_${Date.now()}`,
+      passcode: generatePasscode(),
     }),
 }))

@@ -16,6 +16,7 @@ export const ExportView: React.FC = () => {
     selectedPrintFormat,
     videoUrl,
     sessionId,
+    passcode,
     resetSession,
     retakePhotos,
   } = useBoothStore()
@@ -103,9 +104,14 @@ export const ExportView: React.FC = () => {
               Ready
             </span>
           </h2>
-          <p className="text-xs text-white/50 mt-0.5">
-            {selectedFrame.name} · {selectedPrintFormat.displayName}
-          </p>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <span className="text-xs text-white/50">
+              {selectedFrame.name} · {selectedPrintFormat.displayName}
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 text-white font-mono text-[11px] font-semibold tracking-wider">
+              CODE: {passcode}
+            </span>
+          </div>
         </div>
 
         {/* View Mode Toggle */}
@@ -255,6 +261,11 @@ export const ExportView: React.FC = () => {
             <p className="text-xs text-white/50 mt-1">
               Scan with your phone camera to watch your video and download it directly.
             </p>
+
+            <div className="mt-3 inline-flex items-center gap-2 py-1 px-3 rounded-full bg-white/5 border border-white/10 text-xs text-white/80 font-mono">
+              <span className="text-white/40">PHOTO CODE:</span>
+              <span className="font-bold text-[#FF385C] tracking-widest">{passcode}</span>
+            </div>
 
             {/* QR Card Container */}
             <div className="my-5 p-3.5 bg-white rounded-2xl inline-block shadow-lg">

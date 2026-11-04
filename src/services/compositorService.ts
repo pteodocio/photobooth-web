@@ -126,6 +126,11 @@ export async function renderStrip(job: CompositeJob): Promise<string> {
     ctx.font = 'bold 36px "Segoe UI", sans-serif'
     ctx.fillText(job.dateString, canvasWidth / 2, 3320)
   }
+
+  if (job.passcode) {
+    ctx.font = '600 24px "Segoe UI", sans-serif'
+    ctx.fillText(`CODE: ${job.passcode}`, canvasWidth / 2, 3375)
+  }
   ctx.restore()
 
   // 7. Scannable White QR Sticker Card

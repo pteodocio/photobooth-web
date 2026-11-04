@@ -77,4 +77,15 @@ describe('Booth Store State Machine Tests', () => {
 
     expect(newOrder[2]).toBe(initialOrder[0])
   })
+
+  it('generates a 4-digit passcode on initialization and session reset', () => {
+    const state = useBoothStore.getState()
+    expect(state.passcode).toMatch(/^\d{4}$/)
+
+    useBoothStore.getState().setPasscode('1234')
+    expect(useBoothStore.getState().passcode).toBe('1234')
+
+    useBoothStore.getState().resetSession()
+    expect(useBoothStore.getState().passcode).toMatch(/^\d{4}$/)
+  })
 })

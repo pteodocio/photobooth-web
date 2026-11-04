@@ -52,4 +52,50 @@ describe('SyncService Tests', () => {
     expect(session?.compositeUrl).toBeDefined()
     expect(session?.videoUrl).toBeDefined()
   })
+
+  it('saves and retrieves recent sessions from localStorage', () => {
+    localStorage.clear()
+    expect(SyncService.getRecentSessions()).toHaveLength(0)
+
+    SyncService.saveRecentSession({
+      sessionId: 'session_recent_1',
+      compositeUrl: 'https://example.com/strip1.png',
+      frameName: 'Pink Ribbon Christmas',
+      passcode: '8812',
+    })
+
+    const recents = SyncService.getRecentSessions()
+    expect(recents).toHaveLength(1)
+    expect(recents[0].frameName).toBe('Pink Ribbon Christmas')
+    expect(recents[0].passcode).toBe('8812')
+    expect(recents[0].token).toBeDefined()
+  })
+
+  it('fetches session by 4-digit passcode without exposing raw sessionId', async () => {
+    const videoBlob = new Blob(['mock-video-bytes'], { type: 'video/webm' })
+    const sessionId = 'session_code_test_99'
+    const passcode = '4829'
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(new Blob(['mock-data'])))
+    )
+
+    await SyncService.uploadSession(
+      sessionId,
+      'data:image/png;base64,mockStripWithPasscode',
+      'Santa Workshop',
+      '산타의 작업실',
+      'fourCut',
+      'none',
+      'BEST SHOT 👑',
+      videoBlob,
+      passcode
+    )
+
+    const result = await SyncService.fetchByPasscode(passcode)
+    expect(result).not.toBeNull()
+    expect(result?.frameName).toBe('Santa Workshop')
+    expect(result?.token).toBeDefined()
+    expect(result?.token).not.toContain('session_')
+  })
 })

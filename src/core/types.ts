@@ -106,6 +106,7 @@ export interface CompositeJob {
   dateString: string
   studioWatermark: string
   qrData?: string
+  passcode?: string
 }
 
 export type BoothSessionStatus =

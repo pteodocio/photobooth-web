@@ -26,6 +26,7 @@ export const ContactSheet: React.FC = () => {
     setStamp,
     setCompositeDataUrl,
     sessionId,
+    passcode,
     videoBlob,
   } = useBoothStore()
 
@@ -62,6 +63,7 @@ export const ContactSheet: React.FC = () => {
         dateString,
         studioWatermark: 'KOREAN 4-CUT STUDIO',
         qrData: videoQrUrl,
+        passcode,
       })
 
       setCompositeDataUrl(compositeUrl)
@@ -75,7 +77,8 @@ export const ContactSheet: React.FC = () => {
         selectedLayout.id,
         selectedFilter,
         selectedStamp,
-        videoBlob
+        videoBlob,
+        passcode
       ).catch(() => {})
     } catch (err) {
       console.error('Failed to render strip:', err)

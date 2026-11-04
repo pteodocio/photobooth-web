@@ -193,11 +193,17 @@ export function App() {
         onClose={() => setIsFramePickerOpen(false)}
       />
 
-      {/* Session PIN / URL Retrieval Modal */}
+      {/* Session PIN / QR / Recent Retrieval Modal */}
       <SessionRetrieveModal
         isOpen={isRetrieveModalOpen}
         onClose={() => setIsRetrieveModalOpen(false)}
-        onRetrieve={id => setActiveSessionQuery(id)}
+        onRetrieve={(token, type) => {
+          if (type === 'strip') {
+            setActiveSessionQuery(token)
+          } else {
+            setActiveVideoToken(token)
+          }
+        }}
       />
     </div>
   )

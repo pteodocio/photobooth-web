@@ -16,6 +16,16 @@ export interface SessionData {
   koreanTitle: string
   timestamp: number
   photoUrls?: string[]
+  passcode?: string
+}
+
+export interface RecentSessionItem {
+  token: string
+  compositeUrl: string
+  videoUrl?: string
+  frameName: string
+  passcode?: string
+  timestamp: number
 }
 
 // In-memory cache for fast local retrieval and offline preview
@@ -23,6 +33,7 @@ const localSessionCache = new Map<string, SessionData>()
 
 export class SyncService {
   private static localServerPort = 8080
+  static readonly RECENT_STORAGE_KEY = 'photobooth_recent_history'
 
   static encodeVideoToken(sessionId: string): string {
     try {
@@ -108,19 +119,32 @@ export class SyncService {
     layout: string,
     filter: string,
     stampText: string,
-    videoBlob?: Blob | null
+    videoBlob?: Blob | null,
+    passcode?: string
   ): Promise<{ compositeUrl: string | null; videoUrl: string | null }> {
     let compositePublicUrl: string | null = null
     let videoPublicUrl: string | null = null
+
+    const localVideoUrl = videoBlob ? URL.createObjectURL(videoBlob) : undefined
 
     // Store in local cache first for instant retrieval
     localSessionCache.set(sessionId, {
       sessionId,
       compositeUrl: compositeDataUrl,
-      videoUrl: videoBlob ? URL.createObjectURL(videoBlob) : undefined,
+      videoUrl: localVideoUrl,
       frameName,
       koreanTitle,
       timestamp: Date.now(),
+      passcode,
+    })
+
+    // Save to device recent sessions history immediately
+    this.saveRecentSession({
+      sessionId,
+      compositeUrl: compositeDataUrl,
+      videoUrl: localVideoUrl,
+      frameName,
+      passcode,
     })
 
     try {
@@ -180,19 +204,27 @@ export class SyncService {
         stamp_text: stampText,
         composite_url: finalCompositeUrl,
         video_url: videoPublicUrl,
+        passcode: passcode || null,
       })
 
       if (dbError) {
         console.warn('Supabase db upsert warning:', dbError)
       }
 
-      // Update cache with public URLs if available
+      // Update cache and recents with public URLs if available
       if (compositePublicUrl || videoPublicUrl) {
         const cached = localSessionCache.get(sessionId)
         if (cached) {
           if (compositePublicUrl) cached.compositeUrl = compositePublicUrl
           if (videoPublicUrl) cached.videoUrl = videoPublicUrl
         }
+        this.saveRecentSession({
+          sessionId,
+          compositeUrl: finalCompositeUrl,
+          videoUrl: videoPublicUrl || localVideoUrl,
+          frameName,
+          passcode,
+        })
       }
 
       return { compositeUrl: compositePublicUrl, videoUrl: videoPublicUrl }
@@ -203,20 +235,34 @@ export class SyncService {
   }
 
   // Fetch session data from Cache, Supabase Cloud, or Local LAN
-  static async fetchSession(sessionId: string): Promise<SessionData | null> {
+  static async fetchSession(sessionIdOrToken: string): Promise<SessionData | null> {
+    const sessionId = sessionIdOrToken.startsWith('session_')
+      ? sessionIdOrToken
+      : this.decodeVideoToken(sessionIdOrToken)
+
     // 1. Check local session cache first
-    const cached = localSessionCache.get(sessionId)
+    const cached = localSessionCache.get(sessionId) || localSessionCache.get(sessionIdOrToken)
     if (cached) {
       return cached
     }
 
     // 2. Query Supabase Database
     try {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('booth_sessions')
         .select('*')
         .eq('id', sessionId)
         .maybeSingle()
+
+      if (!data && sessionId !== sessionIdOrToken) {
+        const fallback = await supabase
+          .from('booth_sessions')
+          .select('*')
+          .eq('id', sessionIdOrToken)
+          .maybeSingle()
+        data = fallback.data
+        error = fallback.error
+      }
 
       if (!error && data && data.composite_url) {
         const sessionData: SessionData = {
@@ -266,5 +312,119 @@ export class SyncService {
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
       ],
     }
+  }
+
+  // Save recent session to browser localStorage (stores max 10 entries)
+  static saveRecentSession(item: {
+    sessionId: string
+    compositeUrl: string
+    videoUrl?: string
+    frameName: string
+    passcode?: string
+  }): void {
+    try {
+      if (typeof window === 'undefined' || !window.localStorage) return
+      const token = this.encodeVideoToken(item.sessionId)
+      const existing: RecentSessionItem[] = this.getRecentSessions()
+      const filtered = existing.filter(s => s.token !== token)
+      const newItem: RecentSessionItem = {
+        token,
+        compositeUrl: item.compositeUrl,
+        videoUrl: item.videoUrl,
+        frameName: item.frameName,
+        passcode: item.passcode,
+        timestamp: Date.now(),
+      }
+      const updated = [newItem, ...filtered].slice(0, 10)
+      window.localStorage.setItem(this.RECENT_STORAGE_KEY, JSON.stringify(updated))
+    } catch (err) {
+      console.warn('Failed to save recent session:', err)
+    }
+  }
+
+  // Retrieve list of recent sessions saved on this device
+  static getRecentSessions(): RecentSessionItem[] {
+    try {
+      if (typeof window === 'undefined' || !window.localStorage) return []
+      const raw = window.localStorage.getItem(this.RECENT_STORAGE_KEY)
+      if (!raw) return []
+      const parsed = JSON.parse(raw)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+
+  // Retrieve session by 4-digit photo passcode without revealing internal session IDs
+  static async fetchByPasscode(code: string): Promise<{
+    token: string
+    isVideo: boolean
+    compositeUrl: string
+    videoUrl?: string
+    frameName: string
+  } | null> {
+    const cleanCode = code.trim()
+    if (!cleanCode) return null
+
+    // 1. Search in-memory session cache first
+    for (const [sId, sess] of localSessionCache.entries()) {
+      if (sess.passcode === cleanCode) {
+        return {
+          token: this.encodeVideoToken(sId),
+          isVideo: Boolean(sess.videoUrl),
+          compositeUrl: sess.compositeUrl,
+          videoUrl: sess.videoUrl,
+          frameName: sess.frameName,
+        }
+      }
+    }
+
+    // 2. Search local storage recent history
+    const recents = this.getRecentSessions()
+    const matchRecent = recents.find(r => r.passcode === cleanCode)
+    if (matchRecent) {
+      return {
+        token: matchRecent.token,
+        isVideo: Boolean(matchRecent.videoUrl),
+        compositeUrl: matchRecent.compositeUrl,
+        videoUrl: matchRecent.videoUrl,
+        frameName: matchRecent.frameName,
+      }
+    }
+
+    // 3. Query Supabase Database by passcode
+    try {
+      const { data, error } = await supabase
+        .from('booth_sessions')
+        .select('id, composite_url, video_url, frame_name, passcode')
+        .eq('passcode', cleanCode)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (!error && data && data.id) {
+        const token = this.encodeVideoToken(data.id)
+        const result = {
+          token,
+          isVideo: Boolean(data.video_url),
+          compositeUrl: data.composite_url || '',
+          videoUrl: data.video_url || undefined,
+          frameName: data.frame_name || 'Photobooth Strip',
+        }
+        // Save to device recent sessions for subsequent rapid access
+        this.saveRecentSession({
+          sessionId: data.id,
+          compositeUrl: result.compositeUrl,
+          videoUrl: result.videoUrl,
+          frameName: result.frameName,
+          passcode: cleanCode,
+        })
+        return result
+      }
+    } catch (err) {
+      console.warn('Supabase fetchByPasscode error:', err)
+    }
+
+    return null
   }
 }

@@ -129,6 +129,7 @@ describe('Canvas Compositor Service Tests', () => {
       stampText: 'Best Shot 👑',
       dateString: '2026.12.25',
       studioWatermark: 'CHRISTMAS 2026',
+      passcode: '4829',
     })
 
     expect(result).toBe('data:image/png;base64,mockPng')

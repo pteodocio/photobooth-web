@@ -25,6 +25,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
     filterIntensity,
     selectedStamp,
     sessionId,
+    passcode,
     capturedPhotos,
     recordShot,
     setCompositeDataUrl,
@@ -91,6 +92,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           dateString,
           studioWatermark: 'KOREAN 4-CUT STUDIO',
           qrData: videoQrUrl,
+          passcode,
         })
 
         setCompositeDataUrl(compositeUrl)
@@ -103,7 +105,8 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           selectedLayout.id,
           selectedFilter,
           selectedStamp,
-          videoBlob
+          videoBlob,
+          passcode
         ).catch(() => {})
       } catch (err) {
         console.error('Failed to composite strip:', err)
