@@ -98,7 +98,7 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' }, width: { ideal: 640 } },
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } },
         audio: false,
       })
 
@@ -155,7 +155,6 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
   // Handle scanned token or code from camera or uploaded image
   const handleScannedResult = async (val: string, type: 'video' | 'strip' | 'passcode' | 'token') => {
     if (type === 'passcode' || (/^\d{4}$/.test(val))) {
-      // Lookup by passcode
       await lookupByPasscode(val)
       return
     }
@@ -172,7 +171,6 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
       return
     }
 
-    // Default to video/strip token
     onRetrieve(val, 'video')
     onClose()
   }
@@ -182,56 +180,39 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
     const file = e.target.files?.[0]
     if (!file) return
 
-    sound.playClick()
     setIsProcessingFile(true)
     setCameraError(null)
 
     try {
       const scanResult = await QrScannerService.scanImageFile(file)
       if (scanResult) {
+        sound.playClick()
         handleScannedResult(scanResult.value, scanResult.type)
       } else {
-        setCameraError('No QR code found in this photo. Please ensure the QR code on the strip is clear and well-lit.')
+        setCameraError('No photobooth QR code detected in that photo. Please try another image or enter the 4-digit code directly.')
       }
     } catch {
-      setCameraError('Unable to scan this photo file. Please enter the 4-digit code printed on your strip instead.')
+      setCameraError('Could not process that image. Please try entering your 4-digit code.')
     } finally {
       setIsProcessingFile(false)
-      if (e.target) e.target.value = ''
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
-  // Passcode input handlers
-  const handleDigitChange = (index: number, val: string) => {
-    // Only accept numeric characters
-    const clean = val.replace(/\D/g, '')
-
-    if (!clean) {
-      const newDigits = [...digits]
-      newDigits[index] = ''
-      setDigits(newDigits)
-      return
-    }
-
-    // Handle pasting 4 digits into one slot
-    if (clean.length >= 4) {
-      const pasted = clean.slice(0, 4).split('')
-      setDigits(pasted)
-      digitInputRefs[3].current?.focus()
-      lookupByPasscode(clean.slice(0, 4))
-      return
-    }
-
+  // Digit input handling
+  const handleDigitChange = (index: number, value: string) => {
+    const cleanVal = value.replace(/[^0-9]/g, '').slice(-1)
     const newDigits = [...digits]
-    newDigits[index] = clean[clean.length - 1]
+    newDigits[index] = cleanVal
     setDigits(newDigits)
     setSearchError(null)
 
-    // Advance focus
-    if (index < 3) {
+    if (cleanVal && index < 3) {
       digitInputRefs[index + 1].current?.focus()
-    } else {
-      // All 4 digits entered, trigger automatic search
+    }
+
+    // Auto-submit when all 4 digits entered
+    if (cleanVal && index === 3) {
       const fullPin = newDigits.join('')
       if (fullPin.length === 4) {
         lookupByPasscode(fullPin)
@@ -247,24 +228,25 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault()
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4)
-    if (pasted.length > 0) {
-      const nextDigits = ['', '', '', '']
-      for (let i = 0; i < pasted.length; i++) {
-        nextDigits[i] = pasted[i]
-      }
-      setDigits(nextDigits)
-      if (pasted.length === 4) {
-        lookupByPasscode(pasted)
-      } else {
-        digitInputRefs[Math.min(pasted.length, 3)].current?.focus()
-      }
+    const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 4)
+    if (!pasted) return
+
+    const newDigits = ['', '', '', '']
+    for (let i = 0; i < pasted.length; i++) {
+      newDigits[i] = pasted[i]
+    }
+    setDigits(newDigits)
+    setSearchError(null)
+
+    if (pasted.length === 4) {
+      digitInputRefs[3].current?.focus()
+      lookupByPasscode(pasted)
+    } else {
+      digitInputRefs[pasted.length]?.current?.focus()
     }
   }
 
   const lookupByPasscode = async (code: string) => {
-    if (code.length !== 4) return
-    sound.playClick()
     setIsSearching(true)
     setSearchError(null)
 
@@ -305,15 +287,16 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in select-none">
-      <div className="relative w-full max-w-lg bg-[#141419] border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in select-none">
+      <div className="relative w-full max-w-lg bg-white border border-black/[0.08] rounded-3xl p-6 sm:p-7 shadow-xl flex flex-col max-h-[90vh]">
         {/* Close Button */}
         <button
+          type="button"
           onClick={() => {
             sound.playClick()
             onClose()
           }}
-          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors cursor-pointer"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-black/[0.03] hover:bg-black/[0.06] flex items-center justify-center text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           aria-label="Close"
         >
           <X size={16} />
@@ -321,66 +304,69 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-2xl bg-[#FF385C]/15 border border-[#FF385C]/30 flex items-center justify-center text-[#FF385C]">
-            <Sparkles size={20} />
+          <div className="w-9 h-9 rounded-2xl bg-[#FFF0F3] border border-[#FF4D6D]/20 flex items-center justify-center text-[#FF4D6D]">
+            <Sparkles size={18} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white tracking-tight leading-tight">
+            <h3 className="text-base font-bold text-[#1C1917] tracking-tight leading-tight">
               Find Your Photos
             </h3>
-            <p className="text-xs text-white/50 mt-0.5">
+            <p className="text-xs text-[#78716C] mt-0.5">
               Access your strip or live motion video
             </p>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center p-1 bg-black/40 rounded-2xl border border-white/10 mb-6" role="tablist">
+        <div className="flex items-center p-1 bg-black/[0.03] rounded-2xl border border-black/[0.04] mb-5" role="tablist">
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveTab('code')
             }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               activeTab === 'code'
-                ? 'bg-[#FF385C] text-white shadow-lg shadow-[#FF385C]/20'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-[#FF4D6D] shadow-xs font-semibold'
+                : 'text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
-            <KeyRound size={14} />
+            <KeyRound size={13} />
             <span>Photo Code</span>
           </button>
 
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveTab('scan')
             }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               activeTab === 'scan'
-                ? 'bg-[#FF385C] text-white shadow-lg shadow-[#FF385C]/20'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-[#FF4D6D] shadow-xs font-semibold'
+                : 'text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
-            <QrCode size={14} />
+            <QrCode size={13} />
             <span>Scan QR</span>
           </button>
 
           <button
+            type="button"
             onClick={() => {
               sound.playClick()
               setActiveTab('recent')
             }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer relative ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium transition-[background-color,color] duration-150 cursor-pointer relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               activeTab === 'recent'
-                ? 'bg-[#FF385C] text-white shadow-lg shadow-[#FF385C]/20'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-[#FF4D6D] shadow-xs font-semibold'
+                : 'text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
-            <History size={14} />
+            <History size={13} />
             <span>Recent</span>
             {recentSessions.length > 0 && (
-              <span className="w-4 h-4 rounded-full bg-white/20 text-[10px] flex items-center justify-center font-bold">
+              <span className="w-4 h-4 rounded-full bg-[#FFF0F3] text-[#FF4D6D] text-[10px] flex items-center justify-center font-bold">
                 {recentSessions.length}
               </span>
             )}
@@ -389,13 +375,13 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
 
         {/* Tab 1: 4-Digit Passcode Input */}
         {activeTab === 'code' && (
-          <form onSubmit={handlePasscodeSubmit} className="space-y-6 flex-1 flex flex-col justify-between">
-            <div className="text-center py-2">
-              <label className="block text-xs font-medium text-white/80 mb-1.5">
+          <form onSubmit={handlePasscodeSubmit} className="space-y-5 flex-1 flex flex-col justify-between">
+            <div className="text-center py-1">
+              <label className="block text-xs font-medium text-[#1C1917] mb-1">
                 Enter the 4-digit code printed on your strip
               </label>
-              <p className="text-[11px] text-white/40 mb-6">
-                Look for <span className="font-mono font-semibold text-white/70">CODE: XXXX</span> at the bottom of your physical film strip
+              <p className="text-[11px] text-[#A8A29E] mb-5">
+                Look for <span className="font-mono font-semibold text-[#1C1917]">CODE: XXXX</span> at the bottom of your strip
               </p>
 
               {/* 4 Digit Boxes */}
@@ -412,7 +398,7 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
                     onChange={e => handleDigitChange(idx, e.target.value)}
                     onKeyDown={e => handleKeyDown(idx, e)}
                     onPaste={handlePaste}
-                    className="w-13 h-16 sm:w-16 sm:h-20 text-center font-mono text-2xl sm:text-3xl font-bold rounded-2xl bg-black/50 border-2 border-white/10 text-white focus:border-[#FF385C] focus:bg-[#1E1E28] focus:outline-none transition-all shadow-inner"
+                    className="w-13 h-16 sm:w-16 sm:h-20 text-center font-mono text-2xl sm:text-3xl font-bold rounded-2xl bg-black/[0.02] border-2 border-black/[0.08] text-[#1C1917] focus:border-[#FF4D6D] focus:bg-white focus:outline-none transition-[border-color,background-color] duration-150 shadow-inner"
                     autoComplete="off"
                   />
                 ))}
@@ -420,21 +406,21 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
 
               {/* Error Message */}
               {searchError && (
-                <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2 text-left">
-                  <AlertCircle size={15} className="shrink-0" />
+                <div className="mt-4 p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2 text-left">
+                  <AlertCircle size={14} className="shrink-0" />
                   <span>{searchError}</span>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-black/[0.06]">
               <button
                 type="button"
                 onClick={() => {
                   sound.playClick()
                   onClose()
                 }}
-                className="px-4 py-2.5 rounded-xl text-xs text-white/60 hover:text-white transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 Cancel
               </button>
@@ -442,17 +428,17 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
               <button
                 type="submit"
                 disabled={digits.join('').length !== 4 || isSearching}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] disabled:opacity-40 text-white text-xs font-bold shadow-lg shadow-[#FF385C]/20 transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#FF4D6D] hover:bg-[#E11D48] disabled:opacity-40 text-white text-xs font-semibold shadow-xs transition-transform duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 {isSearching ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={13} className="animate-spin" />
                     <span>Searching...</span>
                   </>
                 ) : (
                   <>
                     <span>View Photos</span>
-                    <ArrowRight size={14} />
+                    <ArrowRight size={13} />
                   </>
                 )}
               </button>
@@ -465,7 +451,7 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
           <div className="space-y-4 flex-1 flex flex-col justify-between overflow-y-auto">
             <div className="flex flex-col items-center">
               {/* Camera Viewfinder Box */}
-              <div className="relative w-full aspect-video sm:aspect-[4/3] max-w-sm rounded-2xl overflow-hidden bg-black/60 border border-white/10 flex items-center justify-center">
+              <div className="relative w-full aspect-video sm:aspect-[4/3] max-w-sm rounded-2xl overflow-hidden bg-black border border-black/[0.08] flex items-center justify-center">
                 <video
                   ref={videoRef}
                   playsInline
@@ -476,35 +462,34 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
                 {/* Reticle Target Overlay */}
                 {cameraActive && (
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    <div className="w-44 h-44 sm:w-52 sm:h-52 border-2 border-dashed border-[#FF385C] rounded-2xl relative animate-pulse flex items-center justify-center">
-                      <div className="w-full h-0.5 bg-[#FF385C]/60 absolute shadow-[0_0_8px_#FF385C] top-1/2 transform -translate-y-1/2" />
+                    <div className="w-40 h-40 sm:w-48 sm:h-48 border-2 border-dashed border-[#FF4D6D] rounded-2xl relative animate-pulse flex items-center justify-center">
+                      <div className="w-full h-0.5 bg-[#FF4D6D]/60 absolute top-1/2 transform -translate-y-1/2" />
                     </div>
                   </div>
                 )}
 
-                {/* Fallback state if camera inactive or permission pending */}
                 {!cameraActive && !cameraError && (
                   <div className="text-center p-4">
-                    <Camera size={28} className="mx-auto text-white/30 mb-2 animate-bounce" />
-                    <span className="text-xs text-white/50">Starting camera preview...</span>
+                    <Camera size={26} className="mx-auto text-white/40 mb-1.5 animate-pulse" />
+                    <span className="text-xs text-white/60">Starting camera preview...</span>
                   </div>
                 )}
               </div>
 
               {cameraError && (
-                <div className="w-full mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
-                  <AlertCircle size={15} className="shrink-0" />
+                <div className="w-full mt-3 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+                  <AlertCircle size={14} className="shrink-0" />
                   <span>{cameraError}</span>
                 </div>
               )}
 
-              <p className="text-[11px] text-white/40 text-center mt-3">
+              <p className="text-[11px] text-[#A8A29E] text-center mt-2.5">
                 Point your camera at the QR badge on your printed photobooth strip
               </p>
             </div>
 
             {/* Photo File Upload Alternative */}
-            <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="pt-3 border-t border-black/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2.5">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -520,16 +505,16 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
                   fileInputRef.current?.click()
                 }}
                 disabled={isProcessingFile}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-white/90 hover:text-white transition-colors cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-black/[0.02] hover:bg-black/[0.05] border border-black/[0.06] text-xs font-medium text-[#1C1917] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 {isProcessingFile ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={13} className="animate-spin" />
                     <span>Analyzing Image...</span>
                   </>
                 ) : (
                   <>
-                    <Upload size={14} className="text-[#00F0FF]" />
+                    <Upload size={13} className="text-[#0EA5E9]" />
                     <span>Upload Photo of Strip</span>
                   </>
                 )}
@@ -541,7 +526,7 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
                   sound.playClick()
                   onClose()
                 }}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs text-white/60 hover:text-white transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 Cancel
               </button>
@@ -553,40 +538,41 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
         {activeTab === 'recent' && (
           <div className="flex-1 flex flex-col justify-between overflow-hidden">
             {recentSessions.length > 0 ? (
-              <div className="overflow-y-auto max-h-[50vh] pr-1 grid grid-cols-2 sm:grid-cols-3 gap-3 my-1">
+              <div className="overflow-y-auto max-h-[50vh] pr-1 grid grid-cols-2 sm:grid-cols-3 gap-2.5 my-1">
                 {recentSessions.map((session, idx) => (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => {
                       sound.playClick()
                       onRetrieve(session.token, session.videoUrl ? 'video' : 'strip')
                       onClose()
                     }}
-                    className="group relative flex flex-col rounded-2xl bg-black/40 border border-white/10 hover:border-[#FF385C] overflow-hidden p-2 text-left transition-all active:scale-95 cursor-pointer"
+                    className="group relative flex flex-col rounded-2xl bg-[#FAF8F5] border border-black/[0.06] hover:border-[#FF4D6D] overflow-hidden p-2 text-left transition-[border-color,transform] duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
                   >
                     {/* Thumbnail */}
-                    <div className="w-full aspect-[9/16] max-h-36 bg-[#0E0E12] rounded-xl overflow-hidden mb-2 relative">
+                    <div className="w-full aspect-[9/16] max-h-36 bg-neutral-100 rounded-xl overflow-hidden mb-1.5 relative">
                       <img
                         src={session.compositeUrl}
                         alt={session.frameName}
-                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-contain group-hover:scale-102 transition-transform duration-150"
                         loading="lazy"
                       />
                       {session.videoUrl && (
-                        <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-[#FF385C] text-[9px] font-bold text-white shadow">
+                        <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-[#FF4D6D] text-[8px] font-bold text-white shadow-xs">
                           VIDEO
                         </div>
                       )}
                     </div>
 
                     <div className="px-1">
-                      <span className="block text-xs font-bold text-white truncate">
+                      <span className="block text-xs font-semibold text-[#1C1917] truncate">
                         {session.frameName}
                       </span>
-                      <div className="flex items-center justify-between text-[10px] text-white/40 mt-0.5">
+                      <div className="flex items-center justify-between text-[10px] text-[#78716C] mt-0.5">
                         <span>{formatRelativeTime(session.timestamp)}</span>
                         {session.passcode && (
-                          <span className="font-mono text-[#FF385C] font-semibold">
+                          <span className="font-mono text-[#FF4D6D] font-medium">
                             #{session.passcode}
                           </span>
                         )}
@@ -596,36 +582,37 @@ export const SessionRetrieveModal: React.FC<SessionRetrieveModalProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="py-12 text-center flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/30 mb-3">
-                  <History size={22} />
+              <div className="py-10 text-center flex flex-col items-center justify-center">
+                <div className="w-10 h-10 rounded-2xl bg-black/[0.03] border border-black/[0.05] flex items-center justify-center text-[#A8A29E] mb-2.5">
+                  <History size={20} />
                 </div>
-                <h4 className="text-sm font-bold text-white mb-1">
+                <h4 className="text-xs font-semibold text-[#1C1917] mb-0.5">
                   No Recent Photos Found
                 </h4>
-                <p className="text-xs text-white/40 max-w-xs mb-4">
-                  Photos captured on this device will automatically appear here for rapid access.
+                <p className="text-xs text-[#78716C] max-w-xs mb-3">
+                  Photos captured on this device will automatically appear here.
                 </p>
                 <button
+                  type="button"
                   onClick={() => {
                     sound.playClick()
                     setActiveTab('code')
                   }}
-                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-xl bg-black/[0.04] hover:bg-black/[0.08] text-[#1C1917] text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
                 >
                   Enter Photo Code
                 </button>
               </div>
             )}
 
-            <div className="flex items-center justify-end pt-3 border-t border-white/10">
+            <div className="flex items-center justify-end pt-3 border-t border-black/[0.06]">
               <button
                 type="button"
                 onClick={() => {
                   sound.playClick()
                   onClose()
                 }}
-                className="px-4 py-2 rounded-xl text-xs text-white/60 hover:text-white transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 Close
               </button>

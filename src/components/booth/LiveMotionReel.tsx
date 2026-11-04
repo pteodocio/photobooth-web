@@ -27,7 +27,7 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
   return (
     <div
       style={backgroundStyle}
-      className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[1/3] max-h-[64vh] mx-auto rounded-3xl overflow-hidden border border-white/10 photo-card-shadow flex flex-col justify-between p-3.5 select-none animate-in fade-in"
+      className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[1/3] max-h-[64vh] mx-auto rounded-3xl overflow-hidden border border-black/[0.08] photo-card-shadow flex flex-col justify-between p-3.5 select-none animate-in fade-in"
     >
       {/* Top Header Banner */}
       <div className="flex items-center justify-between pb-1 px-1">
@@ -39,7 +39,7 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
         </span>
 
         {/* Live Reel Badge (matching test requirement) */}
-        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FF385C] text-white text-[9px] font-mono font-black tracking-wider uppercase shadow">
+        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FF4D6D] text-white text-[9px] font-mono font-bold tracking-wider uppercase shadow-xs">
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
           <span>LIVE REEL</span>
         </div>
@@ -53,12 +53,12 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
             <div
               key={photo.id || idx}
               style={{
-                borderColor: isActive ? '#FF385C' : (frame.slotBorderColor || 'rgba(255,255,255,0.4)'),
+                borderColor: isActive ? '#FF4D6D' : (frame.slotBorderColor || 'rgba(255,255,255,0.4)'),
                 borderWidth: isActive ? 2 : (frame.slotBorderWidth ? 1.5 : 1),
                 borderRadius: Math.max(frame.slotCornerRadius / 3, 6),
               }}
               className={`relative flex-1 rounded-xl overflow-hidden bg-black/60 transition-[transform,opacity,box-shadow] duration-300 ${
-                isActive ? 'scale-[1.03] shadow-lg shadow-[#FF385C]/25 ring-1 ring-[#FF385C]' : 'opacity-90'
+                isActive ? 'scale-[1.02] shadow-sm ring-1 ring-[#FF4D6D]' : 'opacity-90'
               }`}
             >
               <img
@@ -68,7 +68,7 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
               />
 
               {isActive && (
-                <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-black/70 backdrop-blur-sm text-[8px] font-mono text-white/90">
+                <div className="absolute top-1 right-1 px-1.5 py-0.2 rounded bg-black/70 backdrop-blur-xs text-[8px] font-mono text-white/90">
                   {idx + 1}/4
                 </div>
               )}
@@ -85,8 +85,8 @@ export const LiveMotionReel: React.FC<LiveMotionReelProps> = ({ photos, frame })
         >
           KOREAN 4-CUT STUDIO
         </span>
-        <div className="mt-0.5 animate-pulse text-[#FF385C]">
-          <Heart size={12} className="fill-current" />
+        <div className="mt-0.5 animate-pulse text-[#FF4D6D]">
+          <Heart size={10} className="fill-current" />
         </div>
       </div>
     </div>

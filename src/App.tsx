@@ -29,7 +29,6 @@ export function App() {
       let videoParam = searchParams.get('v')
       let sessionParam = searchParams.get('s')
 
-      // Also check hash (e.g. #/video?v=... or #/?v=...)
       if (window.location.hash) {
         const hashQuery = window.location.hash.split('?')[1]
         if (hashQuery) {
@@ -39,7 +38,6 @@ export function App() {
         }
       }
 
-      // Also check path segments (e.g. /video/token or /strip/sessionId)
       if (window.location.pathname.includes('/video')) {
         const parts = window.location.pathname.split('/video/')
         if (parts[1]) videoParam = parts[1].replace(/\/+$/, '')
@@ -83,7 +81,7 @@ export function App() {
     )
   }
 
-  // 3. In-Booth Active Flows (Pre-capture sequence: Filter -> Frame -> Camera Prep -> 4 Shots with Timer -> Final Strip)
+  // 3. In-Booth Active Flows
   if (status === 'filterSelect') {
     return <PreCaptureFilterStep />
   }
@@ -110,32 +108,32 @@ export function App() {
 
   // 4. Showcase & Landing Page
   return (
-    <div className="min-h-screen bg-[#0B0B0E] text-[#F3F3F6] flex flex-col justify-between selection:bg-[#FF385C] selection:text-white">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#1C1917] flex flex-col justify-between selection:bg-[#FFF0F3] selection:text-[#FF4D6D]">
       {/* Navigation Header */}
-      <nav className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#181820] border border-white/10 flex items-center justify-center font-black text-[#FF385C] text-sm shadow-md">
+      <nav className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-black/[0.05]">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-[#FFF0F3] border border-[#FF4D6D]/20 flex items-center justify-center font-bold text-[#FF4D6D] text-xs shadow-xs">
             4C
           </div>
           <div>
-            <div className="text-sm font-bold tracking-tight text-white leading-tight">
+            <div className="text-sm font-semibold tracking-tight text-[#1C1917] leading-tight">
               Korean 4-Cut
             </div>
-            <div className="text-[11px] text-white/40">Photobooth Studio</div>
+            <div className="text-[11px] text-[#A8A29E]">Photobooth Studio</div>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => {
               sound.playClick()
               setIsRetrieveModalOpen(true)
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs font-medium border border-white/10 transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-black/[0.03] text-[#78716C] hover:text-[#1C1917] text-xs font-medium border border-black/[0.08] shadow-xs transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
-            <QrCode size={14} />
+            <QrCode size={13} />
             <span>Find Photos</span>
           </button>
 
@@ -145,9 +143,9 @@ export function App() {
               sound.playClick()
               startBooth()
             }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white text-xs font-bold transition-transform duration-150 shadow-md shadow-[#FF385C]/20 cursor-pointer transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#FF4D6D] hover:bg-[#E11D48] text-white text-xs font-semibold transition-transform duration-150 shadow-xs cursor-pointer transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
-            <Camera size={14} />
+            <Camera size={13} />
             <span>Start Booth</span>
           </button>
         </div>
@@ -174,13 +172,13 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/40">
-        <div>© 2026 Korean 4-Cut Photobooth Studio. All rights reserved.</div>
+      <footer className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-8 border-t border-black/[0.05] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A8A29E]">
+        <div>© 2026 Korean 4-Cut Studio · Self-Photo Booth Experience</div>
         <div className="flex items-center gap-4">
           <a
             href="/apk/photobooth-release.apk"
             download="photobooth-release.apk"
-            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="flex items-center gap-1.5 text-[#78716C] hover:text-[#1C1917] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
             <Smartphone size={13} />
             <span>Android APK (54.9 MB)</span>
@@ -194,7 +192,7 @@ export function App() {
         onClose={() => setIsFramePickerOpen(false)}
       />
 
-      {/* Session PIN / QR / Recent Retrieval Modal */}
+      {/* Session Retrieval Modal */}
       <SessionRetrieveModal
         isOpen={isRetrieveModalOpen}
         onClose={() => setIsRetrieveModalOpen(false)}

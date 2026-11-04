@@ -101,23 +101,23 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
   const hasVideo = Boolean(data?.videoUrl)
 
   return (
-    <div className="w-full min-h-screen bg-[#09090C] text-[#F3F3F6] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
+    <div className="w-full min-h-screen bg-[#FAF8F5] text-[#1C1917] p-4 sm:p-6 flex flex-col justify-between max-w-4xl mx-auto select-none">
       {/* Top Header Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+      <div className="flex items-center justify-between pb-4 border-b border-black/[0.06]">
         <button
           onClick={() => {
             sound.playClick()
             onBack()
           }}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-white/70 hover:text-white transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#F4F1EC] text-xs font-semibold text-[#78716C] hover:text-[#1C1917] border border-black/[0.06] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
         >
           <ArrowLeft size={14} />
           <span>Back to Photobooth</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <Camera size={15} className="text-[#FF385C]" />
-          <span className="text-xs font-bold text-white tracking-wider">
+          <Camera size={15} className="text-[#FF4D6D]" />
+          <span className="text-xs font-semibold text-[#1C1917]">
             Korean 4-Cut Studio
           </span>
         </div>
@@ -126,16 +126,16 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
       {/* View Mode Toggle: Photo Strip vs BTS Video */}
       {!loading && data && (
         <div className="mt-4 flex items-center justify-center">
-          <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-2xl border border-white/10 shadow-lg">
+          <div className="flex items-center gap-1.5 p-1 bg-white rounded-2xl border border-black/[0.06] shadow-xs">
             <button
               onClick={() => {
                 sound.playClick()
                 setActiveTab('strip')
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                 activeTab === 'strip'
-                  ? 'bg-[#FF385C] text-white shadow-lg shadow-[#FF385C]/25'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#FF4D6D] text-white shadow-xs'
+                  : 'text-[#78716C] hover:text-[#1C1917] hover:bg-[#FAF8F5]'
               }`}
             >
               <Film size={14} />
@@ -147,16 +147,16 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
                 sound.playClick()
                 setActiveTab('video')
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                 activeTab === 'video'
-                  ? 'bg-[#FF385C] text-white shadow-lg shadow-[#FF385C]/25'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#FF4D6D] text-white shadow-xs'
+                  : 'text-[#78716C] hover:text-[#1C1917] hover:bg-[#FAF8F5]'
               }`}
             >
               <Video size={14} />
               <span>Short Video (BTS)</span>
               {hasVideo && (
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               )}
             </button>
           </div>
@@ -167,14 +167,14 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
       <div className="my-6 flex-1 flex flex-col items-center justify-center">
         {loading ? (
           <div className="flex flex-col items-center gap-3">
-            <div className="w-9 h-9 rounded-full border-2 border-[#FF385C] border-t-transparent animate-spin" />
-            <p className="text-xs text-white/50">Retrieving your photos & video...</p>
+            <div className="w-9 h-9 rounded-full border-2 border-[#FF4D6D] border-t-transparent animate-spin" />
+            <p className="text-xs text-[#78716C]">Retrieving your photos &amp; video…</p>
           </div>
         ) : data ? (
           <div className="flex flex-col items-center gap-4 w-full">
             {activeTab === 'strip' ? (
               /* Photo Strip View */
-              <div className="photo-card-shadow rounded-2xl overflow-hidden max-h-[68vh] border border-white/10 bg-[#0E0E12] animate-in fade-in duration-200">
+              <div className="photo-card-shadow rounded-2xl overflow-hidden max-h-[68vh] border border-black/[0.06] bg-white animate-in fade-in duration-200">
                 <img
                   src={data.compositeUrl}
                   alt="Korean 4-Cut Photo Strip"
@@ -183,7 +183,7 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
               </div>
             ) : (
               /* Short Video (BTS) View */
-              <div className="w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden border border-white/15 bg-black shadow-2xl relative flex items-center justify-center animate-in fade-in duration-200">
+              <div className="w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden border border-black/[0.06] bg-white shadow-sm relative flex items-center justify-center animate-in fade-in duration-200">
                 {hasVideo ? (
                   <video
                     ref={videoRef}
@@ -191,6 +191,7 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
                     controls
                     autoPlay
                     loop
+                    muted
                     playsInline
                     className="w-full h-full object-cover block"
                   />
@@ -219,8 +220,8 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
                     }}
                   />
                 ) : (
-                  <div className="p-8 text-center text-white/50 text-xs">
-                    <Video size={32} className="mx-auto mb-2 text-white/30" />
+                  <div className="p-8 text-center text-[#78716C] text-xs">
+                    <Video size={32} className="mx-auto mb-2 text-[#A8A29E]" />
                     <span>Video preview is preparing or unavailable for this session.</span>
                   </div>
                 )}
@@ -229,16 +230,16 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
 
             {/* Session Metadata Label */}
             <div className="text-center">
-              <h3 className="text-sm font-bold text-white flex items-center justify-center gap-1.5">
+              <h3 className="text-sm font-semibold text-[#1C1917] flex items-center justify-center gap-1.5">
                 <span>{data.frameName}</span>
-                <span className="text-xs text-white/50 font-normal">· {data.koreanTitle}</span>
+                <span className="text-xs text-[#78716C] font-normal">· {data.koreanTitle}</span>
               </h3>
             </div>
           </div>
         ) : (
-          <div className="text-center p-8 bg-white/5 rounded-2xl border border-white/10 max-w-sm">
-            <p className="text-sm text-white/80 font-semibold">Photobooth strip not found</p>
-            <p className="text-xs text-white/50 mt-1">
+          <div className="text-center p-8 bg-white rounded-2xl border border-black/[0.06] shadow-xs max-w-sm">
+            <p className="text-sm text-[#1C1917] font-semibold">Photobooth strip not found</p>
+            <p className="text-xs text-[#78716C] mt-1">
               Please check your QR code or scan again.
             </p>
           </div>
@@ -246,21 +247,21 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
       </div>
 
       {/* Bottom Download & Share Action Bar */}
-      <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div className="pt-4 border-t border-black/[0.06] flex flex-col sm:flex-row items-center justify-center gap-3">
         <button
           onClick={handleShare}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 transition-colors cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-[#F4F1EC] text-[#1C1917] text-xs font-semibold border border-black/[0.06] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
         >
-          {copied ? <Check size={15} className="text-emerald-400" /> : <Share2 size={15} />}
+          {copied ? <Check size={15} className="text-emerald-600" /> : <Share2 size={15} />}
           <span>{copied ? 'Link Copied' : 'Share'}</span>
         </button>
 
         <button
           onClick={handleDownloadStrip}
           disabled={loading || !data}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 disabled:opacity-40 text-white text-xs font-bold border border-white/10 shadow-lg transition-all active:scale-95 cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-[#F4F1EC] disabled:opacity-40 text-[#1C1917] text-xs font-semibold border border-black/[0.06] shadow-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
         >
-          <Download size={15} className="text-[#FF385C]" />
+          <Download size={15} className="text-[#FF4D6D]" />
           <span>Download Photo Strip</span>
         </button>
 
@@ -268,10 +269,10 @@ export const StripViewerRoute: React.FC<StripViewerRouteProps> = ({ sessionId, o
           <button
             onClick={handleDownloadVideo}
             disabled={loading || !hasVideo || isDownloadingVideo}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#FF385C] to-[#E02649] hover:from-[#E02649] hover:to-[#C01F3E] disabled:opacity-40 text-white text-xs font-bold shadow-xl shadow-[#FF385C]/25 transition-all active:scale-95 cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#FF4D6D] hover:bg-[#E11D48] disabled:opacity-40 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
             <Download size={15} />
-            <span>{isDownloadingVideo ? 'Downloading...' : 'Download Video (BTS)'}</span>
+            <span className="whitespace-nowrap">{isDownloadingVideo ? 'Downloading…' : 'Download Video (BTS)'}</span>
           </button>
         )}
       </div>

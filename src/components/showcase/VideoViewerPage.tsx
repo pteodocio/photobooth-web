@@ -193,48 +193,50 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
   }
 
   return (
-    <main className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-4 sm:p-6 max-w-6xl mx-auto select-none">
+    <main className="min-h-screen bg-[#FAF8F5] text-[#1C1917] flex flex-col justify-between p-4 sm:p-6 max-w-5xl mx-auto select-none">
       {/* Top Studio Brand Header */}
-      <header className="flex items-center justify-between pb-4 border-b border-white/10 w-full gap-4">
+      <header className="flex items-center justify-between pb-3.5 border-b border-black/[0.06] w-full gap-4">
         <div className="flex items-center gap-3">
           {onBack && (
             <button
+              type="button"
               onClick={() => {
                 sound.playClick()
                 onBack()
               }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-white/70 hover:text-white border border-white/10 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-black/[0.03] text-xs font-medium text-[#78716C] hover:text-[#1C1917] border border-black/[0.06] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
             >
-              <ArrowLeft size={14} />
+              <ArrowLeft size={13} />
               <span>Back</span>
             </button>
           )}
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm sm:text-base font-bold text-white tracking-tight">
+              <h1 className="text-sm sm:text-base font-semibold text-[#1C1917] tracking-tight">
                 {title}
               </h1>
               {passcode && (
-                <span className="px-2.5 py-0.5 rounded-full bg-white/10 border border-white/10 font-mono text-xs font-semibold text-white/90">
+                <span className="px-2.5 py-0.5 rounded-full bg-white border border-black/[0.06] font-mono text-xs font-semibold text-[#1C1917] shadow-xs">
                   CODE: {passcode}
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-white/40">Korean 4-Cut Studio Memories</p>
+            <p className="text-[11px] text-[#78716C]">Korean 4-Cut Studio Memories</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white/80 hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-black/[0.03] border border-black/[0.06] text-xs text-[#78716C] hover:text-[#1C1917] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
             title="Share or Copy Link"
           >
             {copiedLink ? (
               <>
-                <Check size={13} className="text-emerald-400" />
-                <span className="text-emerald-400">Copied</span>
+                <Check size={13} className="text-emerald-600" />
+                <span className="text-emerald-600">Copied</span>
               </>
             ) : (
               <>
@@ -244,8 +246,8 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
             )}
           </button>
 
-          <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/60">
-            <Camera size={13} className="text-[#FF385C]" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/[0.03] text-xs text-[#78716C]">
+            <Camera size={13} className="text-[#FF4D6D]" />
             <span className="hidden sm:inline">Studio</span>
           </div>
         </div>
@@ -255,20 +257,21 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
       <div className="flex-1 my-auto py-6 sm:py-8 w-full flex flex-col justify-center">
         {loading ? (
           <div className="flex flex-col items-center gap-3 py-24">
-            <div className="w-10 h-10 rounded-full border-2 border-[#FF385C] border-t-transparent animate-spin" />
-            <p className="text-xs text-white/60 font-medium">Opening your strip & video...</p>
+            <div className="w-8 h-8 rounded-full border-2 border-[#FF4D6D] border-t-transparent animate-spin" />
+            <p className="text-xs text-[#78716C] font-medium">Opening your strip & video…</p>
           </div>
         ) : error || (!videoUrl && !compositeUrl) ? (
-          <div className="w-full max-w-sm mx-auto p-6 rounded-3xl bg-[#111116] border border-white/10 text-center shadow-xl">
-            <AlertCircle size={32} className="mx-auto mb-3 text-[#FF385C]" />
-            <h2 className="text-sm font-bold text-white">Video Not Found</h2>
-            <p className="text-xs text-white/50 mt-1">
+          <div className="w-full max-w-sm mx-auto p-6 rounded-3xl bg-white border border-black/[0.08] text-center shadow-xs">
+            <AlertCircle size={28} className="mx-auto mb-2.5 text-[#FF4D6D]" />
+            <h2 className="text-sm font-semibold text-[#1C1917]">Video Not Found</h2>
+            <p className="text-xs text-[#78716C] mt-1">
               Please check your 4-digit code or QR code and try again.
             </p>
             {onBack && (
               <button
+                type="button"
                 onClick={onBack}
-                className="mt-4 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition-colors cursor-pointer"
+                className="mt-4 px-4 py-2 rounded-xl bg-black/[0.03] hover:bg-black/[0.06] text-[#1C1917] text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 Return to Studio
               </button>
@@ -286,17 +289,17 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
             {compositeUrl && (
               <section className="flex flex-col items-center gap-3 w-full">
                 <div className="w-full flex items-center justify-between px-1">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white tracking-wide uppercase">
-                    <Film size={14} className="text-[#FF385C]" />
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1C1917]">
+                    <Film size={13} className="text-[#FF4D6D]" />
                     <span>Photo Strip</span>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] text-white/60 font-medium">
+                  <span className="px-2 py-0.5 rounded-full bg-black/[0.03] text-[10px] text-[#78716C] font-medium">
                     Print Ready
                   </span>
                 </div>
 
                 {/* Strip Container */}
-                <div className="w-full flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-[#0E0E14] border border-white/10 shadow-2xl min-h-[300px]">
+                <div className="w-full flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-white border border-black/[0.06] shadow-xs min-h-[300px]">
                   <img
                     src={compositeUrl}
                     alt="Photo Strip"
@@ -309,25 +312,25 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
                   type="button"
                   onClick={handleDownloadStrip}
                   disabled={isDownloadingStrip}
-                  className={`w-full flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl font-bold text-xs sm:text-sm shadow-xl transition-all transform active:scale-95 cursor-pointer ${
+                  className={`w-full flex items-center justify-center gap-2 py-3 px-6 rounded-2xl font-semibold text-xs sm:text-sm whitespace-nowrap shadow-xs transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                     downloadStripSuccess
-                      ? 'bg-emerald-500 text-white shadow-emerald-500/25'
-                      : 'bg-[#FF385C] hover:bg-[#E02649] text-white shadow-[#FF385C]/30'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-[#FF4D6D] hover:bg-[#E11D48] text-white'
                   } disabled:opacity-60`}
                 >
                   {isDownloadingStrip ? (
                     <>
                       <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                      <span>Downloading Strip...</span>
+                      <span>Downloading Strip…</span>
                     </>
                   ) : downloadStripSuccess ? (
                     <>
-                      <Check size={17} strokeWidth={3} />
+                      <Check size={15} strokeWidth={3} />
                       <span>Strip Downloaded!</span>
                     </>
                   ) : (
                     <>
-                      <Download size={17} strokeWidth={2.5} />
+                      <Download size={15} strokeWidth={2.5} />
                       <span>Download Strip</span>
                     </>
                   )}
@@ -339,22 +342,23 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
             {videoUrl && (
               <section className="flex flex-col items-center gap-3 w-full">
                 <div className="w-full flex items-center justify-between px-1">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white tracking-wide uppercase">
-                    <Video size={14} className="text-[#00F0FF]" />
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1C1917]">
+                    <Video size={13} className="text-[#0EA5E9]" />
                     <span>Behind-the-Scenes Video</span>
                   </div>
-                  <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[10px] text-emerald-700 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     Live Motion
                   </span>
                 </div>
 
                 {/* Video Player Container */}
-                <div className="w-full flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-[#0E0E14] border border-white/10 shadow-2xl min-h-[300px]">
+                <div className="w-full flex items-center justify-center p-3 sm:p-4 rounded-3xl bg-white border border-black/[0.06] shadow-xs min-h-[300px]">
                   <div className="relative max-h-[58vh] sm:max-h-[64vh] w-auto flex items-center justify-center rounded-xl overflow-hidden group">
                     <video
                       ref={videoRef}
                       src={videoUrl}
+                      poster={compositeUrl || undefined}
                       autoPlay
                       loop
                       muted={isMuted}
@@ -368,23 +372,23 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
                       <button
                         type="button"
                         onClick={togglePlay}
-                        className="pointer-events-auto p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition-transform active:scale-90 cursor-pointer"
+                        className="pointer-events-auto p-1.5 rounded-xl bg-white/90 hover:bg-white backdrop-blur-xs text-[#1C1917] border border-black/[0.06] transition-transform active:scale-95 cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
                         title={isPlaying ? 'Pause' : 'Play'}
                       >
-                        {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                        {isPlaying ? <Pause size={13} /> : <Play size={13} />}
                       </button>
 
-                      <div className="px-3 py-1 rounded-xl bg-black/60 backdrop-blur-md text-[11px] font-semibold text-white/90 border border-white/10 truncate max-w-[180px]">
+                      <div className="px-2.5 py-0.5 rounded-xl bg-white/90 backdrop-blur-xs text-[10px] font-medium text-[#1C1917] border border-black/[0.06] truncate shadow-xs">
                         Live Motion
                       </div>
 
                       <button
                         type="button"
                         onClick={toggleMute}
-                        className="pointer-events-auto p-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white border border-white/10 transition-transform active:scale-90 cursor-pointer"
+                        className="pointer-events-auto p-1.5 rounded-xl bg-white/90 hover:bg-white backdrop-blur-xs text-[#1C1917] border border-black/[0.06] transition-transform active:scale-95 cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
                         title={isMuted ? 'Unmute' : 'Mute'}
                       >
-                        {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                        {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
                       </button>
                     </div>
                   </div>
@@ -395,25 +399,25 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
                   type="button"
                   onClick={handleDownloadVideo}
                   disabled={isDownloadingVideo}
-                  className={`w-full flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl font-bold text-xs sm:text-sm shadow-xl transition-all transform active:scale-95 cursor-pointer ${
+                  className={`w-full flex items-center justify-center gap-2 py-3 px-6 rounded-2xl font-semibold text-xs sm:text-sm whitespace-nowrap shadow-xs transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                     downloadVideoSuccess
-                      ? 'bg-emerald-500 text-white shadow-emerald-500/25'
-                      : 'bg-white/10 hover:bg-white/15 border border-white/10 text-white hover:text-white'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-white hover:bg-black/[0.03] border border-black/[0.08] text-[#1C1917]'
                   } disabled:opacity-60`}
                 >
                   {isDownloadingVideo ? (
                     <>
-                      <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                      <span>Downloading Video...</span>
+                      <div className="w-4 h-4 rounded-full border-2 border-black border-t-transparent animate-spin" />
+                      <span>Downloading Video…</span>
                     </>
                   ) : downloadVideoSuccess ? (
                     <>
-                      <Check size={17} strokeWidth={3} />
+                      <Check size={15} strokeWidth={3} />
                       <span>Video Downloaded!</span>
                     </>
                   ) : (
                     <>
-                      <Download size={17} strokeWidth={2.5} />
+                      <Download size={15} strokeWidth={2.5} />
                       <span>Download Video</span>
                     </>
                   )}
@@ -425,8 +429,8 @@ export const VideoViewerPage: React.FC<VideoViewerPageProps> = ({ token, onBack 
       </div>
 
       {/* Clean Footer Note */}
-      <footer className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-white/40">
-        <span>Korean 4-Cut Studio · High Resolution Prints & Behind-the-Scenes Video</span>
+      <footer className="pt-3 border-t border-black/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#A8A29E]">
+        <span>Korean 4-Cut Studio · Prints & BTS Video</span>
         <span>Tap Download buttons to save directly to your camera roll or device</span>
       </footer>
     </main>

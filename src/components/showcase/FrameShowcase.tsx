@@ -31,33 +31,33 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
       : BUNDLED_FRAMES.filter(f => f.category === activeCategory)
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 border-t border-white/5 select-none">
+    <section className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-12 border-t border-black/[0.06] select-none">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-xl font-bold text-[#1C1917] tracking-tight">
             Frame Collection
           </h2>
-          <p className="text-xs text-white/50 mt-1">
+          <p className="text-xs text-[#78716C] mt-0.5">
             Pick a frame style to start your photobooth session.
           </p>
         </div>
 
         {/* Layout Switcher (4-Cut vs 6-Cut) */}
-        <div className="flex items-center p-1 bg-white/5 rounded-xl border border-white/10 self-start sm:self-auto">
+        <div className="flex items-center p-0.5 bg-black/[0.03] rounded-xl border border-black/[0.04] self-start sm:self-auto">
           <button
             type="button"
             onClick={() => {
               sound.playClick()
               setPreviewLayout(LayoutType.fourCut)
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               previewLayout.id === 'fourCut'
-                ? 'bg-[#FF385C] text-white shadow'
-                : 'text-white/60 hover:text-white'
+                ? 'bg-white text-[#FF4D6D] font-semibold shadow-xs'
+                : 'text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
-            <Layers size={13} />
+            <Layers size={12} />
             4-Cut (1x4)
           </button>
           <button
@@ -66,20 +66,20 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
               sound.playClick()
               setPreviewLayout(LayoutType.sixCut)
             }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               previewLayout.id === 'sixCut'
-                ? 'bg-[#FF385C] text-white shadow'
-                : 'text-white/60 hover:text-white'
+                ? 'bg-white text-[#FF4D6D] font-semibold shadow-xs'
+                : 'text-[#78716C] hover:text-[#1C1917]'
             }`}
           >
-            <Layers size={13} />
+            <Layers size={12} />
             6-Cut (2x3)
           </button>
         </div>
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex items-center gap-2 pb-3 mb-6 overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-1.5 pb-2 mb-6 overflow-x-auto scrollbar-none">
         {CATEGORIES.map(category => (
           <button
             key={category}
@@ -88,10 +88,10 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
               sound.playClick()
               setActiveCategory(category)
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+            className={`px-3 py-1 rounded-lg text-xs whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
               activeCategory === category
-                ? 'bg-white text-black font-semibold shadow'
-                : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/5'
+                ? 'bg-[#1C1917] text-white font-medium shadow-xs'
+                : 'bg-white text-[#78716C] hover:text-[#1C1917] hover:bg-black/[0.03] border border-black/[0.05]'
             }`}
           >
             {category}
@@ -100,7 +100,7 @@ export const FrameShowcase: React.FC<FrameShowcaseProps> = ({ onSelectFrameAndSt
       </div>
 
       {/* Frames Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {filteredFrames.map(frame => (
           <FrameThumbnail
             key={frame.id}

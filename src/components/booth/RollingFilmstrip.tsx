@@ -12,10 +12,10 @@ export const RollingFilmstrip: React.FC<RollingFilmstripProps> = ({ photos, layo
   const totalCount = layout.burstCount
 
   return (
-    <div className="flex flex-col items-center gap-2 select-none">
+    <div className="flex flex-col items-center gap-1.5 select-none">
       {/* Shot Counter */}
-      <div className="text-xs font-semibold text-white/80 tracking-wider uppercase flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-full border border-white/10">
-        <Camera size={13} className="text-[#FF385C]" />
+      <div className="text-xs font-medium text-white/90 flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-full border border-white/10">
+        <Camera size={12} className="text-[#FF4D6D]" />
         <span>
           SHOT {Math.min(currentCount + 1, totalCount)}/{totalCount}
         </span>
@@ -31,11 +31,11 @@ export const RollingFilmstrip: React.FC<RollingFilmstripProps> = ({ photos, layo
           return (
             <div
               key={idx}
-              className={`relative w-11 sm:w-12 h-14 sm:h-16 rounded-lg overflow-hidden border transition-all duration-200 ${
+              className={`relative w-11 sm:w-12 h-14 sm:h-16 rounded-lg overflow-hidden border transition-[transform,border-color,background-color] duration-150 ${
                 isDone
                   ? 'border-white/40 bg-black'
                   : isCurrent
-                  ? 'border-[#FF385C] bg-[#FF385C]/15 ring-2 ring-[#FF385C]/50 scale-105'
+                  ? 'border-[#FF4D6D] bg-[#FF4D6D]/15 ring-2 ring-[#FF4D6D]/50 scale-105'
                   : 'border-white/10 bg-white/5'
               }`}
             >
@@ -48,7 +48,7 @@ export const RollingFilmstrip: React.FC<RollingFilmstripProps> = ({ photos, layo
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-[10px] text-white/30 font-bold">
                   <span>{idx + 1}</span>
-                  {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-[#FF385C] mt-1 animate-pulse" />}
+                  {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D6D] mt-1 animate-pulse" />}
                 </div>
               )}
             </div>

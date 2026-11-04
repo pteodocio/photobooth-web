@@ -1,15 +1,20 @@
+/* Hallmark stamp: minimal-korean-studio | modern-minimal | warm-offwhite */
+/* Critique: calm, uncluttered Korean self-photo studio with warm paper tones, soft rose accents, and generous breathing room */
 @import "tailwindcss";
 
 :root {
-  --color-bg-base: #08080B;
-  --color-bg-surface: #111116;
-  --color-bg-surface-raised: #181822;
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.16);
-  --color-brand-primary: #FF385C;
-  --color-brand-hover: #E02649;
-  --color-text-main: #F3F3F6;
-  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-bg-base: #FAF8F5;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-subdued: #F4F1EC;
+  --color-bg-surface-warm: #EFECE6;
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+  --color-brand-primary: #FF4D6D;
+  --color-brand-hover: #E11D48;
+  --color-brand-subtle: #FFF0F3;
+  --color-text-main: #1C1917;
+  --color-text-muted: #78716C;
+  --color-text-subtle: #A8A29E;
 }
 
 @layer base {
@@ -17,31 +22,31 @@
     overflow-x: clip;
     background-color: var(--color-bg-base);
     color: var(--color-text-main);
-    font-family: 'Outfit', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  button:focus-visible, a:focus-visible {
+  button:focus-visible, a:focus-visible, input:focus-visible {
     outline: 2px solid var(--color-brand-primary);
     outline-offset: 2px;
   }
 }
 
-/* Custom photobooth scrollbars */
+/* Minimalist studio scrollbars */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #0E0E12;
+  background: #F4F1EC;
 }
 ::-webkit-scrollbar-thumb {
-  background: #23232C;
+  background: #D6D1C7;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF385C;
+  background: #FF4D6D;
 }
 
 /* Authentic studio flash */
@@ -60,7 +65,6 @@
   0% {
     transform: translateY(-90%) scale(0.96);
     opacity: 0;
-    filter: drop-shadow(0 0 0 rgba(0,0,0,0));
   }
   35% {
     opacity: 1;
@@ -72,48 +76,39 @@
   100% {
     transform: translateY(0) scale(1);
     opacity: 1;
-    filter: drop-shadow(0 25px 35px rgba(0,0,0,0.65));
   }
 }
 
 .dispense-slide-down {
-  animation: mechanicalDispense 950ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: mechanicalDispense 850ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Filmstrip Perforation Notch Styling */
-.film-notch-pattern {
-  background-image: radial-gradient(circle at 50% 50%, #0B0B0E 3px, transparent 4px);
-  background-size: 14px 14px;
-}
-
-/* Darkroom Lightbox Grid Texture */
-.darkroom-grid {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-/* Mechanical ticket tear-off edge */
-.ticket-edge-left {
-  mask-image: radial-gradient(circle 8px at 0 50%, transparent 8px, black 9px);
-}
-.ticket-edge-right {
-  mask-image: radial-gradient(circle 8px at 100% 50%, transparent 8px, black 9px);
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Physical photo paper shadow */
 .photo-card-shadow {
   box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 8px 24px rgba(0, 0, 0, 0.5),
-    0 24px 48px rgba(0, 0, 0, 0.4);
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.06);
 }
 
-/* Washi tape effect */
-.washi-tape-accent {
-  background: rgba(255, 248, 220, 0.28);
-  border-left: 2px dashed rgba(255, 255, 255, 0.3);
-  border-right: 2px dashed rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(2px);
+/* Soft minimalist card shadow */
+.soft-card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Darkroom light texture */
+.subtle-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
 }

@@ -30,16 +30,16 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="rgba(255, 255, 255, 0.12)"
+          stroke="rgba(255, 255, 255, 0.15)"
           strokeWidth={strokeWidth}
-          fill="rgba(10, 10, 14, 0.65)"
+          fill="rgba(20, 20, 24, 0.6)"
         />
         {/* Animated countdown progress ring */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={isUrgent ? '#FF385C' : '#FF6680'}
+          stroke={isUrgent ? '#FF4D6D' : '#FFA8B6'}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
@@ -51,7 +51,7 @@ export const CountdownRing: React.FC<CountdownRingProps> = ({
       {/* Center number */}
       <span
         data-testid="countdown-number"
-        className={`absolute text-3xl font-black font-mono tracking-tight ${isUrgent ? 'text-[#FF385C] animate-pulse' : 'text-white'}`}
+        className={`absolute text-3xl font-black font-mono tracking-tight ${isUrgent ? 'text-[#FF4D6D] animate-pulse' : 'text-white'}`}
       >
         {secondsRemaining}
       </span>

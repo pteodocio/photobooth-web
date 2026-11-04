@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import type { CapturedPhoto, FrameTemplate, LayoutTypeConfig } from '../../core/types'
 import { getCssFilter } from '../../core/filters'
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Sparkles } from 'lucide-react'
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Sparkles, Heart } from 'lucide-react'
 import { sound } from '../../services/soundService'
 
 export interface AnimatedBtsStripProps {
@@ -117,7 +117,7 @@ export const AnimatedBtsStrip: React.FC<AnimatedBtsStripProps> = ({
         style={backgroundStyle}
         className={`relative w-full ${
           isSixCut ? 'max-w-[340px] sm:max-w-[380px] aspect-[2/3]' : 'max-w-[240px] sm:max-w-[280px] aspect-[1/3]'
-        } max-h-[64vh] mx-auto rounded-3xl overflow-hidden border border-white/10 photo-card-shadow flex flex-col justify-between p-3 sm:p-4 select-none animate-in fade-in`}
+        } max-h-[64vh] mx-auto rounded-3xl overflow-hidden border border-black/[0.08] photo-card-shadow flex flex-col justify-between p-3 sm:p-4 select-none animate-in fade-in`}
       >
         {/* Strip Header: Title & Live BTS Badge */}
         <div className="flex items-center justify-between pb-1 px-1">
@@ -138,7 +138,7 @@ export const AnimatedBtsStrip: React.FC<AnimatedBtsStripProps> = ({
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FF385C] text-white text-[9px] font-mono font-black tracking-wider uppercase shadow">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FF4D6D] text-white text-[9px] font-mono font-bold tracking-wider uppercase shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             <span>LIVE BTS</span>
             <span className="opacity-75">·</span>
@@ -146,7 +146,7 @@ export const AnimatedBtsStrip: React.FC<AnimatedBtsStripProps> = ({
           </div>
         </div>
 
-        {/* Simultaneous Video Slots Grid (4 vertical cuts or 2x3 balanced cuts) */}
+        {/* Simultaneous Video Slots Grid */}
         <div
           className={`flex-1 my-2 grid ${
             isSixCut ? 'grid-cols-2 grid-rows-3 gap-2' : 'grid-cols-1 grid-rows-4 gap-2'
@@ -203,7 +203,7 @@ export const AnimatedBtsStrip: React.FC<AnimatedBtsStripProps> = ({
           })}
         </div>
 
-        {/* Strip Footer: Stamp, Date, Passcode & Korean Heart Sticker */}
+        {/* Strip Footer: Stamp, Date, Passcode & Korean Heart */}
         <div className="pt-1 px-1 text-center flex flex-col items-center">
           {stampText && (
             <span
@@ -220,48 +220,47 @@ export const AnimatedBtsStrip: React.FC<AnimatedBtsStripProps> = ({
             KOREAN 4-CUT STUDIO · {todayStr}
           </span>
           {passcode && (
-            <span className="text-[8px] font-mono font-bold text-[#FF385C] mt-0.5">
+            <span className="text-[8px] font-mono font-bold text-[#FF4D6D] mt-0.5">
               CODE: {passcode}
             </span>
           )}
-          {/* Animated Pulsing Heart matching authentic Korean photobooths */}
-          <div className="mt-0.5 animate-pulse text-[#FF385C] text-xs font-bold leading-none">
-            ♥
+          <div className="mt-0.5 animate-pulse text-[#FF4D6D]">
+            <Heart size={10} className="fill-current" />
           </div>
         </div>
       </div>
 
       {/* Floating Media Controls Toolbar (Play/Pause, Replay, Mute, Status) */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-md shadow-lg">
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white border border-black/[0.08] shadow-sm">
         <button
           type="button"
           onClick={handleTogglePlay}
-          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-transform active:scale-90 cursor-pointer"
+          className="p-1.5 rounded-xl bg-black/[0.03] hover:bg-black/[0.06] text-[#1C1917] transition-transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           title={isPlaying ? 'Pause All' : 'Play All'}
         >
-          {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+          {isPlaying ? <Pause size={13} /> : <Play size={13} />}
         </button>
 
         <button
           type="button"
           onClick={handleReplay}
-          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-transform active:scale-90 cursor-pointer"
+          className="p-1.5 rounded-xl bg-black/[0.03] hover:bg-black/[0.06] text-[#1C1917] transition-transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           title="Replay from Beginning"
         >
-          <RotateCcw size={14} />
+          <RotateCcw size={13} />
         </button>
 
         <button
           type="button"
           onClick={handleToggleMute}
-          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-transform active:scale-90 cursor-pointer"
+          className="p-1.5 rounded-xl bg-black/[0.03] hover:bg-black/[0.06] text-[#1C1917] transition-transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           title={isMuted ? 'Unmute' : 'Mute'}
         >
-          {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+          {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
         </button>
 
-        <div className="px-3 py-1 text-[11px] font-medium text-white/70 flex items-center gap-1.5 border-l border-white/10 pl-2.5">
-          <Sparkles size={11} className="text-[#FF385C]" />
+        <div className="px-2.5 py-0.5 text-[11px] font-medium text-[#78716C] flex items-center gap-1 border-l border-black/[0.06] pl-2">
+          <Sparkles size={11} className="text-[#FF4D6D]" />
           <span>4 BTS Moments Synced</span>
         </div>
       </div>

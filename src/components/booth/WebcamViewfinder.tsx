@@ -4,7 +4,7 @@ import { useBoothStore } from '../../store/useBoothStore'
 import { CountdownRing } from './CountdownRing'
 import { RollingFilmstrip } from './RollingFilmstrip'
 import { AppConstants } from '../../core/constants'
-import { Camera, X, RefreshCw, Loader2, Sparkles } from 'lucide-react'
+import { Camera, X, RefreshCw, Loader2 } from 'lucide-react'
 import { sound } from '../../services/soundService'
 import { getCssFilter, PHOTO_FILTERS } from '../../core/filters'
 import { renderStrip } from '../../services/compositorService'
@@ -247,7 +247,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
   const currentShotIndex = Math.min(capturedPhotos.length + 1, selectedLayout.slotCount)
 
   return (
-    <div className="relative w-full h-full min-h-screen bg-[#08080B] flex flex-col justify-between p-3 sm:p-6 overflow-hidden select-none">
+    <div className="relative w-full h-full min-h-screen bg-[#18181B] flex flex-col justify-between p-3 sm:p-6 overflow-hidden select-none">
       {/* Studio Strobe Flash overlay */}
       {isFlashing && (
         <div className="fixed inset-0 z-50 bg-white camera-flash-effect pointer-events-none" />
@@ -255,43 +255,39 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
 
       {/* Printing Loading Overlay */}
       {isCompositing && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
-          <Loader2 size={44} className="text-[#FF385C] animate-spin mb-4" />
-          <h3 className="text-xl font-bold text-white mb-1">Printing Film Strip...</h3>
-          <p className="text-xs text-white/50">Applying {currentFilterObj.displayName} filter & {selectedFrame.name} decorations</p>
+        <div className="fixed inset-0 z-50 bg-[#18181B]/90 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
+          <Loader2 size={36} className="text-[#FF4D6D] animate-spin mb-3" />
+          <h3 className="text-lg font-semibold text-white mb-0.5">Printing Film Strip...</h3>
+          <p className="text-xs text-white/50">{currentFilterObj.displayName} · {selectedFrame.name}</p>
         </div>
       )}
 
       {/* Top Controls Bar */}
       <div className="relative z-20 flex items-center justify-between w-full max-w-3xl mx-auto">
         {/* Frame & Filter Info Pill */}
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/10 backdrop-blur-xs">
           <div
-            className="w-2.5 h-2.5 rounded-full shadow-sm"
+            className="w-2 h-2 rounded-full"
             style={{ backgroundColor: selectedFrame.gradientColors[0] || selectedFrame.backgroundColor }}
           />
-          <span className="text-xs font-semibold text-white">{selectedFrame.name}</span>
-          <span className="text-xs text-white/50">· {selectedLayout.displayName}</span>
-          <span className="text-xs text-white/50">·</span>
-          <span className="text-xs text-[#FF385C] font-medium flex items-center gap-1">
-            <Sparkles size={11} />
-            {currentFilterObj.displayName}
-          </span>
-          <span className="text-xs text-white/50">·</span>
-          <span className="text-xs text-white font-mono font-semibold">
+          <span className="text-xs font-medium text-white">{selectedFrame.name}</span>
+          <span className="text-xs text-white/40">·</span>
+          <span className="text-xs text-white/80">{currentFilterObj.displayName}</span>
+          <span className="text-xs text-white/40">·</span>
+          <span className="text-xs text-white font-mono font-medium">
             {selectedCountdown}s
           </span>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={toggleCamera}
             title="Switch Camera"
-            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/80 hover:text-white border border-white/10 backdrop-blur-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
-            <RefreshCw size={15} />
+            <RefreshCw size={14} />
           </button>
           <button
             type="button"
@@ -300,9 +296,9 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
               onExit()
             }}
             title="Exit Booth"
-            className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/10 backdrop-blur-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+            className="p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/80 hover:text-white border border-white/10 backdrop-blur-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
           >
-            <X size={15} />
+            <X size={14} />
           </button>
         </div>
       </div>
@@ -311,7 +307,7 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       <div className="relative z-10 flex-1 flex items-center justify-center my-2">
         <div
           data-testid="viewfinder-framing-mask"
-          className="relative aspect-[4/3] w-full max-w-2xl max-h-[64vh] rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black"
+          className="relative aspect-[4/3] w-full max-w-2xl max-h-[66vh] rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-black"
         >
           {/* Mirrored Video Stream with Filter Applied */}
           <video
@@ -326,43 +322,38 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           {/* Camera Error Fallback */}
           {cameraError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-black/90">
-              <Camera size={36} className="text-white/40 mb-3" />
-              <p className="text-sm font-semibold text-white/80">{cameraError}</p>
-              <p className="text-xs text-white/50 mt-1">Please allow camera permissions or test in a supported browser.</p>
+              <Camera size={32} className="text-white/40 mb-2" />
+              <p className="text-sm font-medium text-white/90">{cameraError}</p>
+              <p className="text-xs text-white/50 mt-0.5">Please allow camera permissions.</p>
             </div>
           )}
 
           {/* Pause Notification Between Shots */}
           {isPaused && (
             <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-xs flex flex-col items-center justify-center text-center animate-in fade-in">
-              <div className="px-5 py-2.5 rounded-full bg-black/80 border border-white/20 text-white font-bold text-sm shadow-xl">
+              <div className="px-4 py-2 rounded-full bg-white text-[#1C1917] font-semibold text-xs shadow-lg">
                 Photo {capturedPhotos.length} of {selectedLayout.slotCount} Captured!
               </div>
-              <p className="text-xs text-white/70 mt-2 font-medium">Get ready for next shot...</p>
+              <p className="text-xs text-white/70 mt-1.5 font-medium">Get ready for next shot...</p>
             </div>
           )}
 
-          {/* Corner Framing Marks */}
-          <div className="absolute inset-4 pointer-events-none">
-            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#FF385C] rounded-tl-sm" />
-            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#FF385C] rounded-tr-sm" />
-            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#FF385C] rounded-bl-sm" />
-            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#FF385C] rounded-br-sm" />
-
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30">
-              <div className="w-6 h-[1px] bg-white mx-auto" />
-              <div className="h-6 w-[1px] bg-white mx-auto -mt-[13px]" />
-            </div>
+          {/* Minimal Corner Framing Marks */}
+          <div className="absolute inset-4 pointer-events-none opacity-40">
+            <div className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 border-white rounded-tl-sm" />
+            <div className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 border-white rounded-tr-sm" />
+            <div className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 border-white rounded-bl-sm" />
+            <div className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 border-white rounded-br-sm" />
           </div>
 
-          {/* Countdown Ring: Exact selected timer */}
+          {/* Countdown Ring */}
           {!isPaused && !isCompositing && (
-            <div className="absolute top-4 left-4 pointer-events-none drop-shadow-xl flex items-center gap-2">
+            <div className="absolute top-4 left-4 pointer-events-none drop-shadow-md flex items-center gap-2">
               <CountdownRing
                 secondsRemaining={secondsRemaining}
                 totalSeconds={selectedCountdown}
               />
-              <div className="px-2.5 py-1 rounded-md bg-black/60 border border-white/10 text-[11px] font-bold text-white flex items-center gap-1">
+              <div className="px-2.5 py-1 rounded-lg bg-black/50 border border-white/10 text-[11px] font-semibold text-white">
                 <span>Photo {currentShotIndex} of {selectedLayout.slotCount}</span>
                 <span className="sr-only">SHOT {currentShotIndex}/{selectedLayout.slotCount}</span>
               </div>
@@ -373,10 +364,10 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
           {!isCompositing && (
             <div
               data-testid="bts-recording-indicator"
-              className="absolute top-4 right-4 pointer-events-none drop-shadow-xl flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/65 border border-white/15 backdrop-blur-md"
+              className="absolute top-4 right-4 pointer-events-none drop-shadow-md flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 border border-white/10 backdrop-blur-xs"
             >
-              <span className="w-2 h-2 rounded-full bg-[#FF385C] animate-pulse" />
-              <span className="text-[10px] font-bold font-mono tracking-wider text-white uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D6D] animate-pulse" />
+              <span className="text-[10px] font-mono font-medium tracking-wide text-white uppercase">
                 REC BTS ({selectedCountdown}s)
               </span>
             </div>
@@ -385,18 +376,18 @@ export const WebcamViewfinder: React.FC<WebcamViewfinderProps> = ({ onExit }) =>
       </div>
 
       {/* Bottom Control Dock: Filmstrip + Take Photo Button */}
-      <div className="relative z-20 flex flex-col items-center gap-3 w-full max-w-3xl mx-auto">
+      <div className="relative z-20 flex flex-col items-center gap-2.5 w-full max-w-3xl mx-auto">
         <RollingFilmstrip photos={capturedPhotos} layout={selectedLayout} />
 
         <button
           type="button"
           onClick={handleManualShoot}
           disabled={isCompositing || isPaused}
-          className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-sm shadow-xl shadow-[#FF385C]/30 transition-transform duration-150 transform active:scale-95 cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+          className="flex items-center gap-2 px-7 py-3 rounded-full bg-[#FF4D6D] hover:bg-[#E11D48] text-white font-semibold text-xs shadow-md transition-transform duration-150 transform active:scale-95 cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
         >
-          <Camera size={16} />
+          <Camera size={15} />
           <span>Take Photo</span>
-          <span className="text-xs opacity-70 font-normal">({secondsRemaining}s)</span>
+          <span className="text-xs opacity-80 font-normal">({secondsRemaining}s)</span>
         </button>
       </div>
     </div>

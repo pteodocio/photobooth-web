@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useBoothStore } from '../../store/useBoothStore'
 import { PHOTO_FILTERS, FILTER_CATEGORIES, getCssFilter } from '../../core/filters'
 import { CameraService } from '../../services/cameraService'
-import { Sparkles, Sliders, RotateCcw, ArrowRight, Camera, RefreshCw } from 'lucide-react'
+import { Sliders, RotateCcw, ArrowRight, Camera, RefreshCw } from 'lucide-react'
 import { sound } from '../../services/soundService'
 import { PhotoboothStepHeader } from './PhotoboothStepHeader'
 
@@ -21,7 +21,6 @@ export const PreCaptureFilterStep: React.FC = () => {
   const [cameraActive, setCameraActive] = useState<boolean>(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Start camera preview
   useEffect(() => {
     let isMounted = true
     async function startCamera() {
@@ -57,8 +56,8 @@ export const PreCaptureFilterStep: React.FC = () => {
   const currentFilterObj = PHOTO_FILTERS.find(f => f.id === selectedFilter) || PHOTO_FILTERS[0]
 
   return (
-    <div className="min-h-screen bg-[#08080B] text-[#F3F3F6] flex flex-col justify-between p-3 sm:p-6 select-none max-w-6xl mx-auto">
-      {/* Unified 7-Stage Header */}
+    <div className="min-h-screen bg-[#FAF8F5] text-[#1C1917] flex flex-col justify-between p-3 sm:p-6 select-none max-w-6xl mx-auto">
+      {/* Minimal Studio Header */}
       <PhotoboothStepHeader
         currentStep={1}
         stepTitle="Choose Photo Filter"
@@ -71,7 +70,7 @@ export const PreCaptureFilterStep: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 my-2 flex-1 items-start">
         {/* Left Column: Live Camera Filter Viewfinder (5 cols) */}
         <div className="lg:col-span-5 flex flex-col gap-3">
-          <div className="relative aspect-[4/3] w-full bg-black rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
+          <div className="relative aspect-[4/3] w-full bg-[#1C1917] rounded-2xl overflow-hidden border border-black/[0.06] shadow-sm">
             {/* Live Video with filter applied */}
             <video
               ref={videoRef}
@@ -85,22 +84,22 @@ export const PreCaptureFilterStep: React.FC = () => {
             {!cameraActive && (
               <div
                 style={{ filter: activeCssFilter }}
-                className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#1A1A24] to-[#0E0E14]"
+                className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#F4F1EC]"
               >
-                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-3">
-                  <Camera size={28} className="text-white/60" />
+                <div className="w-14 h-14 rounded-full bg-black/[0.05] flex items-center justify-center mb-2.5">
+                  <Camera size={24} className="text-[#78716C]" />
                 </div>
-                <p className="text-sm font-semibold text-white">Live Camera Preview</p>
-                <p className="text-xs text-white/40 mt-1">Real-time studio filter simulation</p>
+                <p className="text-sm font-medium text-[#1C1917]">Live Camera Preview</p>
+                <p className="text-xs text-[#78716C] mt-0.5">Filter simulation active</p>
               </div>
             )}
 
             {/* Filter Name Badge */}
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-xs font-semibold text-white flex items-center gap-2">
-              <Sparkles size={12} className="text-[#FF385C]" />
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-xs border border-black/[0.06] text-xs font-medium text-[#1C1917] flex items-center gap-1.5 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF4D6D]" />
               <span>{currentFilterObj.displayName}</span>
               {selectedFilter !== 'none' && (
-                <span className="text-[10px] text-white/60 font-mono">
+                <span className="text-[10px] text-[#78716C] font-mono">
                   {Math.round(filterIntensity * 100)}%
                 </span>
               )}
@@ -111,30 +110,22 @@ export const PreCaptureFilterStep: React.FC = () => {
               <button
                 type="button"
                 onClick={toggleCamera}
-                className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white/70 hover:text-white border border-white/15 backdrop-blur-md cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+                className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white text-[#1C1917] border border-black/[0.06] backdrop-blur-xs cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] shadow-xs"
                 title="Switch Camera"
               >
-                <RefreshCw size={13} />
+                <RefreshCw size={12} />
               </button>
             )}
-
-            {/* Viewfinder corner guides */}
-            <div className="absolute inset-3 pointer-events-none opacity-40">
-              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white rounded-tl-sm" />
-              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white rounded-tr-sm" />
-              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white rounded-bl-sm" />
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white rounded-br-sm" />
-            </div>
           </div>
 
           {/* Intensity Slider Control */}
-          <div className="p-3.5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-2">
+          <div className="p-3 rounded-2xl bg-white border border-black/[0.06] shadow-xs flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1.5 font-semibold text-white/90">
-                <Sliders size={13} className="text-[#FF385C]" />
+              <div className="flex items-center gap-1.5 font-medium text-[#1C1917]">
+                <Sliders size={13} className="text-[#FF4D6D]" />
                 <span>Filter Intensity</span>
               </div>
-              <span className="font-mono text-[#FF385C] font-bold">
+              <span className="font-mono text-[#FF4D6D] font-semibold text-xs">
                 {Math.round(filterIntensity * 100)}%
               </span>
             </div>
@@ -147,7 +138,7 @@ export const PreCaptureFilterStep: React.FC = () => {
                 step="0.05"
                 value={filterIntensity}
                 onChange={e => setFilterIntensity(parseFloat(e.target.value))}
-                className="flex-1 accent-[#FF385C] h-2 bg-white/20 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+                className="flex-1 accent-[#FF4D6D] h-1.5 bg-black/[0.06] rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               />
               <button
                 type="button"
@@ -156,7 +147,7 @@ export const PreCaptureFilterStep: React.FC = () => {
                   setFilter('none')
                   setFilterIntensity(1.0)
                 }}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-white/60 hover:text-white border border-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-black/[0.03] hover:bg-black/[0.06] text-[11px] text-[#78716C] hover:text-[#1C1917] border border-black/[0.04] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
               >
                 <RotateCcw size={11} />
                 <span>Reset</span>
@@ -166,7 +157,7 @@ export const PreCaptureFilterStep: React.FC = () => {
         </div>
 
         {/* Right Column: 40 Filter Swatch Library (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col gap-3">
+        <div className="lg:col-span-7 flex flex-col gap-2.5">
           {/* Category Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
             {FILTER_CATEGORIES.map(cat => (
@@ -177,10 +168,10 @@ export const PreCaptureFilterStep: React.FC = () => {
                   sound.playClick()
                   setActiveCategory(cat.id)
                 }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+                className={`px-3 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition-[background-color,color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                   activeCategory === cat.id
-                    ? 'bg-white text-black shadow-md'
-                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                    ? 'bg-[#1C1917] text-white shadow-xs'
+                    : 'bg-white text-[#78716C] hover:text-[#1C1917] hover:bg-black/[0.03] border border-black/[0.04]'
                 }`}
               >
                 {cat.name}
@@ -202,30 +193,27 @@ export const PreCaptureFilterStep: React.FC = () => {
                     sound.playClick()
                     setFilter(filter.id)
                   }}
-                  className={`group relative flex flex-col items-center p-2.5 rounded-xl transition-[transform,opacity,border-color,background-color] duration-150 cursor-pointer text-left border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] ${
+                  className={`group relative flex flex-col items-center p-2 rounded-xl transition-[transform,opacity,border-color,background-color] duration-150 cursor-pointer text-left border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D] ${
                     isSelected
-                      ? 'bg-[#1E1E28] ring-2 ring-[#FF385C] border-transparent shadow-lg shadow-[#FF385C]/20 scale-[1.02]'
-                      : 'bg-[#13131A] hover:bg-[#1A1A24] border-white/5 hover:border-white/15'
+                      ? 'bg-white border-[#FF4D6D] ring-2 ring-[#FF4D6D]/20 shadow-xs'
+                      : 'bg-white hover:bg-[#FDFBF7] border-black/[0.06] hover:border-black/[0.12]'
                   }`}
                 >
                   {/* Swatch Preview Box */}
-                  <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-neutral-800 mb-2 relative">
+                  <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-neutral-100 mb-1.5 relative">
                     <div
                       style={{ filter: previewCss }}
-                      className="w-full h-full bg-gradient-to-tr from-amber-200 via-rose-300 to-sky-300 flex items-center justify-center"
+                      className="w-full h-full bg-gradient-to-tr from-amber-100 via-rose-100 to-sky-100 flex items-center justify-center"
                     >
-                      <div className="w-6 h-6 rounded-full bg-white/40 backdrop-blur-xs" />
+                      <div className="w-5 h-5 rounded-full bg-white/50 backdrop-blur-xs" />
                     </div>
                     {isSelected && (
-                      <div className="absolute inset-0 bg-[#FF385C]/15 border-2 border-[#FF385C] rounded-lg" />
+                      <div className="absolute inset-0 bg-[#FF4D6D]/10 border-2 border-[#FF4D6D] rounded-lg" />
                     )}
                   </div>
 
-                  <span className="text-xs font-semibold text-white/95 truncate w-full">
+                  <span className="text-xs font-medium text-[#1C1917] truncate w-full">
                     {filter.displayName}
-                  </span>
-                  <span className="text-[10px] text-white/40 truncate w-full">
-                    {filter.description}
                   </span>
                 </button>
               )
@@ -235,9 +223,9 @@ export const PreCaptureFilterStep: React.FC = () => {
       </div>
 
       {/* Bottom Action Footer */}
-      <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
-        <div className="text-xs text-white/50">
-          Selected: <span className="font-semibold text-white">{currentFilterObj.displayName}</span>
+      <div className="pt-3 border-t border-black/[0.06] flex items-center justify-between gap-4">
+        <div className="text-xs text-[#78716C]">
+          Selected: <span className="font-semibold text-[#1C1917]">{currentFilterObj.displayName}</span>
           {selectedFilter !== 'none' && ` · ${Math.round(filterIntensity * 100)}%`}
         </div>
 
@@ -247,10 +235,10 @@ export const PreCaptureFilterStep: React.FC = () => {
             sound.playClick()
             goToFrameSelect()
           }}
-          className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#FF385C] hover:bg-[#E02649] text-white font-bold text-xs shadow-xl shadow-[#FF385C]/25 transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C]"
+          className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#FF4D6D] hover:bg-[#E11D48] text-white font-semibold text-xs shadow-xs transition-transform duration-150 transform active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4D6D]"
         >
           <span>Next: Choose Frame</span>
-          <ArrowRight size={15} />
+          <ArrowRight size={14} />
         </button>
       </div>
     </div>
